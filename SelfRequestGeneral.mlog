@@ -1,0 +1,89 @@
+set v1 0 #object variables
+set v2 0
+set MaxPercent 0.6
+op mul MaxValue 1000 MaxPercent
+set lp -1
+loop1: #detect containers/vaults
+    op add lp lp 1
+    getlink obj lp
+    sensor oType obj @type
+    jump select equal oType @container
+    jump select equal oType @vault
+    skip0:
+    jump loop1 lessThan lp @links
+    jump ItemDentify always
+end
+select:
+    sensor ic obj @itemCapacity
+    jump j1 notEqual v1 0 #is v1 filled?
+    set v1 obj
+    jump j2 always
+j1: 
+    jump j2 notEqual v2 0 #is v2 filled?
+    set v2 obj
+j2:
+    op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
+    op min ic MaxValue ic #take smallest
+    set MaxValue ic #set as new MaxValue
+    jump skip0 always
+    end
+ItemDentify: #Part2!!!!
+    set mv MaxValue
+    set i -1
+    jump loop2 notEqual v2 0 #is v2 filled?
+    set v2 v1
+    loop2:
+        op add i i 1
+        lookup item type i
+        sensor r1 v1 type #how much x in v1, v2
+        sensor r2 v2 type
+        op min amount r1 r2 #take small
+        jump selected equal i 1 #selection
+        jump selected equal i 2
+        jump selected equal i 3
+        jump selected equal i 5
+        jump selected equal i 6
+        jump selected equal i 9
+        jump selected equal i 10
+        jump selected equal i 11
+        jump selected equal i 12
+        jump skip1 always
+        selected: #is this the smallest?
+            jump skip1 greaterThanEq amount MaxValue
+            set typec type #if so set the output
+            set dataItem i
+            set MaxValue amount
+    skip1:
+        jump loop2 lessThan i 15
+    jump deactivate greaterThanEq MaxValue mv #is everything full?
+    set isA 1
+    jump j3 always
+    print "0479"
+    deactivate: #if so set output to null
+        set isA 0
+        set typec @null
+        set dataItem 16
+    j3:
+        set a -1
+    loop3:
+        op add a a 1
+        getlink obj a
+        sensor oType obj @type
+        jump skip2 equal oType @vault #skip if vault or container
+        jump skip2 equal oType @container
+        jump displayLogic equal oType @logic-display #display logic
+        jump j4 notEqual oType @memory-cell
+        write dataItem obj 0 #at 0 send item data
+        j4:
+        control enabled obj isA #enable or disable
+        control config obj typec #set output
+    skip2:
+        jump loop3 lessThan a @links
+    end
+    displayLogic:
+        op add rotate rotate 5
+        draw clear 180 172 256
+        draw image 40 40 typec 70 rotate
+        drawflush obj
+    jump skip2 always x false
+end
