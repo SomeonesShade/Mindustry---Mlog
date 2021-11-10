@@ -1,6 +1,7 @@
-set v1 0 #object variables
+set MaxPercent 0.2  #object variables
+set MemoryLocation 0
+set v1 0
 set v2 0
-set MaxPercent 0.6
 op mul MaxValue 1000 MaxPercent
 set lp -1
 loop1: #detect containers/vaults
@@ -73,7 +74,7 @@ ItemDentify: #Part2!!!!
         jump skip2 equal oType @container
         jump displayLogic equal oType @logic-display #display logic
         jump j4 notEqual oType @memory-cell
-        write dataItem obj 0 #at 0 send item data
+        write dataItem obj MemoryLocation #at MemoryLocation send item data
         j4:
         control enabled obj isA #enable or disable
         control config obj typec #set output
