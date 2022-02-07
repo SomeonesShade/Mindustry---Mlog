@@ -1,10 +1,8 @@
-set MaxPercent 0.2  #object variables
-set MemoryLocation 0
-set v1 0
+set selectedA 0
+set v1 0 #object variables
 set v2 0
-set v3 0
-set v4 0
-op mul MaxValue 99999999 MaxPercent
+set MaxPercent 0.6
+op mul MaxValue 1000 MaxPercent
 set lp -1
 loop1: #detect containers/vaults
     op add lp lp 1
@@ -12,30 +10,19 @@ loop1: #detect containers/vaults
     sensor oType obj @type
     jump select equal oType @container
     jump select equal oType @vault
-    jump select equal oType @core-shard
-    jump select equal oType @core-foundation
-    jump select equal oType @core-nucleus
     skip0:
     jump loop1 lessThan lp @links
     jump ItemDentify always
 end
 select:
     sensor ic obj @itemCapacity
-    jump ja1 notEqual v1 0 #is v1 filled?
+    jump j1 notEqual v1 0 #is v1 filled?
     set v1 obj
-    jump j1 always
-ja1: 
-    jump ja2 notEqual v2 0 #is v2 filled?
+    jump j2 always
+j1: 
+    jump j2 notEqual v2 0 #is v2 filled?
     set v2 obj
-    jump j1 always
-ja2:
-    jump ja3 notEqual v3 0 #is v3 filled?
-    set v3 obj
-    jump j1 always
-ja3:
-    jump j1 notEqual v4 0 #is v4 filled?
-    set v4 obj
-j1:
+j2:
     op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
     op min ic MaxValue ic #take smallest
     set MaxValue ic #set as new MaxValue
@@ -43,24 +30,15 @@ j1:
     end
 ItemDentify: #Part2!!!!
     set mv MaxValue
-    set i 0
-    jump jb1 notEqual v2 0 #is v2 filled?
+    set i -1
+    jump loop2 notEqual v2 0 #is v2 filled?
     set v2 v1
-jb1:
-    jump jb2 notEqual v3 0 #is v3 filled?
-    set v3 v1
-jb2:
-    jump loop2 notEqual v4 0 #is v4 filled?
-    set v4 v1
     loop2:
+        op add i i 1
         lookup item type i
-        sensor r1 v1 type #how much x in v1, v2...
+        sensor r1 v1 type #how much x in v1, v2
         sensor r2 v2 type
-        sensor r3 v3 type
-        sensor r4 v4 type
-        op min am1 r1 r2 #take small
-        op min am2 r3 r4
-        op min amount am1 am2
+        op min amount r1 r2 #take small
         jump selected equal i 1 #selection
         jump selected equal i 2
         jump selected equal i 3
@@ -75,15 +53,12 @@ jb2:
             jump skip1 greaterThanEq amount MaxValue
             set typec type #if so set the output
             set dataItem i
-            set MaxValue amount
-    skip1:
-        op add i i 1
-        jump loop2 lessThan i @itemCount
-    jump deactivate greaterThanEq MaxValue mv #is everything full?
     set isA 1
+    set selectedA 1
     jump j3 always
-    print "Someone's Shadow #9470"
+    print "0479"
     deactivate: #if so set output to null
+        set selectedA 1
         set isA 0
         set typec @null
         set dataItem 16
@@ -97,12 +72,15 @@ jb2:
         jump skip2 equal oType @container
         jump displayLogic equal oType @logic-display #display logic
         jump j4 notEqual oType @memory-cell
-        write dataItem obj MemoryLocation #at MemoryLocation send item data
+        write dataItem obj 0 #at 0 send item data
         j4:
         control enabled obj isA #enable or disable
         control config obj typec #set output
     skip2:
         jump loop3 lessThan a @links
+    skip1:
+        jump loop2 lessThan i 15
+    jump deactivate notEqual selectedA 1 #is everything full?
     end
     displayLogic:
         op add rotate rotate 5
