@@ -1,41 +1,7 @@
+set bitSelection 0b0
 set MaxPercent 0.2  #object variables
-set MemoryLocation 1
-jump configIgnore notEqual bitSelection null
-op shl  false 0
-op shl  false 1
-op shl  false 2
-op shl  false 3
-op shl  false 4
-op shl  false 5
-op shl  false 6
-op shl  false 7
-op shl  false 8
-op shl  false 9
-op shl  false 10
-op shl  false 11
-op shl  false 12
-op shl  false 13
-op shl  false 14
-op shl  false 15
-op add bitSelection  
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-configIgnore:
-jump bitSkip equal cell1 null
-read bitSelection cell1 0
-bitSkip:
+set MemoryLocation 0
+
 jump storageCheck notEqual @links prevLinks
 jump storageCheck greaterThanEq sC 100
 print "made by: Someone's Shadow #9470"
@@ -66,16 +32,10 @@ ItemDentify: #Part2!!!
     set isA 1
 	jump j3 lessThan mv MaxValue #is everything full?
 	set isA 0
-    set typec null
+    set typec @null
     set dataItem 16
     j3:
         set a -1
-        jump loop3 notEqual v1 0
-        op equal blink blink 0
-        set isA 0
-        wait 0.5
-        jump loop3 equal blink 0
-        set typec null
     loop3:
         op add a a 1
         getlink obj a

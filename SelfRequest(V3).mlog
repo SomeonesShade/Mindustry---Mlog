@@ -1,48 +1,13 @@
+set bitSelection 0b0
 set MaxPercent 0.2  #object variables
-set MemoryLocation 1
-jump configIgnore notEqual bitSelection null
-op shl  false 0
-op shl  false 1
-op shl  false 2
-op shl  false 3
-op shl  false 4
-op shl  false 5
-op shl  false 6
-op shl  false 7
-op shl  false 8
-op shl  false 9
-op shl  false 10
-op shl  false 11
-op shl  false 12
-op shl  false 13
-op shl  false 14
-op shl  false 15
-op add bitSelection  
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-op add bitSelection bitSelection 
-configIgnore:
-jump bitSkip equal cell1 null
-read bitSelection cell1 0
-bitSkip:
+set MemoryLocation 0
+set isA 0
 jump storageCheck notEqual @links prevLinks
 jump storageCheck greaterThanEq sC 100
 print "made by: Someone's Shadow #9470"
 ItemDentify: #Part2!!!
 	set prevLinks @links
     set bitLocation 0
-    set mv MaxValue
     set i 0
     loop2:
         lookup item type i
@@ -56,39 +21,38 @@ ItemDentify: #Part2!!!
         op min am1 r1 r2 #take small
         op min am2 r3 r4
         op min amount am1 am2
-        jump skip1 greaterThanEq amount mv #is this the smallest?
+        jump skip1 greaterThan amount MaxValue #is this the smallest?
         set typec type #if so set the output
+        set isA 1
         set dataItem i
-        set mv amount
+        set a -1
+    loop3:
+        op add a a 1
+        getlink obj a
+        sensor oType obj @type
+        jump j4 notEqual oType @memory-cell
+        write dataItem obj MemoryLocation #at MemoryLocation send item data
+    j4:
+        control config obj typec #set output
+        jump loop3 lessThan a @links
     skip1:
         op add i i 1
         jump loop2 lessThan i @itemCount
-    set isA 1
-	jump j3 lessThan mv MaxValue #is everything full?
-	set isA 0
-    set typec null
-    set dataItem 16
-    j3:
-        set a -1
-        jump loop3 notEqual v1 0
-        op equal blink blink 0
-        set isA 0
-        wait 0.5
-        jump loop3 equal blink 0
-        set typec null
-    loop3:
+    set a -1
+    jump loop4 notEqual v1 0
+        op equal blink 0 blink
+        set isA blink
+    loop4:
         op add a a 1
         getlink obj a
         sensor oType obj @type
         jump skip2 equal oType @vault #skip if vault or container
         jump skip2 equal oType @container
-        jump j4 notEqual oType @memory-cell
-        write dataItem obj MemoryLocation #at MemoryLocation send item data
-        j4:
         control enabled obj isA #enable or disable
-        control config obj typec #set output
+        jump skip2 equal isA 1
+        control config obj null
     skip2:
-        jump loop3 lessThan a @links
+        jump loop4 lessThan a @links
 	op add sC sC 1
 end
 #log: version 3.0 removed display logic, reduced calling the storage check, and mini optimizations
