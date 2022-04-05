@@ -53,13 +53,15 @@ jump bitSkip lessThan MemoryReadLocation 0
 read bitSelection cell1 MemoryReadLocation
 bitSkip:
 jump storageCheck notEqual @links prevLinks
-jump storageCheck greaterThanEq sC 100
+jump ItemDentify equal isA 1
+jump storageCheck greaterThanEq sC 20
 print "made by: Someone's Shadow #9470"
 ItemDentify: #Part2!!!
 	set prevLinks @links
     set bitLocation 0
     set dataItem 0
-    set mv MaxValue
+    set isA 0
+    set proportion 1
     set i 0
     loop2:
         lookup item type i
@@ -75,16 +77,18 @@ ItemDentify: #Part2!!!
         op min am1 r1 r2 #take small
         op min am2 r3 r4
         op min amount am1 am2
+        op add goBack @counter 1
+        jump itemSelect always
+        op mul mv proportion output
         jump skip1 greaterThanEq amount mv #is this the smallest?
         set typec type #if so set the output
         op add dataItem dataItem bitLocation
-        set mv amount
+        op div proportion amount mv
+        set isA 1
     skip1:
         op add i i 1
         jump loop2 lessThan i @itemCount
-    set isA 1
-	jump j3 lessThan mv MaxValue #is everything full?
-	set isA 0
+	jump j3 equal isA 1 #is everything full?
     set typec null
     set dataItem 0
     j3:
@@ -124,18 +128,37 @@ storageCheck:
 	set v2 0
 	set v3 0
 	set v4 0
-	op mul MaxValue 99999999 MaxPercent
+    op mul MaxValue 99999999 MaxPercent
+    set maxCopper MaxValue
+    set maxLead MaxValue
+    set maxGraphite MaxValue
+    set maxMetaglass MaxValue
+    set maxSand MaxValue
+    set maxCoal MaxValue
+    set maxTitanium MaxValue
+    set maxThorium MaxValue
+    set maxScrap MaxValue
+    set maxSilicon MaxValue
+    set maxPlastanium MaxValue
+    set maxPhaseFabric MaxValue
+    set maxSurgeAlloy MaxValue
+    set maxSporePod MaxValue
+    set maxBlastCompound MaxValue
+    set maxPyratite MaxValue
 	set lp -1
 loop1: #detect containers/vaults
     op add lp lp 1
     getlink obj lp
     sensor oType obj @type
-    jump select equal oType @container
-    jump select equal oType @vault
-    jump select equal oType @mass-driver
-    jump select equal oType @core-shard
-    jump select equal oType @core-foundation
-    jump select equal oType @core-nucleus
+    jump normalStorage equal oType @container
+    jump normalStorage equal oType @vault
+    jump normalStorage equal oType @mass-driver
+    jump normalStorage equal oType @core-shard
+    jump normalStorage equal oType @core-foundation
+    jump normalStorage equal oType @core-nucleus
+    jump tetrative equal oType @tetrative-reconstructor
+    jump exponential equal oType @exponential-reconstructor
+    jump multiplicative equal oType @multiplicative-reconstructor
     skip0:
     	jump loop1 lessThan lp @links
 	jump jb1 notEqual v2 0 #is v2 filled?
@@ -149,8 +172,57 @@ jb2:
 jb3:
 	jump ItemDentify always
 end
+tetrative:
+op mul ic MaxPercent 2000
+op min maxSilicon maxSilicon ic
+op mul ic MaxPercent 1200
+op min maxPlastanium maxPlastanium ic
+op mul ic MaxPercent 700
+op min maxPhaseFabric maxPhaseFabric ic
+op mul ic MaxPercent 1000
+op min maxSurgeAlloy maxSurgeAlloy ic
+jump select always
+end
+exponential:
+op mul ic MaxPercent 1500
+op min maxTitanium maxTitanium ic
+op mul ic MaxPercent 1700
+op min maxSilicon maxSilicon ic
+op mul ic MaxPercent 1300
+op min maxPlastanium maxPlastanium ic
+jump select always
+end
+multiplicative:
+op mul ic MaxPercent 80
+op min maxMetaglass maxMetaglass ic
+op mul ic MaxPercent 160
+op min maxTitanium maxTitanium ic
+op mul ic MaxPercent 260
+op min maxSilicon maxSilicon ic
+jump select always
+end
+normalStorage:
+sensor ic obj @itemCapacity
+op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
+op min maxCopper maxCopper ic
+op min maxLead maxLead ic
+op min maxGraphite maxGraphite ic
+op min maxMetaglass maxMetaglass ic
+op min maxSand maxSand ic
+op min maxCoal maxCoal ic
+op min maxTitanium maxTitanium ic
+op min maxThorium maxThorium ic
+op min maxScrap maxScrap ic
+op min maxSilicon maxSilicon ic
+op min maxPlastanium maxPlastanium ic
+op min maxPhaseFabric maxPhaseFabric ic
+op min maxSurgeAlloy maxSurgeAlloy ic
+op min maxSporePod maxSporePod ic
+op min maxBlastCompound maxBlastCompound ic
+op min maxPyratite maxPyratite ic
+jump select always
+end
 select:
-    sensor ic obj @itemCapacity
     jump ja1 notEqual v1 0 #is v1 filled?
     set v1 obj
     jump j1 always
@@ -166,8 +238,41 @@ ja3:
     jump j1 notEqual v4 0 #is v4 filled?
     set v4 obj
 j1:
-    op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
-    op min ic MaxValue ic #take smallest
-    set MaxValue ic #set as new MaxValue
     jump skip0 always
+end
+itemSelect:
+op mul selectItem i 2
+op add @counter selectItem @counter
+set output maxCopper
+set @counter goBack
+set output maxLead
+set @counter goBack
+set output maxGraphite
+set @counter goBack
+set output maxMetaglass
+set @counter goBack
+set output maxSand
+set @counter goBack
+set output maxCoal
+set @counter goBack
+set output maxTitanium
+set @counter goBack
+set output maxThorium
+set @counter goBack
+set output maxScrap
+set @counter goBack
+set output maxSilicon
+set @counter goBack
+set output maxPlastanium
+set @counter goBack
+set output maxPhaseFabric
+set @counter goBack
+set output maxSurgeAlloy
+set @counter goBack
+set output maxSporePod
+set @counter goBack
+set output maxBlastCompound
+set @counter goBack
+set output maxPyratite
+set @counter goBack
 end

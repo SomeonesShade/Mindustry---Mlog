@@ -1,0 +1,174 @@
+set MaxPercent 0.2  #object variables
+print "determines the maxinum percentage of an item in a storage block"
+set MemoryWriteLocation 1
+print "doesn't write at cell 1 if MemoryReadLocation >= 0"
+set MemoryReadLocation -1
+print "reads at cell1 only, doesnt read if MemoryReadLocation < 0"
+set MinCoreAmount 10
+print "(rss) Determines the mininum amount of an item to start working"
+jump configIgnore notEqual bitSelection null
+print "set to true(1) or false(0) for config selection"
+op shl  false 0
+op shl  1 1
+op shl  1 2
+op shl  1 3
+op shl  false 4
+op shl  1 5
+op shl  1 6
+op shl  false 7
+op shl  false 8
+op shl  1 9
+op shl  1 10
+op shl  1 11
+op shl  1 12
+op shl  false 13
+op shl  false 14
+op shl  false 15
+op add bitSelection  
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+configIgnore:
+jump coreIgnore notEqual Core null
+jump coreIgnore lessThan MinCoreAmount 0
+ubind @gamma
+ulocate building core false @copper ox oy fo Core
+jump coreIgnore equal fo true
+ubind @mono
+ulocate building core false @copper ox oy fo Core
+coreIgnore:
+jump bitSkip equal cell1 null
+jump bitSkip lessThan MemoryReadLocation 0
+read bitSelection cell1 MemoryReadLocation
+bitSkip:
+jump storageCheck notEqual @links prevLinks
+jump ItemDentify equal isA 1
+jump storageCheck greaterThanEq sC 20
+print "made by: Someone's Shadow #9470"
+ItemDentify: #Part2!!!
+	set prevLinks @links
+    set bitLocation 0
+    set dataItem 0
+    set mv MaxValue
+    set i 0
+    loop2:
+        lookup item type i
+		op shl bitLocation 1 i #is at the selcted position true?:
+        op and isSelected bitLocation bitSelection
+		jump skip1 equal isSelected 0 #check
+        sensor c1 Core type
+        jump skip1 lessThan c1 MinCoreAmount
+        sensor r1 v1 type #how much x in v1, v2...
+        sensor r2 v2 type
+        sensor r3 v3 type
+        sensor r4 v4 type
+        op min am1 r1 r2 #take small
+        op min am2 r3 r4
+        op min amount am1 am2
+        jump skip1 greaterThanEq amount mv #is this the smallest?
+        set typec type #if so set the output
+        op add dataItem dataItem bitLocation
+        set mv amount
+    skip1:
+        op add i i 1
+        jump loop2 lessThan i @itemCount
+    set isA 1
+	jump j3 lessThan mv MaxValue #is everything full?
+	set isA 0
+    set typec null
+    set dataItem 0
+    j3:
+        set a -1
+        jump loop3 notEqual v1 0
+        op equal blink blink 0
+        set isA 0
+        wait 0.5
+        jump loop3 equal blink 0
+        set typec null
+    loop3:
+        op add a a 1
+        getlink obj a
+        sensor oType obj @type
+        jump skip2 equal oType @vault #skip if vault or container
+        jump skip2 equal oType @container
+        jump skip2 equal oType @mass-driver
+        jump j4 notEqual oType @memory-cell
+        jump datawrite lessThan MemoryReadLocation 0 
+        jump j4 equal obj cell1
+        datawrite:
+        write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
+        j4:
+        control enabled obj isA #enable or disable
+        control config obj typec #set output
+    skip2:
+        jump loop3 lessThan a @links
+	op add sC sC 1
+end
+#log: version 2.0 removed display logic, reduced calling the storage check, and mini optimizations
+#log: version 2.1 added massdriver as storage option (-this cant disable massdrivers on low item)
+#also rss/coreitemsaver (-maybreak monos on placement)
+#log: version 2.2
+storageCheck:
+	set sC 0
+	set v1 0
+	set v2 0
+	set v3 0
+	set v4 0
+	op mul MaxValue 99999999 MaxPercent
+	set lp -1
+loop1: #detect containers/vaults
+    op add lp lp 1
+    getlink obj lp
+    sensor oType obj @type
+    jump select equal oType @container
+    jump select equal oType @vault
+    jump select equal oType @mass-driver
+    jump select equal oType @core-shard
+    jump select equal oType @core-foundation
+    jump select equal oType @core-nucleus
+    skip0:
+    	jump loop1 lessThan lp @links
+	jump jb1 notEqual v2 0 #is v2 filled?
+    set v2 v1
+jb1:
+    jump jb2 notEqual v3 0 #is v3 filled?
+    set v3 v1
+jb2:
+    jump jb3 notEqual v4 0 #is v4 filled?
+    set v4 v1
+jb3:
+	jump ItemDentify always
+end
+select:
+    sensor ic obj @itemCapacity
+    jump ja1 notEqual v1 0 #is v1 filled?
+    set v1 obj
+    jump j1 always
+ja1: 
+    jump ja2 notEqual v2 0 #is v2 filled?
+    set v2 obj
+    jump j1 always
+ja2:
+    jump ja3 notEqual v3 0 #is v3 filled?
+    set v3 obj
+    jump j1 always
+ja3:
+    jump j1 notEqual v4 0 #is v4 filled?
+    set v4 obj
+j1:
+    op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
+    op min ic MaxValue ic #take smallest
+    set MaxValue ic #set as new MaxValue
+    jump skip0 always
+end
