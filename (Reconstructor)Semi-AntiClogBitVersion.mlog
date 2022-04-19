@@ -106,6 +106,9 @@ ItemDentify: #Part2!!!
         jump skip2 equal oType @vault #skip if vault or container
         jump skip2 equal oType @container
         jump skip2 equal oType @mass-driver
+        jump skip2 equal oType @tetrative-reconstructor
+        jump skip2 equal oType @exponential-reconstructor
+        jump skip2 equal oType @multiplicative-reconstructor
         jump j4 notEqual oType @memory-cell
         jump datawrite lessThan MemoryReadLocation 0 
         jump j4 equal obj cell1
@@ -145,6 +148,7 @@ storageCheck:
     set maxSporePod MaxValue
     set maxBlastCompound MaxValue
     set maxPyratite MaxValue
+    set isRecon 0
 	set lp -1
 loop1: #detect containers/vaults
     op add lp lp 1
@@ -181,6 +185,7 @@ op mul ic MaxPercent 700
 op min maxPhaseFabric maxPhaseFabric ic
 op mul ic MaxPercent 1000
 op min maxSurgeAlloy maxSurgeAlloy ic
+set isRecon 1
 jump select always
 end
 exponential:
@@ -190,6 +195,7 @@ op mul ic MaxPercent 1700
 op min maxSilicon maxSilicon ic
 op mul ic MaxPercent 1300
 op min maxPlastanium maxPlastanium ic
+set isRecon 1
 jump select always
 end
 multiplicative:
@@ -199,6 +205,7 @@ op mul ic MaxPercent 160
 op min maxTitanium maxTitanium ic
 op mul ic MaxPercent 260
 op min maxSilicon maxSilicon ic
+set isRecon 1
 jump select always
 end
 normalStorage:
@@ -220,23 +227,28 @@ op min maxSurgeAlloy maxSurgeAlloy ic
 op min maxSporePod maxSporePod ic
 op min maxBlastCompound maxBlastCompound ic
 op min maxPyratite maxPyratite ic
+set isRecon 0
 jump select always
 end
 select:
     jump ja1 notEqual v1 0 #is v1 filled?
     set v1 obj
+    set recon1 isRecon
     jump j1 always
 ja1: 
     jump ja2 notEqual v2 0 #is v2 filled?
     set v2 obj
+    set recon2 isRecon
     jump j1 always
 ja2:
     jump ja3 notEqual v3 0 #is v3 filled?
     set v3 obj
+    set recon3 isRecon
     jump j1 always
 ja3:
     jump j1 notEqual v4 0 #is v4 filled?
     set v4 obj
+    set recon4 isRecon
 j1:
     jump skip0 always
 end

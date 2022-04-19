@@ -42,15 +42,15 @@ op add bitSelection bitSelection 
 configIgnore:
 jump coreIgnore notEqual Core null
 jump coreIgnore lessThan MinCoreAmount 0
-ubind @gamma
-ulocate building core false @copper ox oy fo Core
+    ubind @gamma
+    ulocate building core false @copper ox oy fo Core
 jump coreIgnore equal fo true
-ubind @mono
-ulocate building core false @copper ox oy fo Core
+    ubind @mono
+    ulocate building core false @copper ox oy fo Core
 coreIgnore:
 jump bitSkip equal cell1 null
 jump bitSkip lessThan MemoryReadLocation 0
-read bitSelection cell1 MemoryReadLocation
+    read bitSelection cell1 MemoryReadLocation
 bitSkip:
 jump storageCheck notEqual @links prevLinks
 jump ItemDentify equal isA 1
@@ -115,10 +115,6 @@ ItemDentify: #Part2!!!
         jump loop3 lessThan a @links
 	op add sC sC 1
 end
-#log: version 2.0 removed display logic, reduced calling the storage check, and mini optimizations
-#log: version 2.1 added massdriver as storage option (-this cant disable massdrivers on low item)
-#also rss/coreitemsaver (-maybreak monos on placement)
-#log: version 2.2
 storageCheck:
 	set sC 0
 	set v1 0
@@ -172,3 +168,7 @@ j1:
     set MaxValue ic #set as new MaxValue
     jump skip0 always
 end
+#log: version 2.0 removed display logic, reduced calling the storage check, and mini optimizations
+#log: version 2.1 added massdriver as storage option (-this cant disable massdrivers on low item)
+#also rss/coreitemsaver (-maybreak monos on placement)
+#log: version 2.2 improved memory interactions with new potential avenues, optimized storagecheck slightly

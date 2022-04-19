@@ -25,14 +25,18 @@ sensor pT2 tower2 @payloadCount
 sensor d conveyor1 @rotation
 sensor lx conveyor1 @x
 sensor ly conveyor1 @y
+sensor enab conveyor1 @enabled
 sensor unitPayload @unit @payloadCount
 
 #State Manager
+jump standby equal standbyState 1
 jump state1 equal state 1
 jump state2 equal state 2
 jump state3 equal state 3
-
+state0:
 #TakeFrom Tower1
+	print "Taking from tower"
+	printflush message1
 	sensor desX tower1 @x
 	sensor desY tower1 @y
 	op add exit @counter 1
@@ -58,17 +62,30 @@ skipD3:
 skipD4:
 	
 #Drop Vault1
-
+	print "Droping to dest"
+	printflush message1
 	set desX lx
 	set desY ly
 	op add exit @counter 1
 	jump payloadDrop always
 	sensor unitPayload @unit @payloadCount
 	jump 0 equal unitPayload 1
-set state 2
+	set standbyState 1
+end
+standby:
+	print "On Standby"
+	printflush message1
+	sensor desX vault1 @x
+	sensor desY vault1 @y
+	ucontrol move desX desY
+	jump 0 equal enab 1
+	set standbyState 0
+	set state 2
 end
 #Take Vault1 w/ condition
 state2:
+	print "Taking Vault"
+	printflush message1
 	sensor desX vault1 @x
 	sensor desY vault1 @y
 	op add exit @counter 1
@@ -78,6 +95,8 @@ set state 3
 end
 #Drop at tower2
 state3:
+	print "Droping to Tower"
+	printflush message1
 	sensor desX tower2 @x
 	sensor desY tower2 @y
 	op add exit @counter 1
