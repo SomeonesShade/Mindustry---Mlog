@@ -1,5 +1,5 @@
 # Mindustry---Mlog
-List of some of the logic(mlog) in Mindustry
+List of some of the logic(mlog) I use in Mindustry
 
 # Notes:
 
