@@ -1,13 +1,15 @@
+jump configIgnore notEqual bitSelection null
 set MaxPercent 0.2  #object variables
 print "determines the maxinum percentage of an item in a storage block"
+set Origin null
+print "The StorageBlock where the items come from. If set to null, automatically finds Core"
+set MinOriginAmount 10
+print "(rss) Determines the mininum amount of an item to start working"
 set MemoryWriteLocation 1
 print "doesn't write at cell 1 if MemoryReadLocation >= 0"
 set MemoryReadLocation -1
 print "reads at cell1 only, doesnt read if MemoryReadLocation < 0"
-set MinCoreAmount 10
-print "(rss) Determines the mininum amount of an item to start working"
-jump configIgnore notEqual bitSelection null
-print "set to true(1) or false(0) for config selection"
+print "for config selection, set to true(1) or false(0)"
 op shl  false 0
 op shl  1 1
 op shl  1 2
@@ -24,6 +26,7 @@ op shl  1 12
 op shl  false 13
 op shl  false 14
 op shl  false 15
+print "Do not modify from this point, unless you know how it works"
 op add bitSelection  
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
@@ -40,67 +43,70 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 configIgnore:
-jump coreIgnore notEqual Core null
-jump coreIgnore lessThan MinCoreAmount 0
+jump coreIgnore notEqual Origin null #sets the Origin
+jump coreIgnore lessThan MinOriginAmount 0
     ubind @gamma
-    ulocate building core false @copper ox oy fo Core
+    ulocate building core false @copper ox oy fo Origin
 jump coreIgnore equal fo true
     ubind @mono
-    ulocate building core false @copper ox oy fo Core
+    ulocate building core false @copper ox oy fo Origin
 coreIgnore:
-jump bitSkip equal cell1 null
+jump bitSkip equal cell1 null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
 bitSkip:
-jump storageCheck notEqual @links prevLinks
+jump storageCheck notEqual @links prevLinks #Determines when to check for Storages
 jump ItemDentify equal isA 1
 jump storageCheck greaterThanEq sC 20
-print "made by: Someone's Shadow #9470"
 ItemDentify: #Part2!!!
-	set prevLinks @links
+	set prevLinks @links #reset values used or update
     set bitLocation 0
     set dataItem 0
     set mv MaxValue
+    set amount MaxValue
     set i 0
-    loop2:
+    itemLoop: #label suggests, it loops to determine what item to use
         lookup item type i
 		op shl bitLocation 1 i #is at the selcted position true?:
         op and isSelected bitLocation bitSelection
 		jump skip1 equal isSelected 0 #check
-        sensor c1 Core type
-        jump skip1 lessThan c1 MinCoreAmount
-        sensor r1 v1 type #how much x in v1, v2...
-        sensor r2 v2 type
-        sensor r3 v3 type
-        sensor r4 v4 type
-        op min am1 r1 r2 #take small
-        op min am2 r3 r4
-        op min amount am1 am2
-        jump skip1 greaterThanEq amount mv #is this the smallest?
+        sensor c1 Origin type
+        jump skip1 lessThan c1 MinOriginAmount #is there anything to unload?
+        set index -1
+        storageRead: #what is contained in the storages?
+        op add index index 1
+        op add goBack @counter 1
+        jump storageSelect always
+        jump loopEscape strictEqual output null
+        sensor r1 output type
+        op min amount amount r1 #what is the smallest amount of them?
+        jump storageRead always
+    loopEscape:
+        jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
         set typec type #if so set the output
         op add dataItem dataItem bitLocation
         set mv amount
     skip1:
         op add i i 1
-        jump loop2 lessThan i @itemCount
+        jump itemLoop lessThan i @itemCount
     set isA 1
 	jump j3 lessThan mv MaxValue #is everything full?
 	set isA 0
     set typec null
     set dataItem 0
     j3:
-        set a -1
-        jump loop3 notEqual v1 0
+        set a -1 #note we can prob send the code upward and skip itemLoop if v1 is not present
+        jump buildingConfigLoop notEqual v1 0 #do we even have a storage block?
         op equal blink blink 0
         set isA 0
         wait 0.5
-        jump loop3 equal blink 0
-        set typec null
-    loop3:
+        jump buildingConfigLoop equal blink 0
+        set typec null #then blink
+    buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
         op add a a 1
         getlink obj a
         sensor oType obj @type
-        jump skip2 equal oType @vault #skip if vault or container
+        jump skip2 equal oType @vault #skip if storage block
         jump skip2 equal oType @container
         jump skip2 equal oType @mass-driver
         jump j4 notEqual oType @memory-cell
@@ -112,20 +118,27 @@ ItemDentify: #Part2!!!
         control enabled obj isA #enable or disable
         control config obj typec #set output
     skip2:
-        jump loop3 lessThan a @links
+        jump buildingConfigLoop lessThan a @links
 	op add sC sC 1
 end
-storageCheck:
+print "made by: Someone's Shadow #9470"
+storageCheck: #set variables
 	set sC 0
-	set v1 0
-	set v2 0
-	set v3 0
-	set v4 0
+    set index -1
+    set writeMode 2
+    set input null
+storageReset: #clear all storage
+    op add index index 1
+    op add goBack @counter 1
+    jump storageSelect always
+    jump storageReset notEqual index null
+    set index 0
 	op mul MaxValue 99999999 MaxPercent
 	set lp -1
-loop1: #detect containers/vaults
+storageDetectionLoop: #detect storages
     op add lp lp 1
     getlink obj lp
+    jump skip0 equal obj Origin
     sensor oType obj @type
     jump select equal oType @container
     jump select equal oType @vault
@@ -134,41 +147,67 @@ loop1: #detect containers/vaults
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
     skip0:
-    	jump loop1 lessThan lp @links
-	jump jb1 notEqual v2 0 #is v2 filled?
-    set v2 v1
-jb1:
-    jump jb2 notEqual v3 0 #is v3 filled?
-    set v3 v1
-jb2:
-    jump jb3 notEqual v4 0 #is v4 filled?
-    set v4 v1
-jb3:
+    	jump storageDetectionLoop lessThan lp @links
+    set writeMode 0 #no need to write on second part of the code, just read
 	jump ItemDentify always
 end
-select:
+select: #if we have found a storageblock, enter into memory
+    jump skip0 strictEqual index null 
+    set input obj
+    op add goBack @counter 1
+    jump storageSelect always
+    op add index index 1
+j1: #this determines the storage capacity of one storageblock, setted on smallestblock
     sensor ic obj @itemCapacity
-    jump ja1 notEqual v1 0 #is v1 filled?
-    set v1 obj
-    jump j1 always
-ja1: 
-    jump ja2 notEqual v2 0 #is v2 filled?
-    set v2 obj
-    jump j1 always
-ja2:
-    jump ja3 notEqual v3 0 #is v3 filled?
-    set v3 obj
-    jump j1 always
-ja3:
-    jump j1 notEqual v4 0 #is v4 filled?
-    set v4 obj
-j1:
     op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
     op min ic MaxValue ic #take smallest
     set MaxValue ic #set as new MaxValue
     jump skip0 always
 end
+storageSelect: #input, output, writeMode, goBack, index
+op mul selectStorage index 4
+op add selectStorage selectStorage writeMode
+op add @counter selectStorage @counter
+set v1 input
+set @counter goBack
+set output v1
+set @counter goBack
+set v2 input
+set @counter goBack
+set output v2
+set @counter goBack
+set v3 input
+set @counter goBack
+set output v3
+set @counter goBack
+set v4 input
+set @counter goBack
+set output v4
+set @counter goBack
+set v5 input
+set @counter goBack
+set output v5
+set @counter goBack
+set v6 input
+set @counter goBack
+set output v6
+set @counter goBack
+set v7 input
+set @counter goBack
+set output v7
+set @counter goBack
+set v8 input
+set @counter goBack
+set output v8
+set @counter goBack
+set index null
+set @counter goBack
+set output null
+set @counter goBack
+
 #log: version 2.0 removed display logic, reduced calling the storage check, and mini optimizations
 #log: version 2.1 added massdriver as storage option (-this cant disable massdrivers on low item)
 #also rss/coreitemsaver (-maybreak monos on placement)
 #log: version 2.2 improved memory interactions with new potential avenues, optimized storagecheck slightly
+#log: version 2.3 renamed Core into Origin, added storage array to theoretically bind up to 8 storage blocks
+#also Renamed into General-AntiClog soonTM if recon logic can work, Needs! optimizations,more than the 1 sec rule
