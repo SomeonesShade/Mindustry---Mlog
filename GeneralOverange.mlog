@@ -1,0 +1,83 @@
+varSetup:
+jump unitBind equal areVarsSet true
+set unitType @
+set healRetreat 0.78
+set safeForRisk 0.95
+ubind unitType
+sensor unitRange @unit @range
+op add shootRange unitRange 2
+set defaultShootRange shootRange
+op add riskyRange shootRange -1
+op add detectRange shootRange 5
+set areVarsSet true
+
+unitBind:
+ubind unitType
+
+flagCheck:
+sensor unitFlag @unit @flagCheck
+jump unitBind notEqual unitFlag 0
+
+heatlthCheck:
+sensor health @unit @health
+sensor maxHealth @unit @maxHealth
+op div health health maxHealth
+jump healthRangeBehavior greaterThan health healRetreat
+ulocate building repair false @copper ox oy found building
+jump healthRangeBehavior equal found false
+ucontrol approach ox oy 4 result 0
+end
+
+healthRangeBehavior: #be safe or go agressive?
+set shootRange riskyRange
+jump skipSafety greaterThan health safeForRisk
+set shootRange defaultShootRange
+skipSafety:
+op add detectRange shootRange 5
+
+targetSet:
+
+enemyTarget:
+uradar enemy any any distance 0 1 enemy
+sensor enemyX enemy @x
+sensor enemyY enemy @y
+jump turretTarget strictEqual enemyX null
+ucontrol approach enemyX enemyY shootRange 0 0
+ucontrol targetp enemy 2 0 0 0
+end
+
+turretTarget:
+ulocate building turret true @copper ox oy found building
+ucontrol within ox oy detectRange result 0
+jump coreTarget equal result 0
+ucontrol approach ox oy shootRange result 0
+jump shootLogic always x false
+end
+
+coreTarget:
+ulocate building core true @copper ox oy found building
+ucontrol within ox oy detectRange result 0
+jump idleBehavior equal result 0
+ucontrol approach ox oy shootRange result 0
+jump shootLogic always x false
+end
+
+idleBehavior:
+ucontrol pathfind outx outy 10 0 0
+ucontrol target ox oy 0 0 0
+end
+
+shootLogic:
+sensor unitX @unit @x
+sensor unitY @unit @y
+op sub dx ox unitX
+op sub dy oy unitY
+op angle a dx dy
+op cos nx a dy
+op sin ny a dy
+op mul tx nx unitRange
+op add tx tx unitX
+op mul ty ny unitRange
+op add ty ty unitY
+ucontrol target tx ty 1 0 0
+end
