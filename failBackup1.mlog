@@ -63,6 +63,7 @@ ItemDentify: #Part2!!!
     set bitLocation 0
     set dataItem 0
     set mv MaxValue
+    set amount MaxValue
     set i 0
     itemLoop: #label suggests, it loops to determine what item to use
         lookup item type i
@@ -71,13 +72,16 @@ ItemDentify: #Part2!!!
 		jump skip1 equal isSelected 0 #check
         sensor c1 Origin type
         jump skip1 lessThan c1 MinOriginAmount #is there anything to unload?
-        sensor r1 v1 type #how much x in v1, v2...
-        sensor r2 v2 type
-        sensor r3 v3 type
-        sensor r4 v4 type
-        op min am1 r1 r2 #take small
-        op min am2 r3 r4
-        op min amount am1 am2
+        set index -1
+        storageRead: #what is contained in the storages?
+        op add index index 1
+        op add goBack @counter 1
+        jump storageSelect always
+        jump loopEscape strictEqual output null
+        sensor r1 output type
+        op min amount amount r1 #what is the smallest amount of them?
+        jump storageRead always
+    loopEscape:
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
         set typec type #if so set the output
         op add dataItem dataItem bitLocation
@@ -121,10 +125,15 @@ end
 print "made by: Someone's Shadow #9470"
 storageCheck: #set variables
 	set sC 0
-    set v1 0
-	set v2 0
-	set v3 0
-	set v4 0
+    set index -1
+    set readMode 0
+    set input null
+storageReset: #clear all storage
+    op add index index 1
+    op add goBack @counter 1
+    jump storageSelect always
+    jump storageReset notEqual index null
+    set index 0
 	op mul MaxValue 99999999 MaxPercent
 	set lp -1
 storageDetectionLoop: #detect storages
@@ -139,45 +148,69 @@ storageDetectionLoop: #detect storages
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
     skip0:
-    		jump loop1 lessThan lp @links
-	jump jb1 notEqual v2 0 #is v2 filled?
-    set v2 v1
-jb1:
-    jump jb2 notEqual v3 0 #is v3 filled?
-    set v3 v1
-jb2:
-    jump jb3 notEqual v4 0 #is v4 filled?
-    set v4 v1
-jb3:	
-    jump ItemDentify always
+    	jump storageDetectionLoop lessThan lp @links
+    set readMode 2 #no need to write on second part of the code, just read
+	jump ItemDentify always
 end
 select: #if we have found a storageblock, enter into memory
+    jump skip0 strictEqual index null 
+    set input obj
+    op add goBack @counter 1
+    jump storageSelect always
+    op add index index 1
+j1: #this determines the storage capacity of one storageblock, setted on smallestblock
     sensor ic obj @itemCapacity
-    jump ja1 notEqual v1 0 #is v1 filled?
-    set v1 obj
-    jump j1 always
-ja1: 
-    jump ja2 notEqual v2 0 #is v2 filled?
-    set v2 obj
-    jump j1 always
-ja2:
-    jump ja3 notEqual v3 0 #is v3 filled?
-    set v3 obj
-    jump j1 always
-ja3:
-    jump j1 notEqual v4 0 #is v4 filled?
-    set v4 obj
-j1:
     op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
     op min ic MaxValue ic #take smallest
     set MaxValue ic #set as new MaxValue
     jump skip0 always
 end
+storageSelect: #input, output, readMode, goBack, index
+op mul selectStorage index 4
+op add selectStorage selectStorage readMode
+op add @counter selectStorage @counter
+set v1 input
+set @counter goBack
+set output v1
+set @counter goBack
+set v2 input
+set @counter goBack
+set output v2
+set @counter goBack
+set v3 input
+set @counter goBack
+set output v3
+set @counter goBack
+set v4 input
+set @counter goBack
+set output v4
+set @counter goBack
+set v5 input
+set @counter goBack
+set output v5
+set @counter goBack
+set v6 input
+set @counter goBack
+set output v6
+set @counter goBack
+set v7 input
+set @counter goBack
+set output v7
+set @counter goBack
+set v8 input
+set @counter goBack
+set output v8
+set @counter goBack
+set index null
+set @counter goBack
+set output null
+set @counter goBack
+
 #log: version 2.0 removed display logic, reduced calling the storage check, and mini optimizations
 #log: version 2.1 added massdriver as storage option (-this cant disable massdrivers on low item)
 #also rss/coreitemsaver (-maybreak monos on placement)
 #log: version 2.2 improved memory interactions with new potential avenues, optimized storagecheck slightly
-#log: version 2.3 renamed Core into Origin, and more Vars optimization
+#log: failed version 2.3 renamed Core into Origin, added storage array to theoretically bind up to 8 storage blocks
 #also Renamed into General-AntiClog soonTM if recon logic can work, Needs! optimizations,more than the 1 sec rule
 
 #Plans:
