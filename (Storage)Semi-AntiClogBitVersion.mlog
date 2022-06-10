@@ -1,4 +1,6 @@
-jump configIgnore notEqual bitSelection null
+set OriginBlock null #bug: if not binded beforehand/set to null, Core is used
+print "The StorageBlock where the items come from. If set to null, automatically finds Core"
+jump configIgnore equal skipVars 1
 set MaxPercent 0.2  #object variables
 print "determines the maxinum percentage of an item in a storage block"
 set Origin null
@@ -26,7 +28,7 @@ op shl  1 12
 op shl  false 13
 op shl  false 14
 op shl  false 15
-print "Do not modify from this point, unless you know how it works"
+print "Do not modify from this point, unless you know how it works lel"
 op add bitSelection  
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
@@ -42,8 +44,12 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
+set skipVars 1
 configIgnore:
-jump coreIgnore notEqual Origin null #sets the Origin
+jump originIgnore equal OriginBlock null #sets the Origin
+set Origin OriginBlock
+originIgnore:
+jump coreIgnore notEqual Origin null
 jump coreIgnore lessThan MinOriginAmount 0
     ubind @gamma
     ulocate building core false @copper ox oy fo Origin
@@ -59,6 +65,17 @@ jump storageCheck notEqual @links prevLinks #Determines when to check for Storag
 jump ItemDentify equal isA 1
 jump storageCheck greaterThanEq sC 25
 ItemDentify: #Part2!!!
+    jump storageIsPresent notEqual v1 0 #do we even have a storage block?
+        op equal blink blink 0
+        set isA 0
+        wait 0.5
+        op add sC sC 10
+        set dataItem 0
+        set typec @blast-compound
+        jump j3 equal blink 0
+        set typec null #then blink
+    jump j3 always
+    storageIsPresent:
 	set prevLinks @links #reset values used or update
     set bitLocation 0
     set dataItem 0
@@ -91,14 +108,7 @@ ItemDentify: #Part2!!!
     set typec null
     set dataItem 0
     j3:
-        set a -1 #note we can prob send the code upward and skip itemLoop if v1 is not present
-        jump buildingConfigLoop notEqual v1 0 #do we even have a storage block?
-        op equal blink blink 0
-        set isA 0
-        wait 0.5
-        op add sC sC 10
-        jump buildingConfigLoop equal blink 0
-        set typec null #then blink
+        set a -1
     buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
         op add a a 1
         getlink obj a
@@ -139,7 +149,7 @@ storageDetectionLoop: #detect storages
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
     skip0:
-    		jump loop1 lessThan lp @links
+    		jump storageDetectionLoop lessThan lp @links
 	jump jb1 notEqual v2 0 #is v2 filled?
     set v2 v1
 jb1:
@@ -173,6 +183,10 @@ j1:
     set MaxValue ic #set as new MaxValue
     jump skip0 always
 end
+#principles:
+#you will only one schem, which only has one proc
+#performance must be fast enough
+
 #log: version 2.0 removed display logic, reduced calling the storage check, and mini optimizations
 #log: version 2.1 added massdriver as storage option (-this cant disable massdrivers on low item)
 #also rss/coreitemsaver (-maybreak monos on placement)
