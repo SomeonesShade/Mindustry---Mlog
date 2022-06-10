@@ -3,8 +3,8 @@ print "The StorageBlock where the items come from. If set to null, automatically
 jump configIgnore equal skipVars 1
 set MaxPercent 0.2  #object variables
 print "determines the maxinum percentage of an item in a storage block"
-set Origin null
-print "The StorageBlock where the items come from. If set to null, automatically finds Core"
+set IsCluster 0
+print "If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
 set MinOriginAmount 10
 print "(rss) Determines the mininum amount of an item to start working"
 set MemoryWriteLocation 1
@@ -92,9 +92,16 @@ ItemDentify: #Part2!!!
         sensor r2 v2 type
         sensor r3 v3 type
         sensor r4 v4 type
+        jump selectedAdd equal IsCluster true #take multi input or single?
         op min am1 r1 r2 #take small
         op min am2 r3 r4
         op min amount am1 am2
+        jump amountCheck always 
+    selectedAdd:
+        op add am1 r1 r2 #combine 
+        op add am2 r3 r4
+        op add amount am1 am2
+    amountCheck:
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
         set typec type #if so set the output
         op add dataItem dataItem bitLocation
@@ -135,7 +142,8 @@ storageCheck: #set variables
 	set v2 0
 	set v3 0
 	set v4 0
-	op mul MaxValue 99999999 MaxPercent
+	op mul BaseLineValue 99999999 MaxPercent
+    set TotalMaxStorage 0
 	set lp -1
 storageDetectionLoop: #detect storages
     op add lp lp 1
@@ -150,6 +158,13 @@ storageDetectionLoop: #detect storages
     jump select equal oType @core-nucleus
     skip0:
     		jump storageDetectionLoop lessThan lp @links
+    set MaxValue BaseLineValue
+    jump clusterIgnore IsCluster 0 #is this cluter mode?
+    op mul TotalMaxStorage TotalMaxStorage MaxPercent
+    set MaxValue TotalMaxStorage
+    jump ItemDentify always
+end
+clusterIgnore:
 	jump jb1 notEqual v2 0 #is v2 filled?
     set v2 v1
 jb1:
@@ -165,22 +180,26 @@ select: #if we have found a storageblock, enter into memory
     sensor ic obj @itemCapacity
     jump ja1 notEqual v1 0 #is v1 filled?
     set v1 obj
+    op add TotalMaxStorage TotalMaxStorage ic
     jump j1 always
 ja1: 
     jump ja2 notEqual v2 0 #is v2 filled?
     set v2 obj
+    op add TotalMaxStorage TotalMaxStorage ic
     jump j1 always
 ja2:
     jump ja3 notEqual v3 0 #is v3 filled?
     set v3 obj
+    op add TotalMaxStorage TotalMaxStorage ic
     jump j1 always
 ja3:
     jump j1 notEqual v4 0 #is v4 filled?
     set v4 obj
+    op add TotalMaxStorage TotalMaxStorage ic
 j1:
     op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
-    op min ic MaxValue ic #take smallest
-    set MaxValue ic #set as new MaxValue
+    op min ic BaseLineValue ic #take smallest
+    set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always
 end
 #principles:
@@ -194,8 +213,12 @@ end
 #log: version 2.3 renamed Core into Origin, and more Vars optimization
 #also Renamed into General-AntiClog soonTM if recon logic can work, Needs! optimizations,more than the 1 sec rule
 
+#log: version 2.4 Cluster/Baseline Mode, If connnecting other anticlog procs with memcells, infinite distance!
+#also some general bugfixes and blinking is optimized, need to work on QOL on the longdistance, and too many vars :/
+
 #Plans:
 #ver 3.0+
+#QOL changes
 #Reverse Mode
 #Recon/Factory Intergration
 #Automatic Config + Overrides
