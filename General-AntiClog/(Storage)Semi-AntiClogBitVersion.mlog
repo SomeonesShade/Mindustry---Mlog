@@ -159,7 +159,7 @@ storageDetectionLoop: #detect storages
     skip0:
     		jump storageDetectionLoop lessThan lp @links
     set MaxValue BaseLineValue
-    jump clusterIgnore IsCluster 0 #is this cluter mode?
+    jump clusterIgnore equal IsCluster 0 #is this cluter mode?
     op mul TotalMaxStorage TotalMaxStorage MaxPercent
     set MaxValue TotalMaxStorage
     jump ItemDentify always
@@ -215,6 +215,7 @@ end
 
 #log: version 2.4 Cluster/Baseline Mode, If connnecting other anticlog procs with memcells, infinite distance!
 #also some general bugfixes and blinking is optimized, need to work on QOL on the longdistance, and too many vars :/
+#log: version 2.4.1, fixed invalid at 162
 
 #Plans:
 #ver 3.0+
