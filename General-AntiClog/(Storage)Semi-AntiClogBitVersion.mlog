@@ -11,7 +11,7 @@ set MemoryWriteLocation 1
 print "doesn't write at cell 1 if MemoryReadLocation >= 0"
 set MemoryReadLocation -1
 print "reads at cell1 only, doesnt read if MemoryReadLocation < 0"
-print "for config selection, set to true(1) or false(0)"
+print "for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
 op shl  false 0
 op shl  1 1
 op shl  1 2
@@ -29,7 +29,7 @@ op shl  false 13
 op shl  false 14
 op shl  false 15
 print "Do not modify from this point, unless you know how it works lel"
-op add bitSelection  
+op add bitSelection   #compile config into a single number (ie 101 as an example)
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
@@ -51,30 +51,34 @@ set Origin OriginBlock
 originIgnore:
 jump coreIgnore notEqual Origin null
 jump coreIgnore lessThan MinOriginAmount 0
-    ubind @gamma
+    ubind @gamma #multiplayer mainly
     ulocate building core false @copper ox oy fo Origin
 jump coreIgnore equal fo true
     ubind @mono
+    sensor controlled @unit @controlled
+    jump coreSet equal controlled @ctrlProcessor #preventing monos not logiced to be affected
+    jump coreIgnore notEqual controlled @ctrlFormation
+coreSet:
     ulocate building core false @copper ox oy fo Origin
 coreIgnore:
 jump bitSkip equal cell1 null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
-bitSkip:
-jump storageCheck notEqual @links prevLinks #Determines when to check for Storages
-jump ItemDentify equal isA 1
-jump storageCheck greaterThanEq sC 25
+bitSkip: #Determines when to check for Storages
+jump storageCheck notEqual @links prevLinks #trigger storageCheck if any link (amount) is changed
+jump ItemDentify equal isA 1 #do not trigger storageCheck if it is currently working
+jump storageCheck greaterThanEq sC 25 #timer lel
 ItemDentify: #Part2!!!
     jump storageIsPresent notEqual v1 0 #do we even have a storage block?
-        op equal blink blink 0
-        set isA 0
-        wait 0.5
-        op add sC sC 10
-        set dataItem 0
-        set typec @blast-compound
+        op equal blink blink 0 #then start blinking
+        set isA 0 #do not enable
+        wait 0.5 #no epilepsy
+        op add sC sC 10 #increase checks so it can be updated asap
+        set dataItem 0 #do not send anything
+        set typec @blast-compound #red (error color) or...
         jump j3 equal blink 0
-        set typec null #then blink
-    jump j3 always
+        set typec null #absolutely nothing
+    jump j3 always #immediately skip itemLoop
     storageIsPresent:
 	set prevLinks @links #reset values used or update
     set bitLocation 0
@@ -137,20 +141,20 @@ ItemDentify: #Part2!!!
 end
 print "made by: Someone's Shadow #9470"
 storageCheck: #set variables
-	set sC 0
-    set v1 0
+	set sC 0 #reset storageCheck counter
+    set v1 0 #reset storages
 	set v2 0
 	set v3 0
 	set v4 0
-	op mul BaseLineValue 99999999 MaxPercent
-    set TotalMaxStorage 0
+	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = 0)
+    set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = 1)
 	set lp -1
-storageDetectionLoop: #detect storages
+storageDetectionLoop: #detect storages via getlink loop
     op add lp lp 1
     getlink obj lp
     jump skip0 equal obj Origin
     sensor oType obj @type
-    jump select equal oType @container
+    jump select equal oType @container #which blocks are considered storages
     jump select equal oType @vault
     jump select equal oType @mass-driver
     jump select equal oType @core-shard
@@ -179,8 +183,8 @@ end
 select: #if we have found a storageblock, enter into memory
     sensor ic obj @itemCapacity
     jump ja1 notEqual v1 0 #is v1 filled?
-    set v1 obj
-    op add TotalMaxStorage TotalMaxStorage ic
+    set v1 obj #if not set it into memory
+    op add TotalMaxStorage TotalMaxStorage ic #and update TotalMaxStorage
     jump j1 always
 ja1: 
     jump ja2 notEqual v2 0 #is v2 filled?
@@ -212,16 +216,30 @@ end
 #log: version 2.2 improved memory interactions with new potential avenues, optimized storagecheck slightly
 #log: version 2.3 renamed Core into Origin, and more Vars optimization
 #also Renamed into General-AntiClog soonTM if recon logic can work, Needs! optimizations,more than the 1 sec rule
-
 #log: version 2.4 Cluster/Baseline Mode, If connnecting other anticlog procs with memcells, infinite distance!
 #also some general bugfixes and blinking is optimized, need to work on QOL on the longdistance, and too many vars :/
-#log: version 2.4.1, fixed invalid at 162
+#log: version 2.4.1 fixed invalid at 162
+#log: version 2.4.2 logiced monos are used to prevent monos from randomly being deactivated
+#also: ton of comments
 
 #Plans:
-#ver 3.0+
+#ver 3.0 and above:
+#solution to storage needing to be hardcoded + not being extremely performant heavy
+    #(check failBackup1)
 #QOL changes
-#Reverse Mode
-#Recon/Factory Intergration
+    #(variable decl, and making it even easier to use... somehow)
+#Reverse Mode 
+    #(using negativeNumbers in MaxPercent? to switch into mv > MaxValue? dunno hmm)
+#Recon/Factory Intergration 
+    #(issue: recons/factories cant hold every item, which means dynamic config and...
+    #recons have diffrent @itemCapacity for each item, which is a pain...
+    #if the issue can't be resolved, this cant be General and can only be Semi)
 #Automatic Config + Overrides
+    #(this may be a reconstructor version feature, although might be ok?...
+    #automatically setting the config based on binds, and adding in items like (silicon)...
+    #if intergration is impossible, this is still applicable as QOL)
 #Performance Lockdown, to insure <2 sec or at best <1sec performance
+    #(this might be hard to pull off, but its a goal so its much much more easier to set MaxPercent...
+    #storageCapacity - how much input being received = MaxPercent, is QOL) 
 #External Schem for config via mem block display
+    #(more QOL, and easier time for people who dont know to set the config of the proc)

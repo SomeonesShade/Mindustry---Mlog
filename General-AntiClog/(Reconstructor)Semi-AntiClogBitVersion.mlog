@@ -1,3 +1,4 @@
+print "warning! this is old, and will be developed soonTM" #do not use lel
 set MaxPercent 0.2  #object variables
 print "determines the maxinum percentage of an item in a storage block"
 set MemoryWriteLocation 1
