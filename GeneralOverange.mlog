@@ -1,21 +1,30 @@
 varSetup:
+jump setVariables strictEqual unitType null
 jump unitBind equal areVarsSet true
-set unitType @
+
+setVariables:
+print "just set unit bind for which unit"
+ubind @
+sensor unitType @unit @type
+sensor unitRange @unit @range
+print "health threshold variables"
 set healRetreat 0.78
 set safeForRisk 0.95
-ubind unitType
-sensor unitRange @unit @range
+print "range variables"
 op add shootRange unitRange 2
 set defaultShootRange shootRange
-op add riskyRange shootRange -1
+op sub riskyRange shootRange 1
 op add detectRange shootRange 5
+print "enable/disable functions"
+set detectUnits true
+print "lock and loaded!"
 set areVarsSet true
 
 unitBind:
 ubind unitType
 
 flagCheck:
-sensor unitFlag @unit @flagCheck
+sensor unitFlag @unit @flag
 jump unitBind notEqual unitFlag 0
 
 heatlthCheck:
@@ -23,9 +32,9 @@ sensor health @unit @health
 sensor maxHealth @unit @maxHealth
 op div health health maxHealth
 jump healthRangeBehavior greaterThan health healRetreat
-ulocate building repair false @copper ox oy found building
+ulocate building repair false @copper hx hy found building
 jump healthRangeBehavior equal found false
-ucontrol approach ox oy 4 result 0
+ucontrol approach hx hy 4 result 0
 end
 
 healthRangeBehavior: #be safe or go agressive?
@@ -33,10 +42,9 @@ set shootRange riskyRange
 jump skipSafety greaterThan health safeForRisk
 set shootRange defaultShootRange
 skipSafety:
-op add detectRange shootRange 5
 
 targetSet:
-
+jump turretTarget equal detectUnits false 
 enemyTarget:
 uradar enemy any any distance 0 1 enemy
 sensor enemyX enemy @x

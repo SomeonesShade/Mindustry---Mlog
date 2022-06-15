@@ -1,3 +1,4 @@
+#outdated do not use yet
 varSetup:
 jump unitBind equal areVarsSet true
 set unitType @
