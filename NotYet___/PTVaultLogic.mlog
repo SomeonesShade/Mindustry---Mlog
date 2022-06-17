@@ -1,3 +1,4 @@
+#this so error prone, needs to be revamped
 set prevTotal total
 control enabled door1 1
 sensor con @unit @controlled
