@@ -1,3 +1,4 @@
+#do not use: broken
 set OriginBlock null #bug: if not binded beforehand/set to null, Core is used
 print "The StorageBlock where the items come from. If set to null, automatically finds Core"
 jump configIgnore equal skipVars 1
@@ -92,6 +93,7 @@ ItemDentify: #Part2!!!
 		jump skip1 equal isSelected 0 #check
         sensor c1 Origin type
         jump skip1 lessThan c1 MinOriginAmount #is there anything to unload?
+#old
         sensor r1 v1 type #how much x in v1, v2...
         sensor r2 v2 type
         sensor r3 v3 type
@@ -106,6 +108,19 @@ ItemDentify: #Part2!!!
         op add am2 r3 r4
         op add amount am1 am2
     amountCheck:
+#-------------------------------------------------------------
+#other
+        set index -1
+        storageRead: #what is contained in the storages?
+        op add index index 1
+        op add goBack @counter 1
+        jump storageSelect always
+        jump loopEscape strictEqual output null
+        sensor r1 output type
+        op min amount amount r1 #what is the smallest amount of them?
+        jump storageRead always
+    loopEscape:
+#-------------------------------------------------------------
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
         set typec type #if so set the output
         op add dataItem dataItem bitLocation
@@ -146,6 +161,17 @@ storageCheck: #set variables
 	set v2 0
 	set v3 0
 	set v4 0
+#-------------------------------------------------------------
+    set index -1
+    set readMode 0
+    set input null
+storageReset: #clear all storage
+    op add index index 1
+    op add goBack @counter 1
+    jump storageSelect always
+    jump storageReset notEqual index null
+    set index 0
+#-------------------------------------------------------------
 	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = 0)
     set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = 1)
 	set lp -1
@@ -161,7 +187,10 @@ storageDetectionLoop: #detect storages via getlink loop
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
     skip0:
-    		jump storageDetectionLoop lessThan lp @links
+    	jump storageDetectionLoop lessThan lp @links
+#-------------------------------------------------------------
+    set readMode 2 #no need to write on second part of the code, just read
+#-------------------------------------------------------------
     set MaxValue BaseLineValue
     jump clusterIgnore equal IsCluster 0 #is this cluter mode?
     op mul TotalMaxStorage TotalMaxStorage MaxPercent
@@ -181,6 +210,13 @@ jb3:
     jump ItemDentify always
 end
 select: #if we have found a storageblock, enter into memory
+#-------------------------------------------------------------
+    jump skip0 strictEqual index null 
+    set input obj
+    op add goBack @counter 1
+    jump storageSelect always
+    op add index index 1
+#-------------------------------------------------------------
     sensor ic obj @itemCapacity
     jump ja1 notEqual v1 0 #is v1 filled?
     set v1 obj #if not set it into memory
@@ -206,9 +242,50 @@ j1:
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always
 end
+#-------------------------------------------------------------
+storageSelect: #input, output, readMode, goBack, index
+op mul selectStorage index 4
+op add selectStorage selectStorage readMode
+op add @counter selectStorage @counter
+set v1 input
+set @counter goBack
+set output v1
+set @counter goBack
+set v2 input
+set @counter goBack
+set output v2
+set @counter goBack
+set v3 input
+set @counter goBack
+set output v3
+set @counter goBack
+set v4 input
+set @counter goBack
+set output v4
+set @counter goBack
+set v5 input
+set @counter goBack
+set output v5
+set @counter goBack
+set v6 input
+set @counter goBack
+set output v6
+set @counter goBack
+set v7 input
+set @counter goBack
+set output v7
+set @counter goBack
+set v8 input
+set @counter goBack
+set output v8
+set @counter goBack
+set index null
+set @counter goBack
+set output null
+set @counter goBack
+#-------------------------------------------------------------
 
-#log: version 2.4.2 logiced monos are used to prevent monos from randomly being deactivated
-#also: ton of comments
+#log: version 3.0.-1 merged with failbackup to start if it this can be intergrated diffrently
 
 #Plans:
 #ver 3.0 and above:
