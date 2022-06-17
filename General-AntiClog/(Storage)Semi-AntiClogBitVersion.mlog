@@ -206,19 +206,7 @@ j1:
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always
 end
-#principles:
-#you will only one schem, which only has one proc
-#performance must be fast enough
 
-#log: version 2.0 removed display logic, reduced calling the storage check, and mini optimizations
-#log: version 2.1 added massdriver as storage option (-this cant disable massdrivers on low item)
-#also rss/coreitemsaver (-maybreak monos on placement)
-#log: version 2.2 improved memory interactions with new potential avenues, optimized storagecheck slightly
-#log: version 2.3 renamed Core into Origin, and more Vars optimization
-#also Renamed into General-AntiClog soonTM if recon logic can work, Needs! optimizations,more than the 1 sec rule
-#log: version 2.4 Cluster/Baseline Mode, If connnecting other anticlog procs with memcells, infinite distance!
-#also some general bugfixes and blinking is optimized, need to work on QOL on the longdistance, and too many vars :/
-#log: version 2.4.1 fixed invalid at 162
 #log: version 2.4.2 logiced monos are used to prevent monos from randomly being deactivated
 #also: ton of comments
 
@@ -240,6 +228,6 @@ end
     #if intergration is impossible, this is still applicable as QOL)
 #Performance Lockdown, to insure <2 sec or at best <1sec performance
     #(this might be hard to pull off, but its a goal so its much much more easier to set MaxPercent...
-    #storageCapacity - how much input being received = MaxPercent, is QOL) 
-#External Schem for config via mem block display
+    #storageCapacity - how much input being received per second = MaxPercent, is QOL) 
+#External Schem for config via mem block display, or message block for instructions
     #(more QOL, and easier time for people who dont know to set the config of the proc)

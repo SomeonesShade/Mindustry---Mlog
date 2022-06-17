@@ -1,3 +1,7 @@
+____________
+Description:
+------------
+
 2.4.1 Semi-Anticlog Cluster/Baseline Mode!
 Groups of storages can finally be accounted as a sum via Cluster Mode
 Old Behavior is Basline Mode, just set IsCluster to 0/false
@@ -25,3 +29,28 @@ MemoryReadLocation/MemoryWriteLocation - allows for custom config override, and 
 
 Notes:
 This is not specialized on one specific schematic, it more used on a variety of schems. Its something you may modify on use on the fly
+
+_____
+Logs:
+-----
+
+#principles:
+#you will only one schem, which only has one proc
+#performance must be fast enough
+
+#before 2.0: ? (check git commit history on SelfRequest series for info...)
+#display logic added ?
+#change to bit for configuration ?
+#storage check diffrentiated ?
+
+#log: version 2.0 removed display logic, reduced calling the storage check, and mini optimizations
+#log: version 2.1 added massdriver as storage option (-this cant disable massdrivers on low item)
+#also rss/coreitemsaver (-maybreak monos on placement)
+#log: version 2.2 improved memory interactions with new potential avenues, optimized storagecheck slightly
+#log: version 2.3 renamed Core into Origin, and more Vars optimization
+#also Renamed into General-AntiClog soonTM if recon logic can work, Needs! optimizations,more than the 1 sec rule
+#log: version 2.4 Cluster/Baseline Mode, If connnecting other anticlog procs with memcells, infinite distance!
+#also some general bugfixes and blinking is optimized, need to work on QOL on the longdistance, and too many vars :/
+#log: version 2.4.1 fixed invalid at 162
+#log: version 2.4.2 logiced monos are used to prevent monos from randomly being deactivated
+#also: ton of comments
