@@ -93,7 +93,6 @@ ItemDentify: #Part2!!!
 		jump skip1 equal isSelected 0 #check
         sensor c1 Origin type
         jump skip1 lessThan c1 MinOriginAmount #is there anything to unload?
-#old
         sensor r1 v1 type #how much x in v1, v2...
         sensor r2 v2 type
         sensor r3 v3 type
@@ -102,24 +101,31 @@ ItemDentify: #Part2!!!
         op min am1 r1 r2 #take small
         op min am2 r3 r4
         op min amount am1 am2
-        jump amountCheck always 
+        jump amountCheck strictEqual v5 null #do we pass the vault test?
+#-------------------------------------------------------------
+        set select_index -1
+        storageMinRead: #what is contained in the storages?
+            op add select_index select_index 1                      #loop start
+            op add goBack @counter 1; jump storageSelect always     #function call...
+            jump amountCheck strictEqual select_output null         #does mentioned vault exist?
+            sensor rV select_output type                            #then: do operation:
+            op min amount amount rV
+            jump storageMinRead always 
+#-------------------------------------------------------------
     selectedAdd:
         op add am1 r1 r2 #combine 
         op add am2 r3 r4
         op add amount am1 am2
-    amountCheck:
+        jump amountCheck strictEqual v5 null #do we pass the vault test?
 #-------------------------------------------------------------
-#other
-        set index -1
-        storageRead: #what is contained in the storages?
-        op add index index 1
-        op add goBack @counter 1
-        jump storageSelect always
-        jump loopEscape strictEqual output null
-        sensor r1 output type
-        op min amount amount r1 #what is the smallest amount of them?
-        jump storageRead always
-    loopEscape:
+        set select_index -1
+        storageAddRead: #what is contained in the storages?
+            op add select_index select_index 1                      #loop start
+            op add goBack @counter 1; jump storageSelect always     #function call...
+            jump amountCheck strictEqual select_output null         #does mentioned vault exist?
+            sensor rV select_output type                            #then: do operation:
+            op add amount amount rV
+            jump storageAddRead always 
 #-------------------------------------------------------------
     amountCheck:
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
@@ -163,15 +169,15 @@ storageCheck: #set variables
 	set v3 0
 	set v4 0
 #-------------------------------------------------------------
-    set index -1
-    set readMode 0
-    set input null
+    set select_readMode 0
+    set select_index -1
+    set select_input null
 storageReset: #clear all storage
-    op add index index 1
-    op add goBack @counter 1
-    jump storageSelect always
-    jump storageReset notEqual index null
-    set index 0
+    op add select_index select_index 1
+    op add goBack @counter 1; jump storageSelect always
+    jump storageReset notEqual select_index null
+storageArrayIgnore:
+    set select_index 0
 #-------------------------------------------------------------
 	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = 0)
     set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = 1)
@@ -211,13 +217,6 @@ jb3:
     jump ItemDentify always
 jump 0 always; end
 select: #if we have found a storageblock, enter into memory
-#-------------------------------------------------------------
-    jump skip0 strictEqual index null 
-    set input obj
-    op add goBack @counter 1
-    jump storageSelect always
-    op add index index 1
-#-------------------------------------------------------------
     sensor ic obj @itemCapacity
     jump ja1 notEqual v1 0 #is v1 filled?
     set v1 obj #if not set it into memory
@@ -234,9 +233,18 @@ ja2:
     op add TotalMaxStorage TotalMaxStorage ic
     jump j1 always
 ja3:
-    jump j1 notEqual v4 0 #is v4 filled?
+    jump ja4 notEqual v4 0 #is v4 filled?
     set v4 obj
     op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+#-------------------------------------------------------------
+ja4:
+    jump skip0 strictEqual select_index null #if hardcode storage has been reached, use this array
+    set select_input obj
+    op add goBack @counter 1; jump storageSelect always
+    op add select_index select_index 1
+    op add TotalMaxStorage TotalMaxStorage ic
+#-------------------------------------------------------------
 j1:
     op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
     op min ic BaseLineValue ic #take smallest
@@ -272,18 +280,24 @@ set v10 select_input
 set @counter goBack
 set select_output v10
 set @counter goBack
-set select_index -2
+set select_index null
 set @counter goBack
 set select_output null
 set @counter goBack
 jump 0 always; end
 #-------------------------------------------------------------
 
-#log: version 3.0.-1 merged with failbackup to start if it this can be intergrated diffrently
+#log: version 3.0.-3 merge successful!, need severe optimizations but this is workable
+
+#worse case while used: 2.59913549721241 in 10x
+#3.600179488460533 on stationary
+#this is horrible lmao
 
 #Plans:
 #ver 3.0 and above:
 #solution to storage needing to be hardcoded + not being extremely performant heavy
+        #Solved! Array System in higher storage amounts while hardcode system for low ammounts
+        #It needs to be optimized still
     #(check failBackup1)
 #QOL changes
     #(variable decl, and making it even easier to use... somehow)
@@ -299,6 +313,6 @@ jump 0 always; end
     #if intergration is impossible, this is still applicable as QOL)
 #Performance Lockdown, to insure <2 sec or at best <1sec performance
     #(this might be hard to pull off, but its a goal so its much much more easier to set MaxPercent...
-    #storageCapacity - how much input being received per second = MaxPercent, is QOL) 
+    #storageCapacity - how much select_input being received per second = MaxPercent, is QOL) 
 #External Schem for config via mem block display, or message block for instructions
     #(more QOL, and easier time for people who dont know to set the config of the proc)
