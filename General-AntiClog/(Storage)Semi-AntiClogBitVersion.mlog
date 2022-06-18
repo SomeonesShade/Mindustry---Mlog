@@ -1,4 +1,4 @@
-#do not use: broken
+print "do not use: broken"
 set OriginBlock null #bug: if not binded beforehand/set to null, Core is used
 print "The StorageBlock where the items come from. If set to null, automatically finds Core"
 jump configIgnore equal skipVars 1
@@ -30,7 +30,7 @@ op shl  false 13
 op shl  false 14
 op shl  false 15
 print "Do not modify from this point, unless you know how it works lel"
-op add bitSelection   #compile config into a single number (ie 101 as an example)
+op add bitSelection   #compile config into a single number (ex: 101 as an example)
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
@@ -66,20 +66,20 @@ jump bitSkip equal cell1 null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
 bitSkip: #Determines when to check for Storages
-jump storageCheck notEqual @links prevLinks #trigger storageCheck if any link (amount) is changed
-jump ItemDentify equal isA 1 #do not trigger storageCheck if it is currently working
-jump storageCheck greaterThanEq sC 25 #timer lel
+jump storageCheck notEqual @links prevLinks     #trigger storageCheck if any link (amount) is changed
+jump ItemDentify equal isA 1                    #do not trigger storageCheck if it is currently working
+jump storageCheck greaterThanEq sC 25           #timer lel
 ItemDentify: #Part2!!!
     jump storageIsPresent notEqual v1 0 #do we even have a storage block?
-        op equal blink blink 0 #then start blinking
-        set isA 0 #do not enable
-        wait 0.5 #no epilepsy
-        op add sC sC 10 #increase checks so it can be updated asap
-        set dataItem 0 #do not send anything
-        set typec @blast-compound #red (error color) or...
+        op equal blink blink 0      #then start blinking
+        set isA 0                   #do not enable
+        wait 0.5                    #no epilepsy
+        op add sC sC 10             #increase checks so it can be updated asap
+        set dataItem 0              #do not send anything
+        set typec @blast-compound   #red (error color) or...
         jump j3 equal blink 0
-        set typec null #absolutely nothing
-    jump j3 always #immediately skip itemLoop
+        set typec null              #absolutely nothing
+    jump j3 always              #immediately skip itemLoop
     storageIsPresent:
 	set prevLinks @links #reset values used or update
     set bitLocation 0
@@ -121,6 +121,7 @@ ItemDentify: #Part2!!!
         jump storageRead always
     loopEscape:
 #-------------------------------------------------------------
+    amountCheck:
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
         set typec type #if so set the output
         op add dataItem dataItem bitLocation
@@ -153,7 +154,7 @@ ItemDentify: #Part2!!!
     skip2:
         jump buildingConfigLoop lessThan a @links
 	op add sC sC 1
-end
+jump 0 always; end
 print "made by: Someone's Shadow #9470"
 storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
@@ -189,14 +190,14 @@ storageDetectionLoop: #detect storages via getlink loop
     skip0:
     	jump storageDetectionLoop lessThan lp @links
 #-------------------------------------------------------------
-    set readMode 2 #no need to write on second part of the code, just read
+    set select_readMode 2 #no need to write on second part of the code, just read
 #-------------------------------------------------------------
     set MaxValue BaseLineValue
     jump clusterIgnore equal IsCluster 0 #is this cluter mode?
     op mul TotalMaxStorage TotalMaxStorage MaxPercent
     set MaxValue TotalMaxStorage
     jump ItemDentify always
-end
+jump 0 always; end
 clusterIgnore:
 	jump jb1 notEqual v2 0 #is v2 filled?
     set v2 v1
@@ -208,7 +209,7 @@ jb2:
     set v4 v1
 jb3:	
     jump ItemDentify always
-end
+jump 0 always; end
 select: #if we have found a storageblock, enter into memory
 #-------------------------------------------------------------
     jump skip0 strictEqual index null 
@@ -241,48 +242,41 @@ j1:
     op min ic BaseLineValue ic #take smallest
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always
-end
+jump 0 always; end
 #-------------------------------------------------------------
-storageSelect: #input, output, readMode, goBack, index
-op mul selectStorage index 4
-op add selectStorage selectStorage readMode
+storageSelect: #select_input, select_output, select_readMode, goBack, select_index
+op mul selectStorage select_index 4
+op add selectStorage selectStorage select_readMode
 op add @counter selectStorage @counter
-set v1 input
+set v5 select_input
 set @counter goBack
-set output v1
+set select_output v5
 set @counter goBack
-set v2 input
+set v6 select_input
 set @counter goBack
-set output v2
+set select_output v6
 set @counter goBack
-set v3 input
+set v7 select_input
 set @counter goBack
-set output v3
+set select_output v7
 set @counter goBack
-set v4 input
+set v8 select_input
 set @counter goBack
-set output v4
+set select_output v8
 set @counter goBack
-set v5 input
+set v9 select_input
 set @counter goBack
-set output v5
+set select_output v9
 set @counter goBack
-set v6 input
+set v10 select_input
 set @counter goBack
-set output v6
+set select_output v10
 set @counter goBack
-set v7 input
+set select_index -2
 set @counter goBack
-set output v7
+set select_output null
 set @counter goBack
-set v8 input
-set @counter goBack
-set output v8
-set @counter goBack
-set index null
-set @counter goBack
-set output null
-set @counter goBack
+jump 0 always; end
 #-------------------------------------------------------------
 
 #log: version 3.0.-1 merged with failbackup to start if it this can be intergrated diffrently
