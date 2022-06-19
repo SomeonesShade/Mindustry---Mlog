@@ -1,14 +1,14 @@
 print "do not use: broken"
-set OriginBlock null #bug: if not binded beforehand/set to null, Core is used
+set OriginBlock null #the block used in reversemode, or rss
 print "The StorageBlock where the items come from. If set to null, automatically finds Core"
 jump configIgnore equal skipVars 1
-set MaxPercent 0.2  #object variables
+set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
 print "determines the maxinum percentage of an item in a storage block"
-set IsCluster 0
+set IsCluster 0 #if dealing. chained or seperated storages, no diffrence if single
 print "If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
-set MinOriginAmount 10
+set MinOriginAmount 10 #acts as a threshold for reverse mode and dont kill core lel
 print "(rss) Determines the mininum amount of an item to start working"
-set MemoryWriteLocation 1
+set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
 print "doesn't write at cell 1 if MemoryReadLocation >= 0"
 set MemoryReadLocation -1
 print "reads at cell1 only, doesnt read if MemoryReadLocation < 0"
@@ -280,14 +280,41 @@ set v10 select_input
 set @counter goBack
 set select_output v10
 set @counter goBack
+set v11 select_input
+set @counter goBack
+set select_output v11
+set @counter goBack
+set v12 select_input
+set @counter goBack
+set select_output v12
+set @counter goBack
+set v13 select_input
+set @counter goBack
+set select_output v13
+set @counter goBack
+set v14 select_input
+set @counter goBack
+set select_output v14
+set @counter goBack
+set v15 select_input
+set @counter goBack
+set select_output v15
+set @counter goBack
+set v16 select_input
+set @counter goBack
+set select_output v16
+set @counter goBack
 set select_index null
 set @counter goBack
 set select_output null
 set @counter goBack
 jump 0 always; end
 #-------------------------------------------------------------
+#Features Added 3.0:
+#Maxinum Storage Binds now up to 16
+#Note: Once Storage Binds are 5 and above, Huge Perfromance Dropoff, adjust MaxPercent
 
-#log: version 3.0.-3 merge successful!, need severe optimizations but this is workable
+#log: version 3.0.-4 increased the storage capacity to 16, (4 of which are optimized) 
 
 #worse case while used: 2.59913549721241 in 10x
 #3.600179488460533 on stationary
@@ -302,6 +329,10 @@ jump 0 always; end
 #QOL changes
     #(variable decl, and making it even easier to use... somehow)
 #Reverse Mode 
+        #Solved? Origin Exactly Does What i need for reverse mode, although a blink override would need to be added
+        #The problem is, rss is a diffrent facility than anticlog, and i think just the var is good enough.
+        #Essentially think of a vault with an unloader/incinerator beside it, if config is all 1, all i have to do is set up the vars...
+        #alongside the noblink, its functional (Solved? becomes Solved! if implemented)
     #(using negativeNumbers in MaxPercent? to switch into mv > MaxValue? dunno hmm)
 #Recon/Factory Intergration 
     #(issue: recons/factories cant hold every item, which means dynamic config and...
@@ -313,6 +344,6 @@ jump 0 always; end
     #if intergration is impossible, this is still applicable as QOL)
 #Performance Lockdown, to insure <2 sec or at best <1sec performance
     #(this might be hard to pull off, but its a goal so its much much more easier to set MaxPercent...
-    #storageCapacity - how much select_input being received per second = MaxPercent, is QOL) 
+    #storageCapacity - how much input being received per second = MaxPercent, is QOL) 
 #External Schem for config via mem block display, or message block for instructions
     #(more QOL, and easier time for people who dont know to set the config of the proc)
