@@ -1,4 +1,4 @@
-print "do not use: broken"
+print "testing phase: recomended not copy yet"
 set OriginBlock null #the block used in reversemode, or rss
 print "The StorageBlock where the items come from. If set to null, automatically finds Core"
 jump configIgnore equal skipVars 1
@@ -9,9 +9,11 @@ print "If the anticlog will want to have a baseline of items in all storages, or
 set MinOriginAmount 10 #acts as a threshold for reverse mode and dont kill core lel
 print "(rss) Determines the mininum amount of an item to start working"
 set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
-print "doesn't write at cell 1 if MemoryReadLocation >= 0"
+print "doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
 set MemoryReadLocation -1
 print "reads at cell1 only, doesnt read if MemoryReadLocation < 0"
+set IgnoreBlink false
+print "disables 'blinking' (it happens when there are no vaults detected)"
 print "for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
 op shl  false 0
 op shl  1 1
@@ -71,6 +73,7 @@ jump ItemDentify equal isA 1                    #do not trigger storageCheck if 
 jump storageCheck greaterThanEq sC 25           #timer lel
 ItemDentify: #Part2!!!
     jump storageIsPresent notEqual v1 0 #do we even have a storage block?
+        jump storageIsPresent equal IgnoreBlink true #Do not blink is IgnoreBlink is set to true
         op equal blink blink 0      #then start blinking
         set isA 0                   #do not enable
         wait 0.5                    #no epilepsy
@@ -314,7 +317,7 @@ jump 0 always; end
 #Maxinum Storage Binds now up to 16
 #Note: Once Storage Binds are 5 and above, Huge Perfromance Dropoff, adjust MaxPercent
 
-#log: version 3.0.-4 increased the storage capacity to 16, (4 of which are optimized) 
+#log: version 3.0.-5 Added IgnoreBlink
 
 #worse case while used: 2.59913549721241 in 10x
 #3.600179488460533 on stationary
@@ -322,28 +325,28 @@ jump 0 always; end
 
 #Plans:
 #ver 3.0 and above:
-#solution to storage needing to be hardcoded + not being extremely performant heavy
+#solution to storage needing to be hardcoded + not being extremely performant heavy (3.0)
         #Solved! Array System in higher storage amounts while hardcode system for low ammounts
         #It needs to be optimized still
     #(check failBackup1)
 #QOL changes
     #(variable decl, and making it even easier to use... somehow)
-#Reverse Mode 
-        #Solved? Origin Exactly Does What i need for reverse mode, although a blink override would need to be added
+#Reverse Mode (3.0)
+        #Solved! Origin Exactly Does What i need for reverse mode, although a blink override would need to be added
         #The problem is, rss is a diffrent facility than anticlog, and i think just the var is good enough.
         #Essentially think of a vault with an unloader/incinerator beside it, if config is all 1, all i have to do is set up the vars...
-        #alongside the noblink, its functional (Solved? becomes Solved! if implemented)
+        #alongside the noblink, its functional
     #(using negativeNumbers in MaxPercent? to switch into mv > MaxValue? dunno hmm)
-#Recon/Factory Intergration 
+#Recon/Factory Intergration (3.1?)
     #(issue: recons/factories cant hold every item, which means dynamic config and...
     #recons have diffrent @itemCapacity for each item, which is a pain...
     #if the issue can't be resolved, this cant be General and can only be Semi)
-#Automatic Config + Overrides
+#Automatic Config + Overrides (3.1?)
     #(this may be a reconstructor version feature, although might be ok?...
     #automatically setting the config based on binds, and adding in items like (silicon)...
     #if intergration is impossible, this is still applicable as QOL)
-#Performance Lockdown, to insure <2 sec or at best <1sec performance
+#Performance Lockdown, to insure <2 sec or at best <1sec performance (general goal)
     #(this might be hard to pull off, but its a goal so its much much more easier to set MaxPercent...
     #storageCapacity - how much input being received per second = MaxPercent, is QOL) 
-#External Schem for config via mem block display, or message block for instructions
+#External Schem for config via mem block display, or message block for instructions (non-associated)
     #(more QOL, and easier time for people who dont know to set the config of the proc)

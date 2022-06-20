@@ -10,6 +10,11 @@ Old Behavior is Basline Mode, just set IsCluster to 0/false
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
+Disclaimer:
+This is not specialized on one specific schematic, it more used on a variety of schems. Its something you may modify on use on the fly
+Custom is always better than general, this logic focuses on somewhat easy use and adaptive block transport situations.
+
+HowTo:
 Set its Config
 Bind the Destination Storage
 (ex: container, vault)
@@ -26,9 +31,6 @@ OriginBlock - setting up what storageblock has the items, automatically detects 
 MinOriginAmount - Allows rss (resource saver) by not requesting the items from OriginBlock, essentially dont cause resource-gon
 IsCluster - either treats the storageblocks as a sum, or tries to fill each storageblock with a mininum amount of items
 MemoryReadLocation/MemoryWriteLocation - allows for custom config override, and chaining other Semi-AntiClog
-
-Notes:
-This is not specialized on one specific schematic, it more used on a variety of schems. Its something you may modify on use on the fly
 
 _____
 Logs:
