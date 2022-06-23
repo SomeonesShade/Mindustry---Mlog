@@ -1,5 +1,7 @@
-#get vars
-jump skipVars varsIsSet true
+#--UnitBind Logic--
+jump skipVars equal varsIsSet true
+ubind @
+sensor unitType @unit @type
 op mul tx @thisx @maph  #create flag...
 op add unitFlag tx @thisy
 set varsIsSet true
@@ -9,11 +11,11 @@ sensor cor @unit @controller
 sensor fla @unit @flag
 #check if:
 jump unitbind strictEqual @unit null    #we dont have a unit binded? ubind.
-jump unitbind equal fla unitFlag        #it isnt our flag? ubind.
+jump unitbind notEqual fla unitFlag        #it isnt our flag? ubind.
 jump unitbind notEqual cor @this        #this is not controlling it? ubind.
 jump keepUnit always            #if it passes the checks its safe! 
 unitbind: #get vars
-ubind @
+ubind unitType
 sensor con @unit @controlled
 sensor fla @unit @flag
 jump unitbind notEqual fla 0 #cant use it?/is it not flag 0? ubind.
@@ -21,3 +23,4 @@ keepUnit:
 jump unitbind equal con @ctrlPlayer     #is it under player control? ubind.
 jump unitbind equal con @ctrlFormation  #is it under formation? ubind.
 ucontrol flag unitFlag
+#------------------
