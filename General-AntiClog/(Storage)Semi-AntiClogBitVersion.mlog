@@ -1,16 +1,18 @@
-set OriginBlock null #bug: if not binded beforehand/set to null, Core is used
+set OriginBlock null #the block used in reversemode, or rss
 print "The StorageBlock where the items come from. If set to null, automatically finds Core"
 jump configIgnore equal skipVars 1
-set MaxPercent 0.2  #object variables
+set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
 print "determines the maxinum percentage of an item in a storage block"
-set IsCluster 0
+set IsCluster 0 #if dealing. chained or seperated storages, no diffrence if single
 print "If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
-set MinOriginAmount 10
+set MinOriginAmount 10 #acts as a threshold for reverse mode and dont kill core lel
 print "(rss) Determines the mininum amount of an item to start working"
-set MemoryWriteLocation 1
-print "doesn't write at cell 1 if MemoryReadLocation >= 0"
+set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
+print "doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
 set MemoryReadLocation -1
 print "reads at cell1 only, doesnt read if MemoryReadLocation < 0"
+set IgnoreBlink false
+print "disables 'blinking' (it happens when there are no vaults detected)"
 print "for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
 op shl  false 0
 op shl  1 1
@@ -29,7 +31,7 @@ op shl  false 13
 op shl  false 14
 op shl  false 15
 print "Do not modify from this point, unless you know how it works lel"
-op add bitSelection   #compile config into a single number (ie 101 as an example)
+op add bitSelection   #compile config into a single number (ex: 101 as an example)
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
@@ -65,20 +67,21 @@ jump bitSkip equal cell1 null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
 bitSkip: #Determines when to check for Storages
-jump storageCheck notEqual @links prevLinks #trigger storageCheck if any link (amount) is changed
-jump ItemDentify equal isA 1 #do not trigger storageCheck if it is currently working
-jump storageCheck greaterThanEq sC 25 #timer lel
+jump storageCheck notEqual @links prevLinks     #trigger storageCheck if any link (amount) is changed
+jump ItemDentify equal isA 1                    #do not trigger storageCheck if it is currently working
+jump storageCheck greaterThanEq sC 25           #timer lel
 ItemDentify: #Part2!!!
     jump storageIsPresent notEqual v1 0 #do we even have a storage block?
-        op equal blink blink 0 #then start blinking
-        set isA 0 #do not enable
-        wait 0.5 #no epilepsy
-        op add sC sC 10 #increase checks so it can be updated asap
-        set dataItem 0 #do not send anything
-        set typec @blast-compound #red (error color) or...
+        jump storageIsPresent equal IgnoreBlink true #Do not blink is IgnoreBlink is set to true
+        op equal blink blink 0      #then start blinking
+        set isA 0                   #do not enable
+        wait 0.5                    #no epilepsy
+        op add sC sC 10             #increase checks so it can be updated asap
+        set dataItem 0              #do not send anything
+        set typec @blast-compound   #red (error color) or...
         jump j3 equal blink 0
-        set typec null #absolutely nothing
-    jump j3 always #immediately skip itemLoop
+        set typec null              #absolutely nothing
+    jump j3 always              #immediately skip itemLoop
     storageIsPresent:
 	set prevLinks @links #reset values used or update
     set bitLocation 0
@@ -100,11 +103,46 @@ ItemDentify: #Part2!!!
         op min am1 r1 r2 #take small
         op min am2 r3 r4
         op min amount am1 am2
-        jump amountCheck always 
+        jump amountCheck strictEqual v5 null #do we pass the vault test?
+        sensor r5 v5 type #how much x in v5, v6...
+        sensor r6 v6 type
+        sensor r7 v7 type
+        sensor r8 v8 type
+        op min am1 r5 r6 #take small again 
+        op min am2 r7 r8
+        op min amount2 am1 am2
+        op min amount amount amount2
+        jump amountCheck strictEqual v9 null #do we pass the vault test again?
+        set select_index -1
+        storageMinRead: #what is contained in the storages?
+            op add select_index select_index 1                      #loop start
+            op add goBack @counter 1; jump storageSelect always     #function call...
+            jump amountCheck strictEqual select_output null         #does mentioned vault exist?
+            sensor rV select_output type                            #then: do operation:
+            op min amount amount rV
+            jump storageMinRead always
     selectedAdd:
         op add am1 r1 r2 #combine 
         op add am2 r3 r4
         op add amount am1 am2
+        jump amountCheck strictEqual v5 null #do we pass the vault test?
+        sensor r5 v5 type #how much x in v5, v6...
+        sensor r6 v6 type
+        sensor r7 v7 type
+        sensor r8 v8 type
+        op add am1 r5 r6 #combine again 
+        op add am2 r7 r8
+        op add amount2 am1 am2
+        op add amount amount amount2
+        jump amountCheck strictEqual v9 null #do we pass the vault test again?
+        set select_index -1
+        storageAddRead: #what is contained in the storages?
+            op add select_index select_index 1                      #loop start
+            op add goBack @counter 1; jump storageSelect always     #function call...
+            jump amountCheck strictEqual select_output null         #does mentioned vault exist?
+            sensor rV select_output type                            #then: do operation:
+            op add amount amount rV
+            jump storageAddRead always 
     amountCheck:
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
         set typec type #if so set the output
@@ -138,7 +176,8 @@ ItemDentify: #Part2!!!
     skip2:
         jump buildingConfigLoop lessThan a @links
 	op add sC sC 1
-end
+jump 0 always; end
+print "Semi-AntiClog 3.0"
 print "made by: Someone's Shadow #9470"
 storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
@@ -146,6 +185,15 @@ storageCheck: #set variables
 	set v2 0
 	set v3 0
 	set v4 0
+    set select_readMode 0
+    set select_index -1
+    set select_input null
+storageReset: #clear all storage
+    op add select_index select_index 1
+    op add goBack @counter 1; jump storageSelect always
+    jump storageReset notEqual select_index null
+storageArrayIgnore:
+    set select_index 0
 	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = 0)
     set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = 1)
 	set lp -1
@@ -161,13 +209,14 @@ storageDetectionLoop: #detect storages via getlink loop
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
     skip0:
-    		jump storageDetectionLoop lessThan lp @links
+    	jump storageDetectionLoop lessThan lp @links
+    set select_readMode 2 #no need to write on second part of the code, just read
     set MaxValue BaseLineValue
     jump clusterIgnore equal IsCluster 0 #is this cluter mode?
     op mul TotalMaxStorage TotalMaxStorage MaxPercent
     set MaxValue TotalMaxStorage
     jump ItemDentify always
-end
+jump 0 always; end
 clusterIgnore:
 	jump jb1 notEqual v2 0 #is v2 filled?
     set v2 v1
@@ -177,9 +226,21 @@ jb1:
 jb2:
     jump jb3 notEqual v4 0 #is v4 filled?
     set v4 v1
-jb3:	
+jb3:
+    jump jb7 strictEqual v5 null #is v5 filled?
+    set v5 v1	
+jb4:
+    jump jb5 notEqual v6 0 #is v6 filled?
+    set v6 v1	
+jb5:
+    jump jb6 notEqual v7 0 #is v7 filled?
+    set v7 v1	
+jb6:
+    jump jb7 notEqual v8 0 #is v8 filled?
+    set v8 v1	
+jb7:
     jump ItemDentify always
-end
+jump 0 always; end
 select: #if we have found a storageblock, enter into memory
     sensor ic obj @itemCapacity
     jump ja1 notEqual v1 0 #is v1 filled?
@@ -197,37 +258,108 @@ ja2:
     op add TotalMaxStorage TotalMaxStorage ic
     jump j1 always
 ja3:
-    jump j1 notEqual v4 0 #is v4 filled?
+    jump ja4 notEqual v4 0 #is v4 filled?
     set v4 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja4:
+    jump ja5 notEqual v5 0 #is v5 filled?
+    set v5 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja5:
+    jump ja6 notEqual v6 0 #is v6 filled?
+    set v6 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja6:
+    jump ja7 notEqual v7 0 #is v7 filled?
+    set v7 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja7:
+    jump jArray notEqual v8 0 #is v8 filled?
+    set v8 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+jArray:
+    jump skip0 strictEqual select_index null #if hardcode storage has been reached, use this array
+    set select_input obj
+    op add goBack @counter 1; jump storageSelect always
+    op add select_index select_index 1
     op add TotalMaxStorage TotalMaxStorage ic
 j1:
     op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
     op min ic BaseLineValue ic #take smallest
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always
-end
+jump 0 always; end
+storageSelect: #select_input, select_output, select_readMode, goBack, select_index
+op mul selectStorage select_index 4
+op add selectStorage selectStorage select_readMode
+op add @counter selectStorage @counter
+set v9 select_input
+set @counter goBack
+set select_output v9
+set @counter goBack
+set v10 select_input
+set @counter goBack
+set select_output v10
+set @counter goBack
+set v11 select_input
+set @counter goBack
+set select_output v11
+set @counter goBack
+set v12 select_input
+set @counter goBack
+set select_output v12
+set @counter goBack
+set v13 select_input
+set @counter goBack
+set select_output v13
+set @counter goBack
+set v14 select_input
+set @counter goBack
+set select_output v14
+set @counter goBack
+set v15 select_input
+set @counter goBack
+set select_output v15
+set @counter goBack
+set v16 select_input
+set @counter goBack
+set select_output v16
+set @counter goBack
+set select_index null
+set @counter goBack
+set select_output null
+set @counter goBack
+jump 0 always; end
 
-#log: version 2.4.2 logiced monos are used to prevent monos from randomly being deactivated
-#also: ton of comments
+#Features Added 3.0:
+#Maxinum Storage Binds now up to 16
+#Note: Once Storage Binds are 9 and above, Huge Perfromance Dropoff, adjust MaxPercent
+
+#log: version 3.0 Extended Storage Binds and Ignore Blink
+#actual changes from 3.0.-5 to 3.0 made the optimized storages count from 4 to 8
 
 #Plans:
-#ver 3.0 and above:
-#solution to storage needing to be hardcoded + not being extremely performant heavy
-    #(check failBackup1)
+#ver 3.1 and above:
 #QOL changes
     #(variable decl, and making it even easier to use... somehow)
-#Reverse Mode 
-    #(using negativeNumbers in MaxPercent? to switch into mv > MaxValue? dunno hmm)
-#Recon/Factory Intergration 
+#Recon/Factory Intergration [3.1?]
     #(issue: recons/factories cant hold every item, which means dynamic config and...
     #recons have diffrent @itemCapacity for each item, which is a pain...
     #if the issue can't be resolved, this cant be General and can only be Semi)
-#Automatic Config + Overrides
+
+#Automatic Config + Overrides [3.1?]
     #(this may be a reconstructor version feature, although might be ok?...
     #automatically setting the config based on binds, and adding in items like (silicon)...
     #if intergration is impossible, this is still applicable as QOL)
-#Performance Lockdown, to insure <2 sec or at best <1sec performance
+
+#Performance Lockdown, to insure <2 sec or at best <1sec performance [general goal]
     #(this might be hard to pull off, but its a goal so its much much more easier to set MaxPercent...
     #storageCapacity - how much input being received per second = MaxPercent, is QOL) 
-#External Schem for config via mem block display, or message block for instructions
+
+#External Schem for config via mem block display, or message block for instructions [non-associated]
     #(more QOL, and easier time for people who dont know to set the config of the proc)
