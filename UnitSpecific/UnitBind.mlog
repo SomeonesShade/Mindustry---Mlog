@@ -1,4 +1,3 @@
-#--UnitBind Logic--
 jump skipVars equal varsIsSet true
 ubind @
 sensor unitType @unit @type
@@ -6,6 +5,8 @@ op mul tx @thisx @maph  #create flag...
 op add unitFlag tx @thisy
 set varsIsSet true
 skipVars:
+
+#----Main Logic----
 sensor con @unit @controlled
 sensor cor @unit @controller
 sensor fla @unit @flag

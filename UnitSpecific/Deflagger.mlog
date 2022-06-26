@@ -1,0 +1,15 @@
+sensor on switch1 @enabled
+jump 0 strictEqual on 0
+control enabled door1 0
+loop:
+op add a a 1
+op mod a a @unitCount
+lookup unit unitType a
+ubind unitType
+jump loop strictEqual @unit null
+sensor flag @unit @flag
+jump 0 strictEqual flag 0
+sensor ctrl @unit @controlled
+jump 0 notEqual ctrl 0
+control enabled door1 1
+ucontrol flag 0
