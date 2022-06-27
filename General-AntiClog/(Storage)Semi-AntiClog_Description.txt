@@ -2,8 +2,8 @@ ____________
 Description:
 ------------
 
-Semi-Anticlog 3.0 
-mini-change-log: Extended Storage Binds to 16 and Ignore Blink
+Semi-Anticlog 3.1
+mini-change-log: QOL! More clarity, and fixes
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
@@ -24,18 +24,20 @@ And you have your transport!
 Features/Variables:
 Up to 16 receiving storageblocks (8 optimized), automatic storage and config block detection, and fast performance in a logic processor
 MaxPercent - what is the target quota of items in storageblock/s, and provides a buffer as if it is too high, a clog will happen
-OriginBlock - setting up what storageblock has the items, automatically detects Core when set to null
+OriginBlock - setting up what storageblock has the items, If set to false, disables origin functionality.
 MinOriginAmount - Allows rss (resource saver) by not requesting the items from OriginBlock, essentially dont cause resource-gon
 IsCluster - either treats the storageblocks as a sum, or tries to fill each storageblock with a mininum amount of items
 MemoryReadLocation/MemoryWriteLocation - allows for custom config override, and chaining other Semi-AntiClog
 IgnoreBlink - allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)
+FindCore - to set core as OriginBlock without binding, only works if OriginBlock is null
 
 ChangeLog:
-There are now two seperate systems for storing storages, 8 are the optimized set, and the others are the array set
-This is done as to not sacrifice normal performance but allowing absurd amounts of links possible
-Ignore Blink has been added to allow only the "rss part" + the configuration for a Origin unloader incinerator set up as a diffrent kind of anti clog
+Reverted Change on only binding logiced monos
+It now works with sorters and inverted sorters (was under my radar, sorry about that...)
+Added FindCore to decrease confusion/seperate behavior from OriginBlock
+OriginBlock added false as an input to allow disabling of Origin Behavior
 
-Made By Shade (Someone's Shadow)
+-Shade
 _____
 Logs:
 -----
@@ -65,3 +67,9 @@ Logs:
 #reason for change is due to a revamp on how to extend storages as many as I want (currently 16, i can extend it to 32 : D)
 #and to reduce processor lag when modifying if i want more...
 #this is a necessary step to get reconstructors and factories in the mix...
+
+#log: version 3.1 QOL update!
+#Reverted Change on only binding logiced monos
+#It now works with sorters and inverted sorters (was under my radar, sorry about that...)
+#Added FindCore to decrease confusion/seperate behavior from OriginBlock
+#OriginBlock added false as an input to allow disabling of Origin Behavior

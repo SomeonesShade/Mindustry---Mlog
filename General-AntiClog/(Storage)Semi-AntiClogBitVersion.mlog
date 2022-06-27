@@ -1,16 +1,18 @@
 set OriginBlock null #the block used in reversemode, or rss
-print "The StorageBlock where the items come from. If set to null, automatically finds Core"
+print "(Block/Bool) The StorageBlock where the items come from. If set to false, disables origin functionality"
 jump configIgnore equal skipVars 1
 set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
-print "determines the maxinum percentage of an item in a storage block"
-set IsCluster 0 #if dealing. chained or seperated storages, no diffrence if single
-print "If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
+print "(decimal) determines the maxinum percentage of an item in a storage block"
+set FindCore true
+print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
+set IsCluster false #if dealing. chained or seperated storages, no diffrence if single
+print "(bool) If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
 set MinOriginAmount 10 #acts as a threshold for reverse mode and dont kill core lel
-print "(rss) Determines the mininum amount of an item to start working"
+print "(integer) /rss/ Determines the mininum amount of an item to start working"
 set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
-print "doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
+print "(whole number) doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
 set MemoryReadLocation -1
-print "reads at cell1 only, doesnt read if MemoryReadLocation < 0"
+print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
 set IgnoreBlink false
 print "disables 'blinking' (it happens when there are no vaults detected)"
 print "for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
@@ -46,21 +48,22 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
+jump originDisable strictEqual OriginBlock false
+jump endOfSettings always 
+originDisable:
+set MinOriginAmount -1
+endOfSettings:
 set skipVars 1
 configIgnore:
+jump coreIgnore lessThan MinOriginAmount 0
 jump originIgnore equal OriginBlock null #sets the Origin
 set Origin OriginBlock
 originIgnore:
 jump coreIgnore notEqual Origin null
-jump coreIgnore lessThan MinOriginAmount 0
-    ubind @gamma #multiplayer mainly
-    ulocate building core false @copper ox oy fo Origin
-jump coreIgnore equal fo true
+jump coreIgnore equal FindCore false
     ubind @mono
     sensor controlled @unit @controlled
-    jump coreSet equal controlled @ctrlProcessor #preventing monos not logiced to be affected
-    jump coreIgnore notEqual controlled @ctrlFormation
-coreSet:
+jump originIgnore greaterThanEq controlled 2
     ulocate building core false @copper ox oy fo Origin
 coreIgnore:
 jump bitSkip equal cell1 null #Sets the Bitselection if memory is used
@@ -162,22 +165,23 @@ ItemDentify: #Part2!!!
         op add a a 1
         getlink obj a
         sensor oType obj @type
-        jump skip2 equal oType @vault #skip if storage block
-        jump skip2 equal oType @container
+        jump jItemConfig equal oType @inverted-sorter #skip if storage block
+        jump jItemConfig equal oType @sorter
         jump skip2 equal oType @mass-driver
-        jump j4 notEqual oType @memory-cell
+        jump jEnable notEqual oType @memory-cell
         jump datawrite lessThan MemoryReadLocation 0 
-        jump j4 equal obj cell1
+        jump jEnable equal obj cell1
         datawrite:
         write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
-        j4:
+        jEnable:
         control enabled obj isA #enable or disable
+        jItemConfig:
         control config obj typec #set output
     skip2:
         jump buildingConfigLoop lessThan a @links
 	op add sC sC 1
-jump 0 always; end
-print "Semi-AntiClog 3.0"
+end
+print "Semi-AntiClog 3.1"
 print "made by: Someone's Shadow #9470"
 storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
@@ -194,8 +198,8 @@ storageReset: #clear all storage
     jump storageReset notEqual select_index null
 storageArrayIgnore:
     set select_index 0
-	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = 0)
-    set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = 1)
+	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = false)
+    set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = true)
 	set lp -1
 storageDetectionLoop: #detect storages via getlink loop
     op add lp lp 1
@@ -212,11 +216,11 @@ storageDetectionLoop: #detect storages via getlink loop
     	jump storageDetectionLoop lessThan lp @links
     set select_readMode 2 #no need to write on second part of the code, just read
     set MaxValue BaseLineValue
-    jump clusterIgnore equal IsCluster 0 #is this cluter mode?
+    jump clusterIgnore equal IsCluster false #is this cluter mode?
     op mul TotalMaxStorage TotalMaxStorage MaxPercent
     set MaxValue TotalMaxStorage
     jump ItemDentify always
-jump 0 always; end
+end
 clusterIgnore:
 	jump jb1 notEqual v2 0 #is v2 filled?
     set v2 v1
@@ -240,7 +244,7 @@ jb6:
     set v8 v1	
 jb7:
     jump ItemDentify always
-jump 0 always; end
+end
 select: #if we have found a storageblock, enter into memory
     sensor ic obj @itemCapacity
     jump ja1 notEqual v1 0 #is v1 filled?
@@ -293,7 +297,7 @@ j1:
     op min ic BaseLineValue ic #take smallest
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always
-jump 0 always; end
+end
 storageSelect: #select_input, select_output, select_readMode, goBack, select_index
 op mul selectStorage select_index 4
 op add selectStorage selectStorage select_readMode
@@ -334,25 +338,24 @@ set select_index null
 set @counter goBack
 set select_output null
 set @counter goBack
-jump 0 always; end
+end
 
-#Features Added 3.0:
-#Maxinum Storage Binds now up to 16
-#Note: Once Storage Binds are 9 and above, Huge Perfromance Dropoff, adjust MaxPercent
-
-#log: version 3.0 Extended Storage Binds and Ignore Blink
-#actual changes from 3.0.-5 to 3.0 made the optimized storages count from 4 to 8
+#log: version 3.1 QOL update!
+#Reverted Change on only binding logiced monos
+#It now works with sorters and inverted sorters (was under my radar, sorry about that...)
+#Added FindCore to decrease confusion/seperate behavior from OriginBlock
+#OriginBlock added false as an input to allow disabling of Origin Behavior
 
 #Plans:
 #ver 3.1 and above:
 #QOL changes
     #(variable decl, and making it even easier to use... somehow)
-#Recon/Factory Intergration [3.1?]
+#Recon/Factory Intergration [3.2?]
     #(issue: recons/factories cant hold every item, which means dynamic config and...
     #recons have diffrent @itemCapacity for each item, which is a pain...
     #if the issue can't be resolved, this cant be General and can only be Semi)
 
-#Automatic Config + Overrides [3.1?]
+#Automatic Config + Overrides [3.2?]
     #(this may be a reconstructor version feature, although might be ok?...
     #automatically setting the config based on binds, and adding in items like (silicon)...
     #if intergration is impossible, this is still applicable as QOL)
