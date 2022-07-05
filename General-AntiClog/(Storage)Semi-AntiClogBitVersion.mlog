@@ -63,7 +63,7 @@ jump coreIgnore notEqual Origin null
 jump coreIgnore equal FindCore false
     ubind @mono
     sensor controlled @unit @controlled
-jump originIgnore greaterThanEq controlled 2
+jump originIgnore greaterThanEq controlled 2 #UHHHHHHHHHH
     ulocate building core false @copper ox oy fo Origin
 coreIgnore:
 jump bitSkip equal cell1 null #Sets the Bitselection if memory is used

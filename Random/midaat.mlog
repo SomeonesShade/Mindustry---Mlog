@@ -1,0 +1,40 @@
+
+sensor r1 driver1 @titanium #how much x in v1, v2...
+sensor r2 driver2 @titanium
+sensor r3 driver3 @titanium
+sensor r4 driver4 @titanium
+sensor r5 driver5 @titanium
+sensor r6 driver6 @titanium
+op add am1 r1 r2 #combine 
+op add am2 r3 r4
+op add amount am1 am2
+op add am1 r5 r6 #combine again 
+op add amount amount am1
+write amount cell1 2
+op add i i 1
+sensor r1 driver1 @silicon #how much x in v1, v2...
+sensor r2 driver2 @silicon
+sensor r3 driver3 @silicon
+sensor r4 driver4 @silicon
+sensor r5 driver5 @silicon
+sensor r6 driver6 @silicon
+op add am1 r1 r2 #combine 
+op add am2 r3 r4
+op add amount am1 am2
+op add am1 r5 r6 #combine again 
+op add amount amount am1
+write amount cell1 3
+op add i i 1
+sensor r1 driver1 @plastanium #how much x in v1, v2...
+sensor r2 driver2 @plastanium
+sensor r3 driver3 @plastanium
+sensor r4 driver4 @plastanium
+sensor r5 driver5 @plastanium
+sensor r6 driver6 @plastanium
+op add am1 r1 r2 #combine 
+op add am2 r3 r4
+op add amount am1 am2
+op add am1 r5 r6 #combine again 
+op add amount amount am1
+write amount cell1 4
+op add i i 1

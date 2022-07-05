@@ -1,19 +1,29 @@
-
-#--UnitBind Logic--
-jump skipVars equal varsIsSet true
+jump skipUbind notEqual unitType null
 ubind @
 sensor unitType @unit @type
-op mul tx @thisx @maph  #create flag...
+skipUbind:
+#----
+set noBindIfFull true
+sensor Item sorter1 @config
+getlink Location 1
+jump skipFullCheck strictEqual Location null
+sensor locationAmount Location Item
+sensor locationCapacity Location @itemCapacity
+jump skipFullCheck equal noBindIfFull false
+jump 0 equal locationAmount locationCapacity
+skipFullCheck:
+#----
+jump skipVars notEqual unitFlag 0 
+op mul tx @thisx @maph  #create flag... note: its not worth to add in a check if x and y is both 0
 op add unitFlag tx @thisy
-set varsIsSet true
 skipVars:
+#----Main Logic----
 sensor con @unit @controlled
 sensor cor @unit @controller
 sensor fla @unit @flag
 #check if:
 jump unitbind strictEqual @unit null    #we dont have a unit binded? ubind.
 jump unitbind notEqual fla unitFlag        #it isnt our flag? ubind.
-jump unitbind notEqual cor @this        #this is not controlling it? ubind.
 jump keepUnit always            #if it passes the checks its safe! 
 unitbind: #get vars
 ubind unitType
@@ -21,13 +31,9 @@ sensor con @unit @controlled
 sensor fla @unit @flag
 jump unitbind notEqual fla 0 #cant use it?/is it not flag 0? ubind.
 keepUnit:
-jump unitbind equal con @ctrlPlayer     #is it under player control? ubind.
-jump unitbind equal con @ctrlFormation  #is it under formation? ubind.
+jump unitbind greaterThanEq con 2     #is it under player control/formation? ubind.
 ucontrol flag unitFlag
 #------------------
-
-sensor Item sorter1 @config
-getlink Location 1
 jump noBind equal Item null
 jump startLogic notEqual Location null
 noBind:

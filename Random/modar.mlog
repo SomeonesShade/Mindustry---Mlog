@@ -1,7 +1,18 @@
-print "nonfunctional do not use"
-
+print "[grey]|MassDriver Side [white]Logic:\n"
+jump cellFound notEqual cell null
+set location putHere:D
+op mod y location @maph
+op sub lx location y
+op div x lx @maph  #create flag...
+jump hasLocation notEqual x 0
+jump hasLocation notEqual y 0
+print "[yellow]put the number from the recon into this processor at location\n[white]"
+printflush
+write data cell1 0
+jump 0 always 0 0 
+hasLocation:
 jump skipUbind notEqual unitType null
-ubind @
+ubind @mono
 sensor unitType @unit @type
 skipUbind:
 jump skipVars notEqual unitFlag 0 
@@ -25,15 +36,23 @@ keepUnit:
 jump unitbind greaterThanEq con 2     #is it under player control/formation? ubind.
 ucontrol flag unitFlag
 #------------------
-sensor siliconAmount dome1 @silicon
-sensor phaseAmount dome1 @phase-fabric
-whichItem:
-op lessThan shouldSilicon siliconAmount phaseAmount
-jump a notEqual phaseAmount 10
-jump shouldSilicon
-set item @null
-a:
-itemSilicon:
-
-unitCoreTake:
-unitDeliver:
+ucontrol move x y
+ucontrol getBlock x y type cell 0
+print "[green]Moving towards factory cell\n[white]"
+printflush
+write data cell1 0
+end
+cellFound:
+write 100 cell 1
+read data cell 0
+write data cell1 0
+read data cell1 2
+write data cell 2
+read data cell1 3
+write data cell 3
+read data cell1 4
+write data cell 4
+print "[white]Data Connection established : D"
+printflush
+end
+print "By Shade"

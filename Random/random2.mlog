@@ -1,0 +1,125 @@
+print "[grey]|MassDriver Receiver [white]Logic\n"
+set TitaniumBuffer 11250
+set SiliconBuffer 12750
+set PlastBuffer 9750
+jump configIgnore equal skipVars 1
+print "the vars above determine how much the anticlog wants to fill"
+set MinOriginAmount 1000 #acts as a threshold for reverse mode and dont kill core lel
+print "(whole number) /rss/ Determines the mininum amount of an item to start working"
+sensor x cell1 @x 
+sensor y cell1 @y 
+op mul tx x @maph  #create flag...
+op add location tx y
+set skipVars 1
+configIgnore:
+jump ItemDentify notEqual Origin null
+    ubind @mono
+    sensor controlled @unit @controlled
+jump ItemDentify greaterThanEq controlled 2
+    ulocate building core false @copper ox oy fo Origin
+ItemDentify:
+    sensor c1 Origin @plastanium
+    jump skip3 lessThan c1 MinOriginAmount #is there anything to unload?
+    sensor r1 reconstructor1 @plastanium #how much x in v1, v2...
+    sensor r2 reconstructor2 @plastanium
+    sensor r3 reconstructor3 @plastanium
+    sensor r4 reconstructor4 @plastanium
+    sensor r5 reconstructor5 @plastanium #how much x in v5, v6...
+    sensor r6 reconstructor6 @plastanium
+    sensor r7 reconstructor7 @plastanium
+    sensor r8 reconstructor8 @plastanium
+    sensor r9 driver1 @plastanium
+    sensor r10 driver2 @plastanium
+    sensor r11 driver3 @plastanium
+    op add am1 r1 r2 #combine 
+    op add am2 r3 r4
+    op add amount am1 am2
+    op add am1 r5 r6 #combine again 
+    op add am2 r7 r8
+    op add amount2 am1 am2
+    op add amount amount amount2
+    op add am1 r9 r10
+    op add am1 am1 r11
+    op add amount amount am1
+    read external cell1 4
+    op add amount amount external
+    jump skip3 greaterThanEq amount PlastBuffer
+    set TitaniumBuffer amount
+    set SiliconBuffer amount
+    set dataitem 10
+skip3:
+    sensor c1 Origin @titanium
+    jump skip1 lessThan c1 MinOriginAmount #is there anything to unload?
+    sensor r1 reconstructor1 @titanium #how much x in v1, v2...
+    sensor r2 reconstructor2 @titanium
+    sensor r3 reconstructor3 @titanium
+    sensor r4 reconstructor4 @titanium
+    sensor r5 reconstructor5 @titanium #how much x in v5, v6...
+    sensor r6 reconstructor6 @titanium
+    sensor r7 reconstructor7 @titanium
+    sensor r8 reconstructor8 @titanium
+    sensor r9 driver1 @titanium
+    sensor r10 driver2 @titanium
+    sensor r11 driver3 @titanium
+    op add am1 r1 r2 #combine 
+    op add am2 r3 r4
+    op add amount am1 am2
+    op add am1 r5 r6 #combine again 
+    op add am2 r7 r8
+    op add amount2 am1 am2
+    op add amount amount amount2
+    op add am1 r9 r10
+    op add am1 am1 r11
+    op add amount amount am1
+    read external cell1 2
+    op add amount amount external
+    jump skip1 greaterThanEq amount TitaniumBuffer
+    set SiliconBuffer amount
+    set dataitem 6
+skip1:
+    sensor c1 Origin @silicon
+    jump skip2 lessThan c1 MinOriginAmount #is there anything to unload?
+    sensor r1 reconstructor1 @silicon #how much x in v1, v2...
+    sensor r2 reconstructor2 @silicon
+    sensor r3 reconstructor3 @silicon
+    sensor r4 reconstructor4 @silicon
+    sensor r5 reconstructor5 @silicon #how much x in v5, v6...
+    sensor r6 reconstructor6 @silicon
+    sensor r7 reconstructor7 @silicon
+    sensor r8 reconstructor8 @silicon
+    sensor r9 driver1 @silicon
+    sensor r10 driver2 @silicon
+    sensor r11 driver3 @silicon
+    op add am1 r1 r2 #combine 
+    op add am2 r3 r4
+    op add amount am1 am2
+    op add am1 r5 r6 #combine again 
+    op add am2 r7 r8
+    op add amount2 am1 am2
+    op add amount amount amount2
+    op add am1 r9 r10
+    op add am1 am1 r11
+    op add amount amount am1
+    read external cell1 3
+    op add amount amount external
+    jump skip2 greaterThanEq amount SiliconBuffer
+    set dataitem 9
+skip2:
+#-----------------------------------------
+    write dataitem cell1 0
+    read isBinded cell1 1
+    jump notBinded lessThanEq isBinded 0
+    print "[#DDDDEE]Sucessful: T4 Operating![white]\n"
+    op sub isBinded isBinded 1
+    write isBinded cell1 1
+    print location
+    printflush
+end
+notBinded:
+    print "[yellow]Copy and paste this to location:[white]\n"
+    print location
+    printflush
+end
+print "Semi-AntiClog Variation"
+print "made by: Someone's Shadow #9470"
+end
