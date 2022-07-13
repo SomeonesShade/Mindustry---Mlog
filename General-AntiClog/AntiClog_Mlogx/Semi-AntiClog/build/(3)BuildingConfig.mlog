@@ -1,0 +1,24 @@
+j3:
+set a -1
+    buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
+op add a a 1
+getlink obj a
+sensor oType obj @type
+jump jItemConfig equal oType @inverted-sorter
+jump jItemConfig equal oType @sorter
+jump skip2 equal oType @mass-driver
+jump jEnable notEqual oType @memory-cell
+jump datawrite lessThan MemoryReadLocation 0
+jump jEnable equal obj cell1
+        datawrite:
+write dataItem obj MemoryWriteLocation
+        jEnable:
+control enabled obj isA
+        jItemConfig:
+control config obj typec
+    skip2:
+jump buildingConfigLoop lessThan a @links
+op add sC sC 1
+end
+print "Semi-AntiClog 3.1"
+print "made by: Someone's Shadow #9470"

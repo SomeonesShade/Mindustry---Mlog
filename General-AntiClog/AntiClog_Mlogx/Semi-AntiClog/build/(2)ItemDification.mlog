@@ -1,0 +1,88 @@
+ItemDentify: #Part2!!!
+jump storageIsPresent notEqual v1 0
+jump storageIsPresent equal IgnoreBlink true
+op equal blink blink 0
+set isA 0
+wait 0.5
+op add sC sC 10
+set dataItem 0
+set typec @blast-compound
+jump j3 equal blink 0
+set typec null
+jump j3 always
+    storageIsPresent:
+set prevLinks @links
+set bitLocation 0
+set dataItem 0
+set mv MaxValue
+set i 0
+    itemLoop: #label suggests, it loops to determine what item to use
+lookup item type i
+op shl bitLocation 1 i
+op and isSelected bitLocation bitSelection
+jump skip1 equal isSelected 0
+sensor c1 Origin type
+jump skip1 lessThan c1 MinOriginAmount
+sensor r1 v1 type
+sensor r2 v2 type
+sensor r3 v3 type
+sensor r4 v4 type
+jump selectedAdd equal IsCluster true
+op min am1 r1 r2
+op min am2 r3 r4
+op min amount am1 am2
+jump amountCheck strictEqual v5 null
+sensor r5 v5 type
+sensor r6 v6 type
+sensor r7 v7 type
+sensor r8 v8 type
+op min am1 r5 r6
+op min am2 r7 r8
+op min amount2 am1 am2
+op min amount amount amount2
+jump amountCheck strictEqual v9 null
+set select_index -1
+        storageMinRead: #what is contained in the storages?
+op add select_index select_index 1
+op add goBack @counter 1
+jump storageSelect always
+jump amountCheck strictEqual select_output null
+sensor rV select_output type
+op min amount amount rV
+jump storageMinRead always
+    selectedAdd:
+op add am1 r1 r2
+op add am2 r3 r4
+op add amount am1 am2
+jump amountCheck strictEqual v5 null
+sensor r5 v5 type
+sensor r6 v6 type
+sensor r7 v7 type
+sensor r8 v8 type
+op add am1 r5 r6
+op add am2 r7 r8
+op add amount2 am1 am2
+op add amount amount amount2
+jump amountCheck strictEqual v9 null
+set select_index -1
+        storageAddRead: #what is contained in the storages?
+op add select_index select_index 1
+op add goBack @counter 1
+jump storageSelect always
+jump amountCheck strictEqual select_output null
+sensor rV select_output type
+op add amount amount rV
+jump storageAddRead always
+    amountCheck:
+jump skip1 greaterThanEq amount mv
+set typec type
+op add dataItem dataItem bitLocation
+set mv amount
+    skip1:
+op add i i 1
+jump itemLoop lessThan i @itemCount
+set isA 1
+jump j3 lessThan mv MaxValue
+set isA 0
+set typec null
+set dataItem 0

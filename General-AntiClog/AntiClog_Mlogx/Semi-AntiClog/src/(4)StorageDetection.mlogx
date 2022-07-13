@@ -1,0 +1,158 @@
+storageCheck: #set variables
+	set sC 0 #reset storageCheck counter
+    set v1 0 #reset storages
+	set v2 0
+	set v3 0
+	set v4 0
+    set select_readMode 0
+    set select_index -1
+    set select_input null
+storageReset: #clear all storage
+    op add select_index select_index 1
+    op add goBack @counter 1
+    jump storageSelect always
+    jump storageReset notEqual select_index null
+storageArrayIgnore:
+    set select_index 0
+	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = false)
+    set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = true)
+	set lp -1
+storageDetectionLoop: #detect storages via getlink loop
+    op add lp lp 1
+    getlink obj lp
+    jump skip0 equal obj Origin
+    sensor oType obj @type
+    jump select equal oType @container #which blocks are considered storages
+    jump select equal oType @vault
+    jump select equal oType @mass-driver
+    jump select equal oType @core-shard
+    jump select equal oType @core-foundation
+    jump select equal oType @core-nucleus
+    skip0:
+    	jump storageDetectionLoop lessThan lp @links
+    set select_readMode 2 #no need to write on second part of the code, just read
+    set MaxValue BaseLineValue
+    jump clusterIgnore equal IsCluster false #is this cluter mode?
+    op mul TotalMaxStorage TotalMaxStorage MaxPercent
+    set MaxValue TotalMaxStorage
+    jump ItemDentify always
+end
+clusterIgnore:
+	jump jb1 notEqual v2 0 #is v2 filled?
+    set v2 v1
+jb1:
+    jump jb2 notEqual v3 0 #is v3 filled?
+    set v3 v1
+jb2:
+    jump jb3 notEqual v4 0 #is v4 filled?
+    set v4 v1
+jb3:
+    jump jb7 strictEqual v5 null #is v5 filled?
+    set v5 v1	
+jb4:
+    jump jb5 notEqual v6 0 #is v6 filled?
+    set v6 v1	
+jb5:
+    jump jb6 notEqual v7 0 #is v7 filled?
+    set v7 v1	
+jb6:
+    jump jb7 notEqual v8 0 #is v8 filled?
+    set v8 v1	
+jb7:
+    jump ItemDentify always
+end
+select: #if we have found a storageblock, enter into memory
+    sensor ic obj @itemCapacity
+    jump ja1 notEqual v1 0 #is v1 filled?
+    set v1 obj #if not set it into memory
+    op add TotalMaxStorage TotalMaxStorage ic #and update TotalMaxStorage
+    jump j1 always
+ja1: 
+    jump ja2 notEqual v2 0 #is v2 filled?
+    set v2 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja2:
+    jump ja3 notEqual v3 0 #is v3 filled?
+    set v3 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja3:
+    jump ja4 notEqual v4 0 #is v4 filled?
+    set v4 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja4:
+    jump ja5 notEqual v5 0 #is v5 filled?
+    set v5 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja5:
+    jump ja6 notEqual v6 0 #is v6 filled?
+    set v6 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja6:
+    jump ja7 notEqual v7 0 #is v7 filled?
+    set v7 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+ja7:
+    jump jArray notEqual v8 0 #is v8 filled?
+    set v8 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always
+jArray:
+    jump skip0 strictEqual select_index null #if hardcode storage has been reached, use this array
+    set select_input obj
+    op add goBack @counter 1
+    jump storageSelect always
+    op add select_index select_index 1
+    op add TotalMaxStorage TotalMaxStorage ic
+j1:
+    op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
+    op min ic BaseLineValue ic #take smallest
+    set BaseLineValue ic #set as new BaseLineValue
+    jump skip0 always
+end
+storageSelect: #select_input, select_output, select_readMode, goBack, select_index
+op mul selectStorage select_index 4
+op add selectStorage selectStorage select_readMode
+op add @counter selectStorage @counter
+set v9 select_input
+set @counter goBack
+set select_output v9
+set @counter goBack
+set v10 select_input
+set @counter goBack
+set select_output v10
+set @counter goBack
+set v11 select_input
+set @counter goBack
+set select_output v11
+set @counter goBack
+set v12 select_input
+set @counter goBack
+set select_output v12
+set @counter goBack
+set v13 select_input
+set @counter goBack
+set select_output v13
+set @counter goBack
+set v14 select_input
+set @counter goBack
+set select_output v14
+set @counter goBack
+set v15 select_input
+set @counter goBack
+set select_output v15
+set @counter goBack
+set v16 select_input
+set @counter goBack
+set select_output v16
+set @counter goBack
+set select_index null
+set @counter goBack
+set select_output null
+set @counter goBack
+end

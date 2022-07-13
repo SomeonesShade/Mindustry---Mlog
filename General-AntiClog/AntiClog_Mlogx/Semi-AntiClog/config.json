@@ -5,7 +5,7 @@
 	],
 	"compilerOptions": {
 		"include": [],
-		"removeComments": true,
+		"removeComments": false,
 		"compileWithErrors": true,
 		"mode": "project",
 		"prependFileName": true,
