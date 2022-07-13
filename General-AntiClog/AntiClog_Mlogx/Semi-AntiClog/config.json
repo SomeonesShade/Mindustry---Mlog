@@ -1,0 +1,15 @@
+{
+	"name": "Semi-AntiClog",
+	"authors": [
+		"Someone's Shade"
+	],
+	"compilerOptions": {
+		"include": [],
+		"removeComments": true,
+		"compileWithErrors": true,
+		"mode": "project",
+		"prependFileName": true,
+		"checkTypes": true
+	},
+	"compilerConstants": {}
+}
