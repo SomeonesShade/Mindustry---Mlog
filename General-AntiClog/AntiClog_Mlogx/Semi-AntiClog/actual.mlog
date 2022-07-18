@@ -1,7 +1,3 @@
-
-end
-
-#functions
 set OriginBlock null
 print "(Block/Bool) The StorageBlock where the items come from. If set to false, disables origin functionality"
 jump configIgnore equal skipVars 1
@@ -92,7 +88,6 @@ bitSkip: #Determines when to check for Storages
 jump storageCheck notEqual @links prevLinks
 jump ItemDentify equal isA 1
 jump storageCheck greaterThanEq sC 25
-end
 ItemDentify: #Part2!!!
 jump storageIsPresent notEqual v1 0
 jump storageIsPresent equal IgnoreBlink true
@@ -181,7 +176,6 @@ jump j3 lessThan mv MaxValue
 set isA 0
 set typec null
 set dataItem 0
-end
 j3:
 set a -1
     buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
@@ -430,10 +424,5 @@ set @counter goBack
 set select_output null
 set @counter goBack
 end
-
-end
-
-#stdlib functions
-
 print "Made with mlogx"
 print "github.com/BalaM314/mlogx/"

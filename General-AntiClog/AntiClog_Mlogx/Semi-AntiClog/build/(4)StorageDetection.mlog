@@ -5,6 +5,7 @@ set v2 0
 set v3 0
 set v4 0
 set select_readMode 0
+jump storageArrayIgnore strictEqual v5 null
 set select_index -1
 set select_input null
 storageReset: #clear all storage
@@ -40,25 +41,25 @@ end
 clusterIgnore:
 jump jb1 notEqual v2 0
 set v2 v1
-jb1:
+    jb1:
 jump jb2 notEqual v3 0
 set v3 v1
-jb2:
+    jb2:
 jump jb3 notEqual v4 0
 set v4 v1
-jb3:
+    jb3:
 jump jb7 strictEqual v5 null
 set v5 v1
-jb4:
+    jb4:
 jump jb5 notEqual v6 0
 set v6 v1
-jb5:
+    jb5:
 jump jb6 notEqual v7 0
 set v7 v1
-jb6:
+    jb6:
 jump jb7 notEqual v8 0
 set v8 v1
-jb7:
+    jb7:
 jump ItemDentify always
 end
 select: #if we have found a storageblock, enter into memory
@@ -67,42 +68,42 @@ jump ja1 notEqual v1 0
 set v1 obj
 op add TotalMaxStorage TotalMaxStorage ic
 jump j1 always
-ja1: 
+    ja1:
 jump ja2 notEqual v2 0
 set v2 obj
 op add TotalMaxStorage TotalMaxStorage ic
 jump j1 always
-ja2:
+    ja2:
 jump ja3 notEqual v3 0
 set v3 obj
 op add TotalMaxStorage TotalMaxStorage ic
 jump j1 always
-ja3:
+    ja3:
 jump ja4 notEqual v4 0
 set v4 obj
 op add TotalMaxStorage TotalMaxStorage ic
 jump j1 always
-ja4:
+    ja4:
 jump ja5 notEqual v5 0
 set v5 obj
 op add TotalMaxStorage TotalMaxStorage ic
 jump j1 always
-ja5:
+    ja5:
 jump ja6 notEqual v6 0
 set v6 obj
 op add TotalMaxStorage TotalMaxStorage ic
 jump j1 always
-ja6:
+    ja6:
 jump ja7 notEqual v7 0
 set v7 obj
 op add TotalMaxStorage TotalMaxStorage ic
 jump j1 always
-ja7:
-jump jArray notEqual v8 0
+    ja7:
+jump ja8 notEqual v8 0
 set v8 obj
 op add TotalMaxStorage TotalMaxStorage ic
 jump j1 always
-jArray:
+    ja8:
 jump skip0 strictEqual select_index null
 set select_input obj
 op add goBack @counter 1
@@ -150,6 +151,70 @@ set @counter goBack
 set v16 select_input
 set @counter goBack
 set select_output v16
+set @counter goBack
+set v17 select_input
+set @counter goBack
+set select_output v17
+set @counter goBack
+set v18 select_input
+set @counter goBack
+set select_output v18
+set @counter goBack
+set v19 select_input
+set @counter goBack
+set select_output v19
+set @counter goBack
+set v20 select_input
+set @counter goBack
+set select_output v20
+set @counter goBack
+set v21 select_input
+set @counter goBack
+set select_output v21
+set @counter goBack
+set v22 select_input
+set @counter goBack
+set select_output v22
+set @counter goBack
+set v23 select_input
+set @counter goBack
+set select_output v23
+set @counter goBack
+set v24 select_input
+set @counter goBack
+set select_output v24
+set @counter goBack
+set v25 select_input
+set @counter goBack
+set select_output v25
+set @counter goBack
+set v26 select_input
+set @counter goBack
+set select_output v26
+set @counter goBack
+set v27 select_input
+set @counter goBack
+set select_output v27
+set @counter goBack
+set v28 select_input
+set @counter goBack
+set select_output v28
+set @counter goBack
+set v29 select_input
+set @counter goBack
+set select_output v29
+set @counter goBack
+set v30 select_input
+set @counter goBack
+set select_output v30
+set @counter goBack
+set v31 select_input
+set @counter goBack
+set select_output v31
+set @counter goBack
+set v32 select_input
+set @counter goBack
+set select_output v32
 set @counter goBack
 set select_index null
 set @counter goBack

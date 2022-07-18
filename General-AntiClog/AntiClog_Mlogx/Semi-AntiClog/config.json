@@ -1,7 +1,7 @@
 {
 	"name": "Semi-AntiClog",
 	"authors": [
-		"Someone's Shade"
+		"Someone's Shadow #9470"
 	],
 	"compilerOptions": {
 		"include": [],
@@ -11,5 +11,7 @@
 		"prependFileName": true,
 		"checkTypes": true
 	},
-	"compilerConstants": {}
+	"compilerConstants": {
+		"version": 3.1
+	}
 }

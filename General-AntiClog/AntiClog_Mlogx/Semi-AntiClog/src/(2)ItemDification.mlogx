@@ -27,7 +27,7 @@ ItemDentify: #Part2!!!
         sensor r2 v2 type
         sensor r3 v3 type
         sensor r4 v4 type
-        jump selectedAdd equal IsCluster true #take multi input or single?
+    jump selectedAdd equal IsCluster true #take multi input or single?
         op min am1 r1 r2 #take small
         op min am2 r3 r4
         op min amount am1 am2

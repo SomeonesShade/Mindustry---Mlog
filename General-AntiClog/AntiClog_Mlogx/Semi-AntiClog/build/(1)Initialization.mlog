@@ -5,16 +5,13 @@ set MaxPercent 0.2
 print "(decimal) determines the maxinum percentage of an item in a storage block"
 set FindCore true
 print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
-set IsCluster false
-print "(bool) If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
 set MinOriginAmount 10
 print "(integer) /rss/ Determines the mininum amount of an item to start working"
-set MemoryWriteLocation 1
-print "(whole number) doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
-set MemoryReadLocation -1
-print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
-set IgnoreBlink false
-print "disables 'blinking' (it happens when there are no vaults detected)"
+p5: 
+jump p5 notEqual 0 0
+print "Item Configuration"
+p6: 
+jump p6 notEqual 0 0
 print "for config selection, set to true(1) or false(0)"
 op shl  false 0
 op shl  1 1
@@ -32,6 +29,24 @@ op shl  1 12
 op shl  false 13
 op shl  false 14
 op shl  false 15
+p1: 
+jump p1 notEqual 0 0
+print "MultiStorage/Processor Settings, you will almost never use these"
+p2: 
+jump p2 notEqual 0 0
+set IsCluster false
+print "(bool) If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
+set MemoryWriteLocation 1
+print "(whole number) doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
+set MemoryReadLocation -1
+print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
+p3: 
+jump p3 notEqual 0 0
+print "Random Settings"
+p4: 
+jump p4 notEqual 0 0
+set IgnoreBlink false
+print "disables 'blinking' (it happens when there are no vaults detected)"
 print "Do not modify from this point, unless you know how it works lel"
 op add bitSelection  
 op add bitSelection bitSelection 
