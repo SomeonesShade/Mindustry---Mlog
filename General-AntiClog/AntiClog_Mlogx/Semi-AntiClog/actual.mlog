@@ -371,58 +371,16 @@ set v20 select_input
 set @counter goBack
 set select_output v20
 set @counter goBack
-set v21 select_input
-set @counter goBack
-set select_output v21
-set @counter goBack
-set v22 select_input
-set @counter goBack
-set select_output v22
-set @counter goBack
-set v23 select_input
-set @counter goBack
-set select_output v23
-set @counter goBack
-set v24 select_input
-set @counter goBack
-set select_output v24
-set @counter goBack
-set v25 select_input
-set @counter goBack
-set select_output v25
-set @counter goBack
-set v26 select_input
-set @counter goBack
-set select_output v26
-set @counter goBack
-set v27 select_input
-set @counter goBack
-set select_output v27
-set @counter goBack
-set v28 select_input
-set @counter goBack
-set select_output v28
-set @counter goBack
-set v29 select_input
-set @counter goBack
-set select_output v29
-set @counter goBack
-set v30 select_input
-set @counter goBack
-set select_output v30
-set @counter goBack
-set v31 select_input
-set @counter goBack
-set select_output v31
-set @counter goBack
-set v32 select_input
-set @counter goBack
-set select_output v32
-set @counter goBack
 set select_index null
 set @counter goBack
 set select_output null
 set @counter goBack
 end
+print "Semi-AntiClog 3.1"
+print "made by: Someone's Shadow #9470"
+end
+
+#stdlib functions
+
 print "Made with mlogx"
 print "github.com/BalaM314/mlogx/"

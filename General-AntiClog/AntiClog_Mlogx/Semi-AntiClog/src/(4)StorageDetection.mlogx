@@ -88,7 +88,7 @@ storageSelect: #select_input, select_output, select_readMode, goBack, select_ind
 op mul selectStorage select_index 4
 op add selectStorage selectStorage select_readMode
 op add @counter selectStorage @counter
-&for i 9 32 #storage array
+&for i 9 20 #storage array
 {
     set v$i select_input
     set @counter goBack
@@ -100,3 +100,5 @@ set @counter goBack
 set select_output null
 set @counter goBack
 end
+print "$name $version"
+print "made by: $authors"
