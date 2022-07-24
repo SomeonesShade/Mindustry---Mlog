@@ -1,0 +1,133 @@
+Initialization:
+jump configIgnore equal skipVars 1
+set MaxPercent 0.2
+print "(decimal) determines the maxinum percentage of an item in a storage block"
+print "set to true(1) or false(0) for config selection"
+op shl  false 0
+op shl  1 1
+op shl  1 2
+op shl  1 3
+op shl  false 4
+op shl  1 5
+op shl  1 6
+op shl  false 7
+op shl  false 8
+op shl  1 9
+op shl  1 10
+op shl  1 11
+op shl  1 12
+op shl  false 13
+op shl  false 14
+op shl  false 15
+op add bitSelection  
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+set skipVars 1
+configIgnore:
+storageCheck:
+jump storageCheck notEqual @links prevLinks
+jump ItemDification equal isA 1
+jump storageCheck greaterThanEq sC 25
+ItemDification:
+set prevLinks @links
+set bitLocation 0
+set dataItem 0
+set mv MaxValue
+set i 0
+itemLoop:
+lookup item type i
+op shl bitLocation 1 i
+op and isSelected bitLocation bitSelection
+jump skip1 equal isSelected 0
+sensor c1 Origin type
+jump skip1 lessThan c1 MinOriginAmount
+sensor r1 v1 type
+set r2 r1
+op min amount r1 r2
+amountCheck:
+jump skip1 greaterThanEq amount mv
+set typec type
+op add dataItem dataItem bitLocation
+set mv amount
+skip1:
+op add i i 1
+jump itemLoop lessThan i @itemCount
+op lessThan isA mv MaxValue
+jump BuildingConfigLoop equal isA 1
+set typec null
+set dataItem 0
+BuildingConfigLoop:
+set a 0
+configurationLoop:
+op add a a 1
+getlink obj a
+sensor oType obj @type
+jump jItemConfig equal oType @inverted-sorter
+jump jItemConfig equal oType @sorter
+jump skip2 equal oType @mass-driver
+jump jEnable notEqual oType @memory-cell
+jump datawrite lessThan MemoryReadLocation 0
+jump jEnable equal obj cell1
+datawrite:
+write dataItem obj MemoryWriteLocation
+jEnable:
+control enabled obj isA
+jItemConfig:
+control config obj typec
+skip2:
+jump configurationLoop lessThan a @links
+op add sC sC 1
+end
+StorageDetection:
+set sC 0
+set v1 0
+set lp -1
+storageDetectionLoop:
+op add lp lp 1
+getlink obj lp
+jump skip0 equal obj Origin
+sensor oType obj @type
+jump select equal oType @container
+jump select equal oType @vault
+jump select equal oType @mass-driver
+jump select equal oType @core-shard
+jump select equal oType @core-foundation
+jump select equal oType @core-nucleus
+skip0:
+jump storageDetectionLoop lessThan lp @links
+set MaxValue BaseLineValue
+jump ItemDification always
+end
+select:
+sensor ic obj @itemCapacity
+jump ja1 notEqual v1 0
+set v1 obj
+jump j1 always
+ja1:
+j1:
+op mul ic ic MaxPercent
+op min ic BaseLineValue ic
+set BaseLineValue ic
+jump skip0 always
+end
+print "made by Shade"
+end
+
+#functions
+
+#stdlib functions
+
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"

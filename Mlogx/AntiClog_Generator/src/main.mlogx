@@ -1,0 +1,147 @@
+Initialization:
+jump configIgnore equal skipVars 1
+set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
+print "(decimal) determines the maxinum percentage of an item in a storage block"
+print "set to true(1) or false(0) for config selection"
+op shl $_copper false 0
+op shl $_lead 1 1
+op shl $_metaglass 1 2
+op shl $_graphite 1 3
+op shl $_sand false 4
+op shl $_coal 1 5
+op shl $_titanium 1 6
+op shl $_thorium false 7
+op shl $_scrap false 8
+op shl $_silicon 1 9
+op shl $_plastanium 1 10
+op shl $_phase-fabric 1 11
+op shl $_surge-alloy 1 12
+op shl $_spore-pod false 13
+op shl $_blast-compound false 14
+op shl $_pyratite false 15
+op add bitSelection $_copper $_lead
+op add bitSelection bitSelection $_metaglass
+op add bitSelection bitSelection $_graphite
+op add bitSelection bitSelection $_sand
+op add bitSelection bitSelection $_coal
+op add bitSelection bitSelection $_titanium
+op add bitSelection bitSelection $_thorium
+op add bitSelection bitSelection $_scrap
+op add bitSelection bitSelection $_silicon
+op add bitSelection bitSelection $_plastanium
+op add bitSelection bitSelection $_phase-fabric
+op add bitSelection bitSelection $_surge-alloy
+op add bitSelection bitSelection $_spore-pod
+op add bitSelection bitSelection $_blast-compound
+op add bitSelection bitSelection $_pyratite
+set skipVars 1
+configIgnore:
+&for i EnableRSS 0 {
+    
+}
+storageCheck:
+jump storageCheck notEqual @links prevLinks     #trigger storageCheck if any link (amount) is changed
+jump ItemDification equal isA 1                 #do not trigger storageCheck if it is currently working
+jump storageCheck greaterThanEq sC 25           #timer lel
+ItemDification:
+    set prevLinks @links
+    set bitLocation 0
+    set dataItem 0
+    set mv MaxValue
+    set i 0
+    itemLoop: #label suggests, it loops to determine what item to use
+        lookup item type i
+		op shl bitLocation 1 i #is at the selcted position true?:
+        op and isSelected bitLocation bitSelection
+		jump skip1 equal isSelected 0 #check
+        sensor c1 Origin type
+        jump skip1 lessThan c1 MinOriginAmount #is there anything to unload?
+        &for i 1 $StorageAmount{
+            sensor r$i v$i type
+        }
+        &for i 1 $StorageAmount{ #basically an if statement
+            &for i $StorageAmount 1{
+                set r2 r1
+            }
+        }
+        op min amount r1 r2
+        &for i 3 $StorageAmount{
+            op min amount amount r$i
+        }
+    amountCheck:
+        jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
+        set typec type #if so set the output
+        op add dataItem dataItem bitLocation
+        set mv amount
+    skip1:
+        op add i i 1
+        jump itemLoop lessThan i @itemCount
+    op lessThan isA mv MaxValue
+	jump BuildingConfigLoop equal isA 1 #is everything full?
+    set typec null
+    set dataItem 0
+BuildingConfigLoop:
+set a 0
+    configurationLoop:
+    op add a a 1
+        getlink obj a
+        sensor oType obj @type
+        jump jItemConfig equal oType @inverted-sorter #skip if storage block
+        jump jItemConfig equal oType @sorter
+        jump skip2 equal oType @mass-driver
+        jump jEnable notEqual oType @memory-cell
+        jump datawrite lessThan MemoryReadLocation 0 
+        jump jEnable equal obj cell1
+        datawrite:
+        write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
+    jEnable:
+    control enabled obj isA #enable or disable
+    jItemConfig:
+    control config obj typec #set output
+skip2:
+jump configurationLoop lessThan a @links
+op add sC sC 1
+end
+
+StorageDetection: #set variables
+    set sC 0
+	&for i 1 $StorageAmount{
+        set v$i 0
+    }
+	set lp -1
+storageDetectionLoop: #detect storages via getlink loop
+    op add lp lp 1
+    getlink obj lp
+    jump skip0 equal obj Origin
+    sensor oType obj @type
+    jump select equal oType @container #which blocks are considered storages
+    jump select equal oType @vault
+    jump select equal oType @mass-driver
+    jump select equal oType @core-shard
+    jump select equal oType @core-foundation
+    jump select equal oType @core-nucleus
+    skip0:
+    	jump storageDetectionLoop lessThan lp @links
+    set MaxValue BaseLineValue
+&for i 2 $StorageAmount{
+    jump jb$i notEqual v$i 0 #is v$i filled?
+    set v$i v1
+jb$i:
+}
+    jump ItemDification always
+end
+select: #if we have found a storageblock, enter into memory
+    sensor ic obj @itemCapacity
+&for i 1 $StorageAmount{
+        jump ja$i notEqual v$i 0    #is v$1 filled?
+        set v$i obj                 #if not set it into memory
+        jump j1 always
+    ja$i:
+} 
+j1:
+    op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
+    op min ic BaseLineValue ic #take smallest
+    set BaseLineValue ic #set as new BaseLineValue
+    jump skip0 always
+end
+print "made by $authors"
