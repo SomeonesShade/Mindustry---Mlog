@@ -5,7 +5,7 @@ set MaxPercent 0.2  #this functions as a buffer (filling it to full will practic
 print "(decimal) determines the maxinum percentage of an item in a storage block"
 set FindCore true
 print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
-set MinOriginAmount 900 #acts as a threshold for reverse mode and dont kill core lel
+set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
 print "(integer) /rss/ Determines the mininum amount of an item to start working"
 pa1: 
 jump pa1 notEqual 0 0
@@ -47,6 +47,7 @@ pc2:
 jump pc2 notEqual 0 0
 set IgnoreBlink false
 print "disables 'blinking' (it happens when there are no vaults detected)"
+
 print "Do not modify from this point, unless you know how it works lel"
 op add bitSelection   #compile config into a single number (ex: 101 as an example)
 op add bitSelection bitSelection 
@@ -63,16 +64,19 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
+
 jump originDisable strictEqual OriginBlock false
 jump endOfSettings always 
 originDisable:
 set MinOriginAmount -1
 endOfSettings:
 set skipVars 1
+
 configIgnore:
 jump coreIgnore lessThan MinOriginAmount 0
 jump originIgnore equal OriginBlock null #sets the Origin
 set Origin OriginBlock
+
 originIgnore:
 jump coreIgnore notEqual Origin null
 jump coreIgnore equal FindCore false
@@ -80,19 +84,22 @@ jump coreIgnore equal FindCore false
     sensor controlled @unit @controlled
 jump originIgnore greaterThanEq controlled 2 #UHHHHHHHHHH
     ulocate building core false @copper ox oy fo Origin
+
 coreIgnore:
 jump bitSkip equal cell1 null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
+
 bitSkip: #Determines when to check for Storages
 jump storageCheck notEqual @links prevLinks     #trigger storageCheck if any link (amount) is changed
-jump ItemDentify equal isA 1                    #do not trigger storageCheck if it is currently working
+jump ItemDentify equal isA true                    #do not trigger storageCheck if it is currently working
 jump storageCheck greaterThanEq sC 25           #timer lel
+
 ItemDentify: #Part2!!!
     jump storageIsPresent notEqual v1 0 #do we even have a storage block?
         jump storageIsPresent equal IgnoreBlink true #Do not blink is IgnoreBlink is set to true
         op equal blink blink 0      #then start blinking
-        set isA 0                   #do not enable
+        set isA false                   #do not enable
         wait 0.5                    #no epilepsy
         op add sC sC 10             #increase checks so it can be updated asap
         set dataItem 0              #do not send anything
@@ -100,7 +107,8 @@ ItemDentify: #Part2!!!
         jump j3 equal blink 0
         set typec null              #absolutely nothing
     jump j3 always              #immediately skip itemLoop
-    storageIsPresent:
+
+storageIsPresent:
 	set prevLinks @links #reset values used or update
     set bitLocation 0
     set dataItem 0
@@ -117,11 +125,12 @@ ItemDentify: #Part2!!!
         sensor r2 v2 type
         sensor r3 v3 type
         sensor r4 v4 type
-        jump selectedAdd equal IsCluster true #take multi input or single?
+
+    jump selectedAdd equal IsCluster true #take multi input or single?
         op min am1 r1 r2 #take small
         op min am2 r3 r4
         op min amount am1 am2
-        jump amountCheck strictEqual v5 null #do we pass the vault test?
+    jump amountCheck equal v5 0 #do we pass the vault test?
         sensor r5 v5 type #how much x in v5, v6...
         sensor r6 v6 type
         sensor r7 v7 type
@@ -130,7 +139,7 @@ ItemDentify: #Part2!!!
         op min am2 r7 r8
         op min amount2 am1 am2
         op min amount amount amount2
-        jump amountCheck strictEqual v9 null #do we pass the vault test again?
+    jump amountCheck strictEqual v9 null #do we pass the vault test again?
         set select_index -1
         storageMinRead: #what is contained in the storages?
             op add select_index select_index 1                      #loop start
@@ -139,11 +148,12 @@ ItemDentify: #Part2!!!
             sensor rV select_output type                            #then: do operation:
             op min amount amount rV
             jump storageMinRead always
+    
     selectedAdd:
         op add am1 r1 r2 #combine 
         op add am2 r3 r4
         op add amount am1 am2
-        jump amountCheck strictEqual v5 null #do we pass the vault test?
+    jump amountCheck equal v5 0 #do we pass the vault test?
         sensor r5 v5 type #how much x in v5, v6...
         sensor r6 v6 type
         sensor r7 v7 type
@@ -152,7 +162,7 @@ ItemDentify: #Part2!!!
         op add am2 r7 r8
         op add amount2 am1 am2
         op add amount amount amount2
-        jump amountCheck strictEqual v9 null #do we pass the vault test again?
+    jump amountCheck strictEqual v9 null #do we pass the vault test again?
         set select_index -1
         storageAddRead: #what is contained in the storages?
             op add select_index select_index 1                      #loop start
@@ -161,19 +171,22 @@ ItemDentify: #Part2!!!
             sensor rV select_output type                            #then: do operation:
             op add amount amount rV
             jump storageAddRead always 
+
     amountCheck:
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
         set typec type #if so set the output
         op add dataItem dataItem bitLocation
         set mv amount
+
     skip1:
         op add i i 1
         jump itemLoop lessThan i @itemCount
-    set isA 1
-	jump j3 lessThan mv MaxValue #is everything full?
-	set isA 0
+
+    op lessThan isA mv MaxValue
+jump j3 equal isA true #is everything full?
     set typec null
     set dataItem 0
+
     j3:
         set a -1
     buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
@@ -186,36 +199,46 @@ ItemDentify: #Part2!!!
         jump jEnable notEqual oType @memory-cell
         jump datawrite lessThan MemoryReadLocation 0 
         jump jEnable equal obj cell1
-        datawrite:
+    datawrite:
         write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
-        jEnable:
+    jEnable:
         control enabled obj isA #enable or disable
-        jItemConfig:
+    jItemConfig:
         control config obj typec #set output
     skip2:
         jump buildingConfigLoop lessThan a @links
 	op add sC sC 1
 end
-print "Semi-AntiClog 3.1"
+
+print "Semi-AntiClog 3.2"
 print "made by: Someone's Shadow #9470"
+
 storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
+    set select_readMode 0
     set v1 0 #reset storages
 	set v2 0
 	set v3 0
 	set v4 0
-    set select_readMode 0
+    set v5 0
+    set v6 0
+    set v7 0
+    set v8 0
+jump storageArrayIgnore strictEqual v9 null
+
     set select_index -1
     set select_input null
 storageReset: #clear all storage
     op add select_index select_index 1
     op add goBack @counter 1; jump storageSelect always
     jump storageReset notEqual select_index null
+
 storageArrayIgnore:
-    set select_index 0
 	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = false)
     set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = true)
-	set lp -1
+	
+    set select_index 0
+    set lp -1
 storageDetectionLoop: #detect storages via getlink loop
     op add lp lp 1
     getlink obj lp
@@ -227,15 +250,19 @@ storageDetectionLoop: #detect storages via getlink loop
     jump select equal oType @core-shard
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
+
     skip0:
     	jump storageDetectionLoop lessThan lp @links
+    
     set select_readMode 2 #no need to write on second part of the code, just read
     set MaxValue BaseLineValue
-    jump clusterIgnore equal IsCluster false #is this cluter mode?
+jump clusterIgnore equal IsCluster false #is this cluter mode?
+
     op mul TotalMaxStorage TotalMaxStorage MaxPercent
     set MaxValue TotalMaxStorage
     jump ItemDentify always
 end
+
 clusterIgnore:
 	jump jb1 notEqual v2 0 #is v2 filled?
     set v2 v1
@@ -246,7 +273,7 @@ jb2:
     jump jb3 notEqual v4 0 #is v4 filled?
     set v4 v1
 jb3:
-    jump jb7 strictEqual v5 null #is v5 filled?
+    jump jb7 strictEqual v5 0 #is v5 filled?
     set v5 v1	
 jb4:
     jump jb5 notEqual v6 0 #is v6 filled?
@@ -260,6 +287,7 @@ jb6:
 jb7:
     jump ItemDentify always
 end
+
 select: #if we have found a storageblock, enter into memory
     sensor ic obj @itemCapacity
     jump ja1 notEqual v1 0 #is v1 filled?
@@ -313,6 +341,7 @@ j1:
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always
 end
+
 storageSelect: #select_input, select_output, select_readMode, goBack, select_index
 op mul selectStorage select_index 4
 op add selectStorage selectStorage select_readMode
@@ -355,13 +384,22 @@ set select_output null
 set @counter goBack
 end
 
-#log: version 3.1 QOL update!
-#Reverted Change on only binding logiced monos
-#It now works with sorters and inverted sorters (was under my radar, sorry about that...)
-#Added FindCore to decrease confusion/seperate behavior from OriginBlock
-#OriginBlock added false as an input to allow disabling of Origin Behavior
+#log: version 3.2 Small Changes
+#Moved/Shifted Variables/Settings To Reduce Confusion on Necessary Variables The user will need
+#Fixed Bugs related to storages 5 through 9
+
+#internal changes: added some spacing to chunk the code for more readability
 
 #Plans:
+#ver 3.3 Plans
+#Bind on arc to allow custom configuration
+#Since reverse lookup isnt a thing its sadly slow : /
+#Allow input of MaxValue to be a Whole Number
+#Allow input of OriginAmount to be a Decimal/Percent
+#ver 3.4 Plans
+# >allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)
+# this needs to take into account with Core as well... there is a wai to get reversmode in though...
+
 #ver 3.1 and above:
 #QOL changes
     #(variable decl, and making it even easier to use... somehow)

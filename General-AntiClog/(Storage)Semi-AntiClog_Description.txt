@@ -2,8 +2,10 @@ ____________
 Description:
 ------------
 
-Semi-Anticlog 3.1
-mini-change-log: QOL! More clarity, and fixes
+Semi-Anticlog 3.2
+|Small Changes
+Moved/Shifted Variables/Settings To Reduce Confusion on Necessary Variables The user will need
+Fixed Bugs related to Storages 5 through 9
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
@@ -28,14 +30,8 @@ OriginBlock - setting up what storageblock has the items, If set to false, disab
 MinOriginAmount - Allows rss (resource saver) by not requesting the items from OriginBlock, essentially dont cause resource-gon
 IsCluster - either treats the storageblocks as a sum, or tries to fill each storageblock with a mininum amount of items
 MemoryReadLocation/MemoryWriteLocation - allows for custom config override, and chaining other Semi-AntiClog
-IgnoreBlink - allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)
+IgnoreBlink - Removes Blinking (May get Redundant/Depreciated tbh)
 FindCore - to set core as OriginBlock without binding, only works if OriginBlock is null
-
-ChangeLog:
-Reverted Change on only binding logiced monos
-It now works with sorters and inverted sorters (was under my radar, sorry about that...)
-Added FindCore to decrease confusion/seperate behavior from OriginBlock
-OriginBlock added false as an input to allow disabling of Origin Behavior
 
 -Shade
 _____
@@ -73,3 +69,7 @@ Logs:
 #It now works with sorters and inverted sorters (was under my radar, sorry about that...)
 #Added FindCore to decrease confusion/seperate behavior from OriginBlock
 #OriginBlock added false as an input to allow disabling of Origin Behavior
+
+#log: version 3.2 Small Changes
+#Splitted Variables/Settings into their own set to help with settings some stuff
+#Fixed Bugs related to storages 5 through 9
