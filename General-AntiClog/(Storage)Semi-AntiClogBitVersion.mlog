@@ -47,6 +47,8 @@ jump pc1 notEqual 0 0
 print "Random Settings"
 pc2: 
 jump pc2 notEqual 0 0
+set ConfigTurretType @arc
+print "if this proc binds this type of turret, its starts external config mode"
 set IgnoreBlink false
 print "disables 'blinking' (it happens when there are no vaults detected)"
 
@@ -254,6 +256,7 @@ storageDetectionLoop: #detect storages via getlink loop
     jump select equal oType @core-shard
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
+    jump externalConfiguration equal oType ConfigTurretType
 
     skip0:
     	jump storageDetectionLoop lessThan lp @links
@@ -349,6 +352,108 @@ j1:
     op min ic BaseLineValue ic #take smallest
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always 0 0
+end
+
+externalConfiguration: #a non config way to set items, its not pernament though...
+set r -1
+resetConfig:
+op add r r 1
+getlink configBuilding r
+control enabled configBuilding false
+jump resetConfig lessThan r @links
+
+set selection 0b0 #reset some vars
+control enabled obj 1
+set turret obj #this is necessary if a link is broken for arc
+
+externalConfigurationLoop: #its time to set
+set r -1
+detectConfigLoop:
+op add r r 1
+getlink configBuilding r
+sensor itemDet configBuilding @config
+jump skipDCL strictEqual itemDet null #is it a valid item?
+op add goBack @counter 1; jump reverseItemLookup always 0 0
+op or selection lookup_output selection #record
+control shoot turret @thisx @thisy 1 #display
+control config configBuilding null #reset/feedback
+control enabled configBuilding false #dont send unessary items to other binds
+skipDCL:
+jump detectConfigLoop lessThan r @links
+
+getlink turret lp
+jump externalConfigurationLoop strictEqual turret obj #is the turret still valid link?
+set bitSelection selection
+jump skip0 always 0 0
+end
+
+reverseItemLookup: #itemDet, lookup_output, goBack
+jump rl0 notEqual itemDet @copper
+op shl lookup_output 1 0
+set @counter goBack
+rl0:
+jump rl1 notEqual itemDet @lead
+op shl lookup_output 1 1
+set @counter goBack
+rl1:
+jump rl2 notEqual itemDet @metaglass
+op shl lookup_output 1 2
+set @counter goBack
+rl2:
+jump rl3 notEqual itemDet @graphite
+op shl lookup_output 1 3
+set @counter goBack
+rl3:
+jump rl4 notEqual itemDet @sand
+op shl lookup_output 1 4
+set @counter goBack
+rl4:
+jump rl5 notEqual itemDet @coal
+op shl lookup_output 1 5
+set @counter goBack
+rl5:
+jump rl6 notEqual itemDet @titanium
+op shl lookup_output 1 6
+set @counter goBack
+rl6:
+jump rl7 notEqual itemDet @thorium
+op shl lookup_output 1 7
+set @counter goBack
+rl7:
+jump rl8 notEqual itemDet @scrap
+op shl lookup_output 1 8
+set @counter goBack
+rl8:
+jump rl9 notEqual itemDet @silicon
+op shl lookup_output 1 9
+set @counter goBack
+rl9:
+jump rl10 notEqual itemDet @plastanium
+op shl lookup_output 1 10
+set @counter goBack
+rl10:
+jump rl11 notEqual itemDet @surge-alloy
+op shl lookup_output 1 11
+set @counter goBack
+rl11:
+jump rl12 notEqual itemDet @phase-fabric
+op shl lookup_output 1 12
+set @counter goBack
+rl12:
+jump rl13 notEqual itemDet @spore-pod
+op shl lookup_output 1 13
+set @counter goBack
+rl13:
+jump rl14 notEqual itemDet @blast-compound
+op shl lookup_output 1 14
+set @counter goBack
+rl14:
+jump rl15 notEqual itemDet @pyratite
+op shl lookup_output 1 15
+set @counter goBack
+rl15:
+set lookup_output null
+set @counter goBack
 end
 
 storageSelect: #select_input, select_output, select_readMode, goBack, select_index
