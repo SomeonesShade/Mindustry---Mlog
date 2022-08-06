@@ -1,0 +1,69 @@
+jump rl0 notEqual itemDet @copper
+set select_output 0b0
+set @counter goBack
+rl0:
+jump rl1 notEqual itemDet @lead
+set select_output 0b1
+set @counter goBack
+rl1:
+jump rl2 notEqual itemDet @metaglass
+set select_output 0b10
+set @counter goBack
+rl2:
+jump rl3 notEqual itemDet @graphite
+set select_output 0b100
+set @counter goBack
+rl3:
+jump rl4 notEqual itemDet @sand
+set select_output 0b1000
+set @counter goBack
+rl4:
+jump rl5 notEqual itemDet @coal
+set select_output 0b10000
+set @counter goBack
+rl5:
+jump rl6 notEqual itemDet @titanium
+set select_output 0b100000
+set @counter goBack
+rl6:
+jump rl7 notEqual itemDet @thorium
+set select_output 0b1000000
+set @counter goBack
+rl7:
+jump rl8 notEqual itemDet @scrap
+set select_output 0b10000000
+set @counter goBack
+rl8:
+jump rl9 notEqual itemDet @silicon
+set select_output 0b100000000
+set @counter goBack
+rl9:
+jump rl10 notEqual itemDet @plastanium
+set select_output 0b1000000000
+set @counter goBack
+rl10:
+jump rl11 notEqual itemDet @surge-alloy
+set select_output 0b10000000000
+set @counter goBack
+rl11:
+jump rl12 notEqual itemDet @phase-fabric
+set select_output 0b100000000000
+set @counter goBack
+rl12:
+jump rl13 notEqual itemDet @spore-pod
+set select_output 0b1000000000000
+set @counter goBack
+rl13:
+jump rl14 notEqual itemDet @blast-compound
+set select_output 0b10000000000000
+set @counter goBack
+rl14:
+jump rl15 notEqual itemDet @pyratite
+set select_output 0b100000000000000
+set @counter goBack
+rl15:
+set select_output null
+set @counter goBack
+end
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"

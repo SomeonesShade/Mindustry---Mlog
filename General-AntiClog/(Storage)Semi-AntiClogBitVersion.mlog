@@ -2,7 +2,7 @@ set OriginBlock null #the block used in reversemode, or rss
 print "(Block/Bool) The StorageBlock where the items come from. If set to false, disables origin functionality"
 jump configIgnore equal skipVars 1
 set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
-print "(decimal) determines the maxinum percentage of an item in a storage block"
+print "(decimal/whole number) determines the maxinum percentage of an item in a storage block, if whole number it uses that value instead"
 set FindCore true
 print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
@@ -36,6 +36,8 @@ pb2:
 jump pb2 notEqual 0 0
 set IsCluster false #if dealing. chained or seperated storages, no diffrence if single
 print "(bool) If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
+set ReadMemoryBlock cell1
+print "(memoryblock) the read cell block for configuration"
 set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
 print "(whole number) doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
 set MemoryReadLocation -1
@@ -65,8 +67,9 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 
+op greaterThanEq shouldOverideMaxPercent MaxPercent 1.01
 jump originDisable strictEqual OriginBlock false
-jump endOfSettings always 
+jump endOfSettings always 0 0
 originDisable:
 set MinOriginAmount -1
 endOfSettings:
@@ -78,7 +81,8 @@ jump originIgnore equal OriginBlock null #sets the Origin
 set Origin OriginBlock
 
 originIgnore:
-jump coreIgnore notEqual Origin null
+sensor hasOriginDied Origin @dead
+jump coreIgnore equal hasOriginDied false
 jump coreIgnore equal FindCore false
     ubind @mono
     sensor controlled @unit @controlled
@@ -86,7 +90,7 @@ jump originIgnore greaterThanEq controlled 2 #UHHHHHHHHHH
     ulocate building core false @copper ox oy fo Origin
 
 coreIgnore:
-jump bitSkip equal cell1 null #Sets the Bitselection if memory is used
+jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
 
@@ -106,7 +110,7 @@ ItemDentify: #Part2!!!
         set typec @blast-compound   #red (error color) or...
         jump j3 equal blink 0
         set typec null              #absolutely nothing
-    jump j3 always              #immediately skip itemLoop
+    jump j3 always 0 0          #immediately skip itemLoop
 
 storageIsPresent:
 	set prevLinks @links #reset values used or update
@@ -143,11 +147,11 @@ storageIsPresent:
         set select_index -1
         storageMinRead: #what is contained in the storages?
             op add select_index select_index 1                      #loop start
-            op add goBack @counter 1; jump storageSelect always     #function call...
+            op add goBack @counter 1; jump storageSelect always 0 0 #function call...
             jump amountCheck strictEqual select_output null         #does mentioned vault exist?
             sensor rV select_output type                            #then: do operation:
             op min amount amount rV
-            jump storageMinRead always
+            jump storageMinRead always 0 0
     
     selectedAdd:
         op add am1 r1 r2 #combine 
@@ -166,11 +170,11 @@ storageIsPresent:
         set select_index -1
         storageAddRead: #what is contained in the storages?
             op add select_index select_index 1                      #loop start
-            op add goBack @counter 1; jump storageSelect always     #function call...
+            op add goBack @counter 1; jump storageSelect always 0 0 #function call...
             jump amountCheck strictEqual select_output null         #does mentioned vault exist?
             sensor rV select_output type                            #then: do operation:
             op add amount amount rV
-            jump storageAddRead always 
+            jump storageAddRead always 0 0
 
     amountCheck:
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
@@ -230,7 +234,7 @@ jump storageArrayIgnore strictEqual v9 null
     set select_input null
 storageReset: #clear all storage
     op add select_index select_index 1
-    op add goBack @counter 1; jump storageSelect always
+    op add goBack @counter 1; jump storageSelect always 0 0
     jump storageReset notEqual select_index null
 
 storageArrayIgnore:
@@ -257,10 +261,10 @@ storageDetectionLoop: #detect storages via getlink loop
     set select_readMode 2 #no need to write on second part of the code, just read
     set MaxValue BaseLineValue
 jump clusterIgnore equal IsCluster false #is this cluter mode?
-
+    jump overideMaxValue equal shouldOverideMaxPercent true
     op mul TotalMaxStorage TotalMaxStorage MaxPercent
     set MaxValue TotalMaxStorage
-    jump ItemDentify always
+    jump ItemDentify always 0 0
 end
 
 clusterIgnore:
@@ -285,7 +289,12 @@ jb6:
     jump jb7 notEqual v8 0 #is v8 filled?
     set v8 v1	
 jb7:
-    jump ItemDentify always
+    jump overideMaxValue equal shouldOverideMaxPercent true
+    jump ItemDentify always 0 0
+end
+overideMaxValue:
+    set MaxValue MaxPercent
+    jump ItemDentify always 0 0
 end
 
 select: #if we have found a storageblock, enter into memory
@@ -293,53 +302,53 @@ select: #if we have found a storageblock, enter into memory
     jump ja1 notEqual v1 0 #is v1 filled?
     set v1 obj #if not set it into memory
     op add TotalMaxStorage TotalMaxStorage ic #and update TotalMaxStorage
-    jump j1 always
+    jump j1 always 0 0
 ja1: 
     jump ja2 notEqual v2 0 #is v2 filled?
     set v2 obj
     op add TotalMaxStorage TotalMaxStorage ic
-    jump j1 always
+    jump j1 always 0 0
 ja2:
     jump ja3 notEqual v3 0 #is v3 filled?
     set v3 obj
     op add TotalMaxStorage TotalMaxStorage ic
-    jump j1 always
+    jump j1 always 0 0
 ja3:
     jump ja4 notEqual v4 0 #is v4 filled?
     set v4 obj
     op add TotalMaxStorage TotalMaxStorage ic
-    jump j1 always
+    jump j1 always 0 0
 ja4:
     jump ja5 notEqual v5 0 #is v5 filled?
     set v5 obj
     op add TotalMaxStorage TotalMaxStorage ic
-    jump j1 always
+    jump j1 always 0 0
 ja5:
     jump ja6 notEqual v6 0 #is v6 filled?
     set v6 obj
     op add TotalMaxStorage TotalMaxStorage ic
-    jump j1 always
+    jump j1 always 0 0
 ja6:
     jump ja7 notEqual v7 0 #is v7 filled?
     set v7 obj
     op add TotalMaxStorage TotalMaxStorage ic
-    jump j1 always
+    jump j1 always 0 0
 ja7:
     jump jArray notEqual v8 0 #is v8 filled?
     set v8 obj
     op add TotalMaxStorage TotalMaxStorage ic
-    jump j1 always
+    jump j1 always 0 0
 jArray:
     jump skip0 strictEqual select_index null #if hardcode storage has been reached, use this array
     set select_input obj
-    op add goBack @counter 1; jump storageSelect always
+    op add goBack @counter 1; jump storageSelect always 0 0
     op add select_index select_index 1
     op add TotalMaxStorage TotalMaxStorage ic
 j1:
     op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
     op min ic BaseLineValue ic #take smallest
     set BaseLineValue ic #set as new BaseLineValue
-    jump skip0 always
+    jump skip0 always 0 0
 end
 
 storageSelect: #select_input, select_output, select_readMode, goBack, select_index
@@ -384,17 +393,13 @@ set select_output null
 set @counter goBack
 end
 
-#log: version 3.2 Small Changes
-#Moved/Shifted Variables/Settings To Reduce Confusion on Necessary Variables The user will need
-#Fixed Bugs related to storages 5 through 9
-
-#internal changes: added some spacing to chunk the code for more readability
+#log: version 3.3.-1
+#Allow input of MaxValue to be a Whole Number
 
 #Plans:
 #ver 3.3 Plans
 #Bind on arc to allow custom configuration
 #Since reverse lookup isnt a thing its sadly slow : /
-#Allow input of MaxValue to be a Whole Number
 #Allow input of OriginAmount to be a Decimal/Percent
 #ver 3.4 Plans
 # >allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)

@@ -8,7 +8,7 @@ Moved/Shifted Variables/Settings To Reduce Confusion on Necessary Variables The 
 Fixed Bugs related to Storages 5 through 9
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
-
+Source Code: https://github.com/SomeonesShade/Mindustry---Mlog/blob/master/General-AntiClog/(Storage)Semi-AntiClogBitVersion.mlog
 Disclaimer:
 This is not specialized on one specific schematic, it more used on a variety of schems. Its something you may modify on use on the fly
 Custom is always better than general, this logic focuses on somewhat easy use and adaptive block transport situations.

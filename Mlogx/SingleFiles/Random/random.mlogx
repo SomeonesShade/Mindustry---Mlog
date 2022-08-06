@@ -1,0 +1,7 @@
+&for i in 0 15 {
+    jump rl$i notEqual lookup_type @copper$i
+    set select_output $i
+    set @counter goBack
+    rl$i:
+}
+set @counter goBack
