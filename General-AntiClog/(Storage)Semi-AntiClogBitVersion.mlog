@@ -234,7 +234,8 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.3\nmade by: [black]|[white]Someone's [black]Shade"
+print "[#DDDDFF]Semi-AntiClog 3.3\nmade by: [black]|[white]Someone's [black]Shade\n[white]Setting All Item Config Blocks To: "
+print typec
 op mul selectMessage messageCode 6
 op add @counter selectMessage @counter
 
