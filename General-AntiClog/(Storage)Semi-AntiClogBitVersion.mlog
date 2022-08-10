@@ -1,12 +1,14 @@
 set OriginBlock null #the block used in reversemode, or rss
-print "(Block/Bool) The StorageBlock where the items come from. If set to false, disables origin functionality"
 jump configIgnore equal skipVars 1
+print "(Block/Bool) The StorageBlock where the items come from. If set to false, disables origin functionality"
 set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
 print "(decimal/whole number) determines the maxinum percentage of an item in a storage block, if whole number it uses that value instead"
 set FindCore true
 print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
 print "(integer) /rss/ Determines the mininum amount of an item to start working"
+set FindCoreUnitType @mono
+print "(unitType) unit used to detect core automatically"
 pa1: 
 jump pa1 notEqual 0 0
 print "Item Configuration"
@@ -67,6 +69,11 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 
+printflush null
+set storageMessage 2
+jump ignoreMessageStorage equal IsCluster false
+set storageMessage 3
+ignoreMessageStorage:
 op greaterThanEq shouldOverideMaxPercent MaxPercent 1.01
 jump originDisable strictEqual OriginBlock false
 jump endOfSettings always 0 0
@@ -76,7 +83,9 @@ endOfSettings:
 set skipVars 1
 
 configIgnore:
+set messageCode 0
 jump coreIgnore lessThan MinOriginAmount 0
+set messageCode 1
 jump originIgnore equal OriginBlock null #sets the Origin
 set Origin OriginBlock
 
@@ -84,9 +93,15 @@ originIgnore:
 sensor hasOriginDied Origin @dead
 jump coreIgnore equal hasOriginDied false
 jump coreIgnore equal FindCore false
-    ubind @mono
+    ubind FindCoreUnitType
     sensor controlled @unit @controlled
-jump originIgnore greaterThanEq controlled 2 #UHHHHHHHHHH
+sensor unitDied @unit @dead
+jump noValidUnitFound equal unitDied true
+jump validUnitFound lessThan controlled 2 #UHHHHHHHHHH
+noValidUnitFound:
+    set messageCode 5
+    jump coreIgnore always 0 0
+validUnitFound:
     ulocate building core false @copper ox oy fo Origin
 
 coreIgnore:
@@ -102,6 +117,7 @@ jump storageCheck greaterThanEq sC 25           #timer lel
 ItemDentify: #Part2!!!
     jump storageIsPresent notEqual v1 0 #do we even have a storage block?
         jump storageIsPresent equal IgnoreBlink true #Do not blink is IgnoreBlink is set to true
+        set messageCode 4             #Alert Message
         op equal blink blink 0      #then start blinking
         set isA false                   #do not enable
         wait 0.5                    #no epilepsy
@@ -190,6 +206,8 @@ storageIsPresent:
 jump j3 equal isA true #is everything full?
     set typec null
     set dataItem 0
+jump j3 greaterThan messageCode storageMessage
+    set messageCode storageMessage
 
     j3:
         set a -1
@@ -200,6 +218,7 @@ jump j3 equal isA true #is everything full?
         jump jItemConfig equal oType @inverted-sorter #skip if storage block
         jump jItemConfig equal oType @sorter
         jump skip2 equal oType @mass-driver
+        jump messageDisplay equal oType @message
         jump jEnable notEqual oType @memory-cell
         jump datawrite lessThan MemoryReadLocation 0 
         jump jEnable equal obj cell1
@@ -214,8 +233,58 @@ jump j3 equal isA true #is everything full?
 	op add sC sC 1
 end
 
-print "Semi-AntiClog 3.2"
-print "made by: Someone's Shadow #9470"
+messageDisplay:
+print "[#DDDDFF]Semi-AntiClog 3.3\nmade by: [black]|[white]Someone's [black]Shade"
+op mul selectMessage messageCode 6
+op add @counter selectMessage @counter
+
+operational:
+print "\n\n[#AAFFAA]Operational!\nTargeting for "
+print MaxValue
+print " items"
+printflush obj
+jump skip2 always 0 0
+end
+
+operationalWithOrigin:
+print "\n\n[#AAFFAA]Operational!\nTargeting for "
+print MaxValue
+print " items.\nInternal RSS activated and set to "
+print MinOriginAmount
+printflush obj
+jump skip2 always 0 0
+
+fullStorageBaseLine:
+print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
+print MaxValue
+printflush obj
+jump skip2 always 0 0
+end
+end
+
+fullStorageCluster:
+print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any total amount of items per type reaches below "
+print MaxValue
+printflush obj
+jump skip2 always 0 0
+end
+end
+
+noStorageDetected:
+print "\n\n[#FFAAAA]error: No Storage Block Found\nPlease Bind to One"
+printflush obj
+jump skip2 always 0 0
+end
+end
+end
+
+noUnitDetected:
+print "\n\n[#FFAAAA]error: No Valid "
+print FindCoreUnitType
+print " Found\n\nPlease either make the unit or configurate the settings to use a diffrent unit type"
+printflush obj
+jump skip2 always 0 0
+end
 
 storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
@@ -262,8 +331,7 @@ storageDetectionLoop: #detect storages via getlink loop
     set MaxValue BaseLineValue
 jump clusterIgnore equal IsCluster false #is this cluter mode?
     jump overideMaxValue equal shouldOverideMaxPercent true
-    op mul TotalMaxStorage TotalMaxStorage MaxPercent
-    set MaxValue TotalMaxStorage
+    op mul MaxValue TotalMaxStorage MaxPercent
     jump ItemDentify always 0 0
 end
 
@@ -393,34 +461,45 @@ set select_output null
 set @counter goBack
 end
 
-#log: version 3.3.-1
+#log: version 3.3
+#Message Block Support!
 #Allow input of MaxValue to be a Whole Number
+#Small Fixes
+
+#Note: its now in the 0.7 sec range rn, optimizations will take root to lower it
 
 #Plans:
-#ver 3.3 Plans
-#Bind on arc to allow custom configuration
-#Since reverse lookup isnt a thing its sadly slow : /
-#Allow input of OriginAmount to be a Decimal/Percent
-#ver 3.4 Plans
-# >allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)
-# this needs to take into account with Core as well... there is a wai to get reversmode in though...
+#Final RoadMap
+#ver 3.4
+    #External Schem for config setting in memBlock via 3.3 attempt on coustom config
+    #Implementation of Reverse Mode
+        #>allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)
+        #this needs to take into account with Core as well... there is a wai to get reversmode in though...
+    #Allow input of OriginAmount to be a Decimal/Percent
 
-#ver 3.1 and above:
-#QOL changes
-    #(variable decl, and making it even easier to use... somehow)
-#Recon/Factory Intergration [3.2?]
-    #(issue: recons/factories cant hold every item, which means dynamic config and...
-    #recons have diffrent @itemCapacity for each item, which is a pain...
-    #if the issue can't be resolved, this cant be General and can only be Semi)
+#Finishes Goals: 
+    #External Schem for config via mem block display, or message block for instructions [non-associated]
+        #(more QOL, and easier time for people who dont know to set the config of the proc)
+    #QOL changes
+        #(variable decl, and making it even easier to use... somehow)
 
-#Automatic Config + Overrides [3.2?]
-    #(this may be a reconstructor version feature, although might be ok?...
-    #automatically setting the config based on binds, and adding in items like (silicon)...
-    #if intergration is impossible, this is still applicable as QOL)
+#ver 3.5+/4.0
+    #Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed
+    #deciding if min/baseline mode is needed
+    #Starting the Recon Version/Simple version
+    #Updating the external schem for default configs
+    #Severe Optimizations to the message system
+#Finishes Goals:
+    #Recon/Factory Intergration
+        #(issue: recons/factories cant hold every item, which means dynamic config and...
+        #recons have diffrent @itemCapacity for each item, which is a pain...
+        #if the issue can't be resolved, this cant be General and can only be Semi)
+    #Automatic Config + Overrides
+        #(this may be a reconstructor version feature, although might be ok?...
+        #automatically setting the config based on binds, and adding in items like (silicon)...
+        #if intergration is impossible, this is still applicable as QOL)
 
-#Performance Lockdown, to insure <2 sec or at best <1sec performance [general goal]
-    #(this might be hard to pull off, but its a goal so its much much more easier to set MaxPercent...
-    #storageCapacity - how much input being received per second = MaxPercent, is QOL) 
 
-#External Schem for config via mem block display, or message block for instructions [non-associated]
-    #(more QOL, and easier time for people who dont know to set the config of the proc)
+#In all versions
+#Performance Lockdown, to insure <1sec performance [general goal]
+    #at Best, less than 0.75 sec, that is max allowance
