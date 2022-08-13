@@ -1,0 +1,115 @@
+set OriginBlock null
+jump configIgnore equal skipVars 1
+print "(Block) The StorageBlock where the items come from"
+set FindCore true
+print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
+set FindCoreUnitType @mono
+print "(unitType) Unit used to detect core automatically"
+set MinOriginAmount 2000
+print "(integer) Determines the mininum amount of an item to start working"
+set PowerStoredThreshold 0.4
+print "(decimal) If Power Stored in Power Grid amount/capacity goes below this percentage, deactivate"
+set PowerRSSBlockType @power-node
+print "(BlockType) What BlockType to measure battery from"
+set skipVars 1
+configIgnore:
+jump originIgnore equal OriginBlock null
+set Origin OriginBlock
+originIgnore:
+sensor hasOriginDied Origin @dead
+jump coreIgnore equal hasOriginDied false
+jump coreIgnore equal FindCore false
+ubind FindCoreUnitType
+sensor controlled @unit @controlled
+sensor unitDied @unit @dead
+jump noValidUnitFound equal unitDied true
+jump validUnitFound lessThan controlled 2
+noValidUnitFound:
+set messageCode 5
+jump coreIgnore always 0 0
+validUnitFound:
+ulocate building core false @copper ox oy fo Origin
+coreIgnore:
+bitSkip:
+jump storageCheck notEqual @links prevLinks
+jump ItemDentify equal isA true
+jump storageCheck greaterThanEq sC 25
+ItemDentify:
+storageIsPresent:
+sensor powerBlockDead PowerBlock @dead
+jump powerIsPresent equal powerBlockDead true
+sensor powerStored PowerBlock @powerNetStored
+sensor powerCapacity PowerBlock @powerNetCapacity
+op div powerPercentage powerStored powerCapacity
+jump powerIsPresent greaterThanEq powerPercentage PowerStoredThreshold
+set messageCode 6
+set isA false
+jump j3 always 0 0
+powerIsPresent:
+set prevLinks @links
+set bitLocation 0
+set i 0
+itemLoop:
+lookup item type i
+op shl bitLocation 1 i
+op and isSelected bitLocation bitSelection
+jump skip1 equal isSelected 0
+sensor c1 Origin type
+jump skip1 lessThan c1 MinOriginAmount
+skip1:
+op add i i 1
+jump itemLoop lessThan i @itemCount
+j3:
+set a -1
+buildingConfigLoop:
+op add a a 1
+getlink obj a
+sensor oType obj @type
+jEnable:
+control enabled obj isA
+skip2:
+jump buildingConfigLoop lessThan a @links
+op add sC sC 1
+end
+messageDisplay:
+print "[#DDDDFF]Semi-AntiClog 3.4 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[white]Setting All Item Config Blocks To: "
+print typec
+op mul selectMessage messageCode 6
+op add @counter selectMessage @counter
+operational:
+print "\n\n[#AAFFAA]Operational!\nTargeting for "
+print MaxValue
+print " items"
+printflush obj
+jump skip2 always 0 0
+end
+operationalWithOrigin:
+print "\n\n[#AAFFAA]Operational!\nTargeting for "
+print MaxValue
+print " items.\nInternal RSS activated and set to "
+print MinOriginAmount
+printflush obj
+jump skip2 always 0 0
+fullStorageBaseLine:
+print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
+print MaxValue
+printflush obj
+jump skip2 always 0 0
+end
+end
+storageCheck:
+set sC 0
+set select_index 0
+set lp -1
+storageDetectionLoop:
+op add lp lp 1
+getlink obj lp
+sensor oType obj @type
+jump skip0 notEqual oType PowerRSSBlockType
+set PowerBlock obj
+skip0:
+jump storageDetectionLoop lessThan lp @links
+jump ItemDentify always 0 0
+end
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"

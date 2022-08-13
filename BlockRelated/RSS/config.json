@@ -1,0 +1,17 @@
+{
+	"name": "RSS",
+	"authors": [
+		"Shade"
+	],
+	"compilerOptions": {
+		"include": [],
+		"removeComments": true,
+		"compileWithErrors": true,
+		"mode": "single",
+		"prependFileName": true,
+		"checkTypes": true
+	},
+	"compilerConstants": {
+
+	}
+}
