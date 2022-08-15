@@ -5,10 +5,18 @@ set MaxPercent 0.2  #this functions as a buffer (filling it to full will practic
 print "(decimal/whole number) determines the maxinum percentage of an item in a storage block, if whole number it uses that value instead"
 set FindCore true
 print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
-set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
-print "(integer) /rss/ Determines the mininum amount of an item to start working"
 set FindCoreUnitType @mono
-print "(unitType) unit used to detect core automatically"
+print "(unitType) Unit used to detect core automatically"
+paRSS: 
+jump paRSS notEqual 0 0
+print "Resource Saver (RSS)"
+paRSS1:
+set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
+print "(integer) Determines the mininum amount of an item to start working"
+set PowerStoredThreshold 0.4
+print "(decimal) If Power Stored in Power Grid amount/capacity goes below this percentage, deactivate"
+set PowerRSSBlockType @power-node
+print "(BlockType) What BlockType to measure battery from"
 pa1: 
 jump pa1 notEqual 0 0
 print "Item Configuration"
@@ -50,7 +58,7 @@ print "Random Settings"
 pc2: 
 jump pc2 notEqual 0 0
 set IgnoreBlink false
-print "disables 'blinking' (it happens when there are no vaults detected)"
+print "(bool) disables 'blinking' (it happens when there are no vaults detected)"
 
 print "Do not modify from this point, unless you know how it works lel"
 op add bitSelection   #compile config into a single number (ex: 101 as an example)
@@ -129,6 +137,22 @@ ItemDentify: #Part2!!!
     jump j3 always 0 0          #immediately skip itemLoop
 
 storageIsPresent:
+sensor powerBlockDead PowerBlock @dead
+jump powerIsPresent equal powerBlockDead true
+sensor powerStored PowerBlock @powerNetStored
+sensor powerCapacity PowerBlock @powerNetCapacity
+op div powerPercentage powerStored powerCapacity
+jump powerIsPresent greaterThanEq powerPercentage PowerStoredThreshold
+    set messageCode 6             #Alert Message
+        op equal blink blink 0      #then start blinking
+        set isA false                   #do not enable
+        wait 0.5                    #no epilepsy
+        set dataItem 0              #do not send anything
+        set typec @surge-alloy   #yellow (error color) or...
+        jump j3 equal blink 0
+        set typec null              #absolutely nothing
+    jump j3 always 0 0          #immediately skip itemLoop
+powerIsPresent:
 	set prevLinks @links #reset values used or update
     set bitLocation 0
     set dataItem 0
@@ -234,57 +258,80 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.3\nmade by: [black]|[white]Someone's [black]Shade\n[white]Setting All Item Config Blocks To: "
+print "[#DDDDFF]Semi-AntiClog 3.4 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: "
 print typec
-op mul selectMessage messageCode 6
+op mul selectMessage messageCode 8
 op add @counter selectMessage @counter
 
-operational:
+operational: #0
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
 print MaxValue
 print " items"
 printflush obj
+jump skipMem1 lessThan MemoryReadLocation 0
+print "\n[#FFAAFF]Reading any binded cell for item configuration"
+skipMem1: ; printflush obj
 jump skip2 always 0 0
-end
 
-operationalWithOrigin:
+operationalWithOrigin: #1
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
 print MaxValue
-print " items.\nInternal RSS activated and set to "
+print " items.\n[#FFFFAA]Internal RSS activated and set to "
 print MinOriginAmount
-printflush obj
+jump skipMem2 lessThan MemoryReadLocation 0
+print "\n[#FFAAFF]Reading any binded cell for item configuration"
+skipMem2: ; printflush obj
 jump skip2 always 0 0
 
-fullStorageBaseLine:
+
+fullStorageBaseLine: #2
 print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
 print MaxValue
 printflush obj
 jump skip2 always 0 0
 end
 end
+end
+end
 
-fullStorageCluster:
+fullStorageCluster: #3
 print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any total amount of items per type reaches below "
 print MaxValue
 printflush obj
 jump skip2 always 0 0
 end
 end
+end
+end
 
-noStorageDetected:
+noStorageDetected: #4
 print "\n\n[#FFAAAA]error: No Storage Block Found\nPlease Bind to One"
 printflush obj
 jump skip2 always 0 0
 end
 end
 end
+end
+end
 
-noUnitDetected:
+noUnitDetected: #5
 print "\n\n[#FFAAAA]error: No Valid "
 print FindCoreUnitType
 print " Found\n\nPlease either make the unit or configurate the settings to use a diffrent unit type"
 printflush obj
 jump skip2 always 0 0
+end
+end
+end
+
+powerLow: #6
+print "\n\n[#FFAAAA]disabled: Not Enough Power Stored. Its Less Than "
+print PowerStoredThreshold
+print "\n\nCurrent Power Percentage Stored: "
+print powerPercentage
+printflush obj
+jump skip2 always 0 0
+end
 end
 
 storageCheck: #set variables
@@ -324,7 +371,8 @@ storageDetectionLoop: #detect storages via getlink loop
     jump select equal oType @core-shard
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
-
+    jump skip0 notEqual oType PowerRSSBlockType
+    set PowerBlock obj
     skip0:
     	jump storageDetectionLoop lessThan lp @links
     
@@ -462,29 +510,36 @@ set select_output null
 set @counter goBack
 end
 
-#log: version 3.3
-#Message Block Support!
-#Allow input of MaxValue to be a Whole Number
-#Small Fixes
+#log: version 3.4.-1
+#Power RSS
+#Message Improvemnts - Reading Cell Check
 
 #Note: its now in the 0.7 sec range rn, optimizations will take root to lower it
 
 #Plans:
 #Final RoadMap
 #ver 3.4
+    #Power RSS
+    #Erekir Compatibility - Medium (Extend the Normal Arrray for now)
+    #Message Improvemnts - Reading Cell Check and Cluster Mode Var
+#ver 3.5
+    #Erekir Compatibility Max
+        #Initialization will add in ID check for each Item, to have complete no Hardcode)
+    #Allow input of OriginAmount to be a Decimal/Percent
+#ver 3.6
     #External Schem for config setting in memBlock via 3.3 attempt on coustom config
     #Implementation of Reverse Mode
         #>allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)
         #this needs to take into account with Core as well... there is a wai to get reversmode in though...
-    #Allow input of OriginAmount to be a Decimal/Percent
+        #! What is actually needed is a way to make the core into v1
 
 #Finishes Goals: 
     #External Schem for config via mem block display, or message block for instructions [non-associated]
         #(more QOL, and easier time for people who dont know to set the config of the proc)
     #QOL changes
         #(variable decl, and making it even easier to use... somehow)
-
-#ver 3.5+/4.0
+        
+#ver Unkown/4.0
     #Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed
     #deciding if min/baseline mode is needed
     #Starting the Recon Version/Simple version
