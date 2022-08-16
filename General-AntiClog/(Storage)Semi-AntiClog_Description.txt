@@ -2,11 +2,10 @@ ____________
 Description:
 ------------
 
-|Semi-Anticlog 3.3
-Message Block Support!
-Allow input of MaxValue to be a Whole Number
-
-Note: Major Issue, In Multiplayer This May Be Unplacable. Still identifying confirmed cause
+|Semi-AntiClog 3.4
+Power RSS
+Message Improvemnts Overall
+Added Erekir Items
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
@@ -15,7 +14,7 @@ Source Code: https://github.com/SomeonesShade/Mindustry---Mlog/blob/master/Gener
 Disclaimer:
 This is not specialized on one specific schematic, it more used on a variety of schems. Its something you may modify on use on the fly
 Custom is always better than general, this logic focuses on somewhat easy use and adaptive block transport situations.
-Expect this Logic to run with 0.7 seconds per main loop
+Expect this Logic to run with 0.7 seconds per main loop for 3 unloader 1 vault setup
 
 HowTo:
 Set its Config
@@ -27,18 +26,17 @@ Create the transport from unloader to destination
 
 And you have your transport!
 
-Features/Variables:
-Up to 16 receiving storageblocks (8 optimized), automatic storage and config block detection, and fast performance in a logic processor
-Includes Message Block Support for additional information
+Features:
+Automatic Storage and Config Block Detection
+Up to 16 Receiving Storageblocks (8 Optimized)
+Memory Block Support, allowing for specialized relay/long distance chaining 
+    Note: (will work on docs for how this works eventually)
+Internal Item and Power RSS, with Wireless/Bindless Core Detection
+MessageBlock Information For Easy TroubleShooting and Information
 
-Main Configuration Variables:
-MaxPercent - what is the target quota of items in storageblock/s, and provides a buffer as if it is too high, a clog will happen
-OriginBlock - setting up what storageblock has the items, If set to false, disables origin functionality.
-MinOriginAmount - Allows rss (resource saver) by not requesting the items from OriginBlock, essentially dont cause resource-gon
-IsCluster - either treats the storageblocks as a sum, or tries to fill each storageblock with a mininum amount of items
-MemoryReadLocation/MemoryWriteLocation - allows for custom config override, and chaining other Semi-AntiClog
-IgnoreBlink - Removes Blinking (May get Redundant/Depreciated tbh)
-FindCore - to set core as OriginBlock without binding, only works if OriginBlock is null
+Potential Additions: (maybe it will happen, maybe not)
+    External Logic Schem For Custom Configurations
+    Recontructor/Factory Support For Cluster Mode
 
 -Shade
 _____
@@ -80,3 +78,29 @@ Logs:
 #log: version 3.2 Small Changes
 #Splitted Variables/Settings into their own set to help with settings some stuff
 #Fixed Bugs related to storages 5 through 9
+
+#log: version 3.3
+#Message Block Support!
+#Allow input of MaxValue to be a Whole Number
+#Small Fixes
+
+#Note: its now in the 0.7 sec range rn, optimizations will take root to lower it
+
+#log: version 3.4
+#Power RSS
+#Message Improvemnts - Reading Cell Check and Cluster Mode Var
+#Erekir Compatibility - Medium (Extend the Normal Array for now)
+
+Also Old Description: Might be useful for later
+Features/Variables:
+Up to 16 receiving storageblocks (8 optimized), automatic storage and config block detection, and fast performance in a logic processor
+Includes Message Block Support for additional information
+
+Main Configuration Variables:
+MaxPercent - what is the target quota of items in storageblock/s, and provides a buffer as if it is too high, a clog will happen
+OriginBlock - setting up what storageblock has the items, If set to false, disables origin functionality.
+MinOriginAmount - Allows rss (resource saver) by not requesting the items from OriginBlock, essentially dont cause resource-gon
+IsCluster - either treats the storageblocks as a sum, or tries to fill each storageblock with a mininum amount of items
+MemoryReadLocation/MemoryWriteLocation - allows for custom config override, and chaining other Semi-AntiClog
+IgnoreBlink - Removes Blinking (May get Redundant/Depreciated tbh)
+FindCore - to set core as OriginBlock without binding, only works if OriginBlock is null

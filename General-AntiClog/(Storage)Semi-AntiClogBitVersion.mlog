@@ -39,6 +39,12 @@ op shl  1 12
 op shl  false 13
 op shl  false 14
 op shl  false 15
+op shl  false 16
+op shl fissile-matter false 17 #unused
+op shl dormant-cyst false 18 #unused
+op shl  false 19
+op shl  false 20
+op shl  false 21
 pb1: 
 jump pb1 notEqual 0 0
 print "MultiStorage/Processor Settings, you will almost never use these"
@@ -76,6 +82,12 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection fissile-matter
+op add bitSelection bitSelection dormant-cyst
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
 
 printflush null
 set storageMessage 2
@@ -258,8 +270,14 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.4 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: "
+print "[#DDDDFF]Semi-AntiClog 3.4 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
+jump clusterMessage equal IsCluster true
+print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine"
+jump messageArray always 0 0
+clusterMessage:
+print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster"
+messageArray:
 op mul selectMessage messageCode 8
 op add @counter selectMessage @counter
 
@@ -510,21 +528,26 @@ set select_output null
 set @counter goBack
 end
 
-#log: version 3.4.-1
+#log: version 3.4
 #Power RSS
-#Message Improvemnts - Reading Cell Check
+#Message Improvemnts - Reading Cell Check and Cluster Mode Var
+#Erekir Compatibility - Medium (Extend the Normal Array for now)
 
 #Note: its now in the 0.7 sec range rn, optimizations will take root to lower it
 
 #Plans:
-#Final RoadMap
-#ver 3.4
+#RoadMap
+#ver 3.4 - Kinda Hotfixy due to Mixed tech being more prevelant
     #Power RSS
-    #Erekir Compatibility - Medium (Extend the Normal Arrray for now)
+    #Erekir Compatibility - Medium (Extend the Normal Array for now)
     #Message Improvemnts - Reading Cell Check and Cluster Mode Var
 #ver 3.5
     #Erekir Compatibility Max
-        #Initialization will add in ID check for each Item, to have complete no Hardcode)
+        #Initialization will now add in ID checks for each Item, to have complete no Hardcode IDs
+            #Reverse Lookup : C
+    #Decreasing @itemCount, up to the highest id item possible
+        #Slight Optimization, since it matters now due to item count going from 16 > 22
+        #May potentially add in a check if @itemCount changes (camapain/tech tree variability) and running the massive Reverse ID Lookup
     #Allow input of OriginAmount to be a Decimal/Percent
 #ver 3.6
     #External Schem for config setting in memBlock via 3.3 attempt on coustom config
@@ -543,6 +566,7 @@ end
     #Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed
     #deciding if min/baseline mode is needed
     #Starting the Recon Version/Simple version
+        #If its possible this includes an array for each factory
     #Updating the external schem for default configs
     #Severe Optimizations to the message system
 #Finishes Goals:
