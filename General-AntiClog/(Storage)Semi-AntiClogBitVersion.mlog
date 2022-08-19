@@ -270,7 +270,7 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.4\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.4.1\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 jump clusterMessage equal IsCluster true
 print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine"
@@ -285,11 +285,11 @@ operational: #0
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
 print MaxValue
 print " items"
-printflush obj
 jump skipMem1 lessThan MemoryReadLocation 0
 print "\n[#FFAAFF]Reading any binded cell for item configuration"
 skipMem1: ; printflush obj
 jump skip2 always 0 0
+end
 
 operationalWithOrigin: #1
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
@@ -528,7 +528,9 @@ set select_output null
 set @counter goBack
 end
 
-#log: version 3.4
+#log: version 3.4.1
+#HotFix: MessageBlock Bug, doesnt flush correctly on no Origin Mode while feeding storages
+
 #Power RSS
 #Message Improvemnts - Reading Cell Check and Cluster Mode Var
 #Erekir Compatibility - Medium (Extend the Normal Array for now)

@@ -2,10 +2,12 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.4
+|Semi-AntiClog 3.4.1
 Power RSS
 Message Improvemnts Overall
 Added Erekir Items
+
+HotFix: MessageBlock Bug, doesnt flush correctly on no Origin Mode while feeding storages
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
