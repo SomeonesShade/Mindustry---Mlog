@@ -1,0 +1,42 @@
+#Planned Version which includes all of my features/ideas that will never get in normal proc
+
+#Structure:
+#Hyper-Proc, Power Node, MemCell, MessageBlock, Inverted Sorter, Bridge, Wex, Cyrofluid Mixer
+
+#Planned Features:
+
+#Built In Custom Item Configuration (using the inv sorter)
+    #Null- internal hardcoded settings
+    #Copper- needed res for Surge Alloy
+    #Lead- T1 Set
+    #Graphite- T2 mat
+    #Metaglass- T3 mat
+    #Silicon- Coal Sand
+    #Plastanium- T4 mat
+    #Phase-Fabric- ODD
+    #Surge-Alloy- T5 mat
+    #Blast-Compound- needed res
+    #Spore-Pod- internal hardcoded + 
+    #Pyratite- needed res
+
+#SelfFeed on the Cyro Maker
+
+#Multi-Orign Mode
+    #Nuts
+    #Detects Unloaders Near the Orgin based on coordinates
+    #Nuts
+    #Core Compatibility is Questionable though
+
+#Advanced Message System
+    #Now displays the item configuration it is using
+    #A How-To about the settings/processor (enabled if inv is set to spore)
+    #Additional Error Codes/Warnings/Status
+
+#Extra Unnessary/Overkill Features:
+    #Item ID's are checked just incase if a mod breaks logic id
+
+#When?: 2023/2024 if i dont end up dead lmao
+#jk: but mainly because im seeing limitations in normal proc for AntiClog
+#and im running out ideas that can fit within those limitations and i have to start and wrap up Recon/Fac Suport for 4.0
+
+#i keep on getting developing this set because it feels fun/it can expand a ton somehow...

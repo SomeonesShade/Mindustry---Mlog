@@ -1,0 +1,70 @@
+jump finishedInitialization equal configSkip 1
+set MaxValue 800
+set MinOriginAmount 10
+set configSkip 1
+finishedInitialization:
+set mx1 MaxValue
+set mx2 MaxValue
+set isA1 false
+set isA2 false
+set isA3 false
+set isA4 false
+set isA5 false
+set isA6 false
+set i 0
+itemLoop:
+lookup item item i
+
+    sensor Amount1 vault1 item #first check if the vault is full
+    jump set2 greaterThan Amount1 mx1
+#if vault 1 is not full, lets see which vault can be valid to fill it up
+        sensor amount2 vault2 item
+        jump vault3Check lessThanEq amount2 MinOriginAmount
+        set isA1 true
+        control config unloader1 item
+        control config unloader2 item
+    vault3Check:
+        sensor amount3 vault3 item
+        jump vault4Check lessThanEq amount3 MinOriginAmount
+        set isA2 true
+        control config unloader3 item
+    vault4Check:
+        sensor amount4 vault4 item
+        jump vault4Again lessThanEq amount4 MinOriginAmount
+        set isA3 true
+        control config unloader4 item
+        control config unloader5 item
+    
+    set2:
+    sensor Amount7 vault7 item #repeat but for other vault
+    jump skip1 greaterThan Amount7 mx2
+    vault4Again:
+        sensor amount4 vault4 item
+        jump vault5Check lessThanEq amount4 MinOriginAmount
+        set isA4 true
+        control config unloader6 item
+        control config unloader7 item
+    vault5Check:
+        sensor amount5 vault5 item
+        jump vault6Check lessThanEq amount5 MinOriginAmount
+        set isA5 true
+        control config unloader8 item
+    vault6Check:
+        sensor amount6 vault6 item
+        jump skip1 lessThanEq amount6 MinOriginAmount
+        set isA6 true
+        control config unloader9 item
+        control config unloader10 item
+skip1:
+    op add i i 1
+jump itemLoop lessThan i @itemCount
+control enabled unloader1 isA1
+control enabled unloader2 isA1
+control enabled unloader3 isA2
+control enabled unloader4 isA3
+control enabled unloader5 isA3
+control enabled unloader6 isA4
+control enabled unloader7 isA4
+control enabled unloader8 isA5
+control enabled unloader9 isA6
+control enabled unloader10 isA6
