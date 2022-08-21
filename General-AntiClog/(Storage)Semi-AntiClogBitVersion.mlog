@@ -43,8 +43,9 @@ op shl  false 16
 op shl fissile-matter false 17 #unused
 op shl dormant-cyst false 18 #unused
 op shl  false 19
-op shl  false 20
-op shl  false 21
+op shl  false 20
+op shl  false 21
+
 pb1: 
 jump pb1 notEqual 0 0
 print "MultiStorage/Processor Settings, you will almost never use these"
@@ -86,8 +87,8 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection fissile-matter
 op add bitSelection bitSelection dormant-cyst
 op add bitSelection bitSelection 
-op add bitSelection bitSelection 
 op add bitSelection bitSelection 
+op add bitSelection bitSelection 
 
 printflush null
 set storageMessage 2
@@ -270,7 +271,7 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.4.1\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.4.2\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 jump clusterMessage equal IsCluster true
 print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine"
@@ -528,28 +529,17 @@ set select_output null
 set @counter goBack
 end
 
-#log: version 3.4.1
-#HotFix: MessageBlock Bug, doesnt flush correctly on no Origin Mode while feeding storages
+#log: version 3.4.2
+#Fix: Erekir Items are now correctly layed out/ID(s)
 
-#Power RSS
-#Message Improvemnts - Reading Cell Check and Cluster Mode Var
-#Erekir Compatibility - Medium (Extend the Normal Array for now)
 
 #Note: its now in the 0.7 sec range rn, optimizations will take root to lower it
 
 #Plans:
 #RoadMap
-#ver 3.4 - Kinda Hotfixy due to Mixed tech being more prevelant
-    #Power RSS
-    #Erekir Compatibility - Medium (Extend the Normal Array for now)
-    #Message Improvemnts - Reading Cell Check and Cluster Mode Var
-#ver 3.5
-    #Erekir Compatibility Max
-        #Initialization will now add in ID checks for each Item, to have complete no Hardcode IDs
-            #Reverse Lookup : C
+#ver 3.5 Warn: feature list will move to hyper
     #Decreasing @itemCount, up to the highest id item possible
         #Slight Optimization, since it matters now due to item count going from 16 > 22
-        #May potentially add in a check if @itemCount changes (camapain/tech tree variability) and running the massive Reverse ID Lookup
     #Allow input of OriginAmount to be a Decimal/Percent
 #ver 3.6
     #External Schem for config setting in memBlock via 3.3 attempt on coustom config
