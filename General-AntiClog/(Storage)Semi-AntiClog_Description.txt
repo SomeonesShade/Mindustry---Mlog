@@ -37,8 +37,7 @@ Internal Item and Power RSS, with Wireless/Bindless Core Detection
 MessageBlock Information For Easy TroubleShooting and Information
 
 Potential Additions: (maybe it will happen, maybe not)
-    External Logic Schem For Custom Configurations
-    Recontructor/Factory Support For Cluster Mode
+    Recontructor/Factory Support For Cluster Mode (4.0?)
 
 -Shade
 _____
