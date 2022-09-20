@@ -1,2 +1,76 @@
-#Semi-AntiClog, but without the bloat lmao
-#soonTM
+set Origin vault2
+set v1 vault1
+jump skipConfig equal skip 1
+print "Origin: where items comefrom"
+print "v1: target storageblock"
+set MaxPercent 0.6
+print "MaxPercent: target goal"
+set MinOriginAmount 200
+print "MinOriginAmount: rss, set -1 if ya dont want"
+#set MemoryReadLocation -1
+#set MemoryWriteLocation 1
+print "barebones-anticlog by Someone's Shadow#9470"
+op shl  false 0
+op shl  1 1
+op shl  1 2
+op shl  1 3
+op shl  false 4
+op shl  1 5
+op shl  1 6
+op shl  false 7
+op shl  false 8
+op shl  1 9
+op shl  1 10
+op shl  1 11
+op shl  1 12
+op shl  false 13
+op shl  false 14
+op shl  false 15
+print "replace @itemCount with the highest number id from your configs + 1 for optimizations"
+set itemCount @itemCount
+print "E"
+op add bitSelection   #compile config into a single number (ex: 101 as an example)
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+printflush null
+set skip 1
+skipConfig:
+sensor itemCapacity v1 @itemCapacity
+op mul MaxValue MaxPercent itemCapacity
+set itemOut null
+set mv MaxValue
+set i 0
+itemLoop:
+op shl bitLocation 1 i #is at the selcted position true?:
+op and isSelected bitLocation bitSelection
+jump skip1 equal isSelected 0 #check
+lookup item type i
+sensor c1 Origin type
+jump skip1 lessThan c1 MinOriginAmount #is there anything to unload?
+sensor a1 v1 type
+jump skip1 greaterThanEq a1 mv
+set itemOut type
+set mv a1
+skip1:
+op add i i 1
+jump itemLoop lessThan i itemCount
+op lessThan isA mv MaxValue
+set a 0
+buildingConfigLoop:
+getlink obj a
+control enabled obj isA
+control config obj itemOut
+op add a a 1
+jump buildingConfigLoop lessThan a @links
