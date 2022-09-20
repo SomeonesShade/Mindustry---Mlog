@@ -48,7 +48,7 @@ op shl  false 21
 
 pb1: 
 jump pb1 notEqual 0 0
-print "MultiStorage/Processor Settings, you will almost never use these"
+print "MultiStorage/Processor Settings for high amounts of distance or items/s"
 pb2: 
 jump pb2 notEqual 0 0
 set IsCluster false #if dealing. chained or seperated storages, no diffrence if single
@@ -91,6 +91,19 @@ op add bitSelection bitSelection 
 op add bitSelection bitSelection 
 
 printflush null
+
+#__this may breaking something
+set count @itemCount
+itemCountCheck:
+op shl bitLocation 1 count
+op and isSelected bitLocation bitSelection
+jump itemCountEnd notEqual isSelected 0
+op sub count count 1
+jump itemCountCheck greaterThanEq count 0
+itemCountEnd:
+set itemCount count
+#__pls check
+
 set storageMessage 2
 jump ignoreMessageStorage equal IsCluster false
 set storageMessage 3
@@ -129,6 +142,9 @@ coreIgnore:
 jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
+#hmm
+    set itemCount @itemCount
+#hmm
 
 bitSkip: #Determines when to check for Storages
 jump storageCheck notEqual @links prevLinks     #trigger storageCheck if any link (amount) is changed
@@ -237,7 +253,7 @@ powerIsPresent:
 
     skip1:
         op add i i 1
-        jump itemLoop lessThan i @itemCount
+        jump itemLoop lessThan i itemCount
 
     op lessThan isA mv MaxValue
 jump j3 equal isA true #is everything full?
@@ -271,14 +287,15 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.4.2\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.5 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 jump clusterMessage equal IsCluster true
-print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine"
+print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[#DDDDFF]Current Origin: [#BBBBEE]"
 jump messageArray always 0 0
 clusterMessage:
-print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster"
+print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster\n[#DDDDFF]Current Origin: [#BBBBEE]"
 messageArray:
+print Origin
 op mul selectMessage messageCode 8
 op add @counter selectMessage @counter
 
@@ -528,9 +545,20 @@ set @counter goBack
 set select_output null
 set @counter goBack
 end
+#Critical Points of Failure (if something goes wrong, here is a list):
+#itemCount calculation (goes wrong/unupdated?)
+#storage detection (skips a block or isnt updated for some reason during linking?)
+#overfill! (storage items unaccounted maybe due to md shenanigans or maxpercent too high?)
+#messageblock (incorrect amount of "end" for each block?)
+#power/vault detection (shenanigans related to @dead maybe?)
+#FindCore Core (failure if unit ded, or @dead shenanigans again?)
+#MemBlock (incorrect interpretation, self feedback, or external noise?)
+#item config (is it set to 0?, are ids right? is 1 + 1 = 10 or 2?)
+#Baseline/TotalItems (check storageCheck + MaxPercent, all op/sensor/set should be checked?)
 
-#log: version 3.4.2
-#Fix: Erekir Items are now correctly layed out/ID(s)
+#log: version 3.5
+#Decreasing @itemCount, up to the highest id item possible
+        #Slight Optimization, since it matters now due to item count going from 16 > 22
 
 
 #Note: its now in the 0.7 sec range rn, optimizations will take root to lower it
@@ -539,8 +567,6 @@ end
 #RoadMap
 #(Internal Thinkng on which Feature is going into Hyper Proc or not)
 #ver 3.5 Warn: feature list will move to hyper
-    #Decreasing @itemCount, up to the highest id item possible
-        #Slight Optimization, since it matters now due to item count going from 16 > 22
     #Allow input of OriginAmount to be a Decimal/Percent
 #ver 3.6
     #External Schem for config setting in memBlock via 3.3 attempt on coustom config
