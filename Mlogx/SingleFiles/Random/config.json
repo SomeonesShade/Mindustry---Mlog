@@ -1,0 +1,17 @@
+{
+	"name": "Random",
+	"authors": [
+		"Shade"
+	],
+	"compilerOptions": {
+		"include": [],
+		"removeComments": false,
+		"compileWithErrors": true,
+		"mode": "single",
+		"prependFileName": true,
+		"checkTypes": true
+	},
+	"compilerConstants": {
+
+	}
+}

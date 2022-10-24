@@ -1,0 +1,72 @@
+#in dev
+jump skipUbind notEqual unitType null
+ubind @
+sensor unitType @unit @type
+skipUbind:
+#----
+sensor Item sorter1 @config
+findBuilding:
+op add a a 1
+op mod a a @links
+getlink Location a
+
+mainLoop:
+
+#----
+jump skipVars notEqual unitFlag 0 
+op mul tx @thisx @maph  #create flag... note: its not worth to add in a check if x and y is both 0
+op add unitFlag tx @thisy
+skipVars:
+#----Main Logic----
+sensor con @unit @controlled
+sensor cor @unit @controller
+sensor fla @unit @flag
+#check if:
+jump unitbind strictEqual @unit null    #we dont have a unit binded? ubind.
+jump unitbind notEqual fla unitFlag        #it isnt our flag? ubind.
+jump keepUnit always 0 0          #if it passes the checks its safe! 
+unitbind: #get vars
+ubind unitType
+sensor con @unit @controlled
+sensor fla @unit @flag
+jump unitbind notEqual fla 0 #cant use it?/is it not flag 0? ubind.
+keepUnit:
+jump unitbind greaterThanEq con 2     #is it under player control/formation? ubind.
+ucontrol flag unitFlag
+#------------------
+
+jump noBind equal Item null #standby is no item
+jump noBind equal Location sorter1
+jump startLogic notEqual Location null
+noBind:
+ucontrol move @thisx @thisy
+end
+
+startLogic:
+sensor posX Location @x #getvars
+sensor posY Location @y
+sensor itemType @unit @firstItem
+jump goCore equal itemType Item     #does unit either have the item we want
+jump goCore equal itemType null     #or no items? then goCore
+ulocate building core false @copper ox oy found Core #otherwise itemDrop to Core
+ucontrol approach ox oy 1
+ucontrol itemDrop Core 999
+wait 0.5
+ucontrol itemDrop @air 999
+jump mainLoop always 0 0
+
+goCore:
+sensor itemAmount @unit Item
+jump deliverToLocation greaterThan itemAmount 1         #Do we have enough of the item?
+ulocate building core false @copper ox oy found Core    #if not resupply in Core
+ucontrol approach ox oy 1
+ucontrol itemTake Core Item 999
+jump mainLoop always 0 0
+
+deliverToLocation:
+ucontrol move posX posY         #From previous checks, this means we are delivering to Location!
+ucontrol itemDrop Location 999
+ucontrol within posX posY 0.5 r
+jump deliverToLocation equal r false
+wait 0.2
+end
