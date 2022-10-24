@@ -92,7 +92,7 @@ op add bitSelection bitSelection 
 
 printflush null
 
-#__this may breaking something
+#__this may breaking something + bug fix
 set count @itemCount
 itemCountCheck:
 op shl bitLocation 1 count
@@ -101,7 +101,7 @@ jump itemCountEnd notEqual isSelected 0
 op sub count count 1
 jump itemCountCheck greaterThanEq count 0
 itemCountEnd:
-set itemCount count
+op add itemCount count 1
 #__pls check
 
 set storageMessage 2
@@ -109,10 +109,11 @@ jump ignoreMessageStorage equal IsCluster false
 set storageMessage 3
 ignoreMessageStorage:
 op greaterThanEq shouldOverideMaxPercent MaxPercent 1.01
+set OriginItemLimit MinOriginAmount
 jump originDisable strictEqual OriginBlock false
 jump endOfSettings always 0 0
 originDisable:
-set MinOriginAmount -1
+set OriginItemLimit -1
 endOfSettings:
 set skipVars 1
 
@@ -125,7 +126,7 @@ set Origin OriginBlock
 
 originIgnore:
 sensor hasOriginDied Origin @dead
-jump coreIgnore equal hasOriginDied false
+jump originPercentage equal hasOriginDied false
 jump coreIgnore equal FindCore false
     ubind FindCoreUnitType
     sensor controlled @unit @controlled
@@ -137,6 +138,10 @@ noValidUnitFound:
     jump coreIgnore always 0 0
 validUnitFound:
     ulocate building core false @copper ox oy fo Origin
+originPercentage:
+    jump coreIgnore greaterThanEq MinOriginAmount 1
+    sensor originCapacity Origin @itemCapacity
+    op mul OriginItemLimit originCapacity MinOriginAmount
 
 coreIgnore:
 jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
@@ -193,7 +198,7 @@ powerIsPresent:
         op and isSelected bitLocation bitSelection
 		jump skip1 equal isSelected 0 #check
         sensor c1 Origin type
-        jump skip1 lessThan c1 MinOriginAmount #is there anything to unload?
+        jump skip1 lessThan c1 OriginItemLimit #is there anything to unload?
         sensor r1 v1 type #how much x in v1, v2...
         sensor r2 v2 type
         sensor r3 v3 type
@@ -313,7 +318,7 @@ operationalWithOrigin: #1
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
 print MaxValue
 print " items.\n[#FFFFAA]Internal RSS activated and set to "
-print MinOriginAmount
+print OriginItemLimit
 jump skipMem2 lessThan MemoryReadLocation 0
 print "\n[#FFAAFF]Reading any binded cell for item configuration"
 skipMem2: ; printflush obj
@@ -559,7 +564,8 @@ end
 #log: version 3.5
 #Decreasing @itemCount, up to the highest id item possible
         #Slight Optimization, since it matters now due to item count going from 16 > 22
-
+        #change message code system to use the message code as the counter destination
+            #op add @counter @counter messageCode
 
 #Note: its now in the 0.7 sec range rn, optimizations will take root to lower it
 
