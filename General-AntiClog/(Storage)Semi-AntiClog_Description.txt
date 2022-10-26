@@ -2,12 +2,10 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.4.2
-Power RSS
-Message Improvemnts Overall
-Added Erekir Items
+|Semi-AntiClog 3.5
+@itemCount and message code system has been optimized
+MinOriginAmount can now work with decimals/percentage%
 
-HotFix: Erekir Items ID fix
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
@@ -16,10 +14,11 @@ Source Code: https://github.com/SomeonesShade/Mindustry---Mlog/blob/master/Gener
 Disclaimer:
 This is not specialized on one specific schematic, it more used on a variety of schems. Its something you may modify on use on the fly
 Custom is always better than general, this logic focuses on somewhat easy use and adaptive block transport situations.
-Expect this Logic to run with 0.7 seconds per main loop for 3 unloader 1 vault setup
+Expect this Logic to run slowly as more blocks are binded
 
 HowTo:
 Set its Config
+(which items are used)
 Bind the Destination Storage
 (ex: container, vault)
 Bind the unloader 
@@ -94,6 +93,12 @@ Logs:
 #3.4.1: HotFix: MessageBlock Bug, doesnt flush correctly on no Origin Mode while feeding storages
 #3.4.2: HotFix: Erekir Items ID fix
 
+#log: version 3.5
+#Decreasing @itemCount, up to the highest id item possible
+    #Slight Optimization, since it matters now due to item count going from 16 > 22
+#Allow input of OriginAmount to be a Decimal/Percent
+#change message code system to use the message code as the counter destination
+    #op add @counter @counter messageCode
 
 
 

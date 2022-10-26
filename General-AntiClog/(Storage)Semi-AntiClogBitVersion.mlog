@@ -12,7 +12,7 @@ jump paRSS notEqual 0 0
 print "Resource Saver (RSS)"
 paRSS1:
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
-print "(integer) Determines the mininum amount of an item to start working"
+print "(integer/decimal) Determines the mininum amount/percentage of an item to start working"
 set PowerStoredThreshold 0.4
 print "(decimal) If Power Stored in Power Grid amount/capacity goes below this percentage, deactivate"
 set PowerRSSBlockType @power-node
@@ -104,9 +104,9 @@ itemCountEnd:
 op add itemCount count 1
 #__pls check
 
-set storageMessage 2
+set storageMessage 15 #m2
 jump ignoreMessageStorage equal IsCluster false
-set storageMessage 3
+set storageMessage 19 #m3
 ignoreMessageStorage:
 op greaterThanEq shouldOverideMaxPercent MaxPercent 1.01
 set OriginItemLimit MinOriginAmount
@@ -118,9 +118,9 @@ endOfSettings:
 set skipVars 1
 
 configIgnore:
-set messageCode 0
-jump coreIgnore lessThan MinOriginAmount 0
-set messageCode 1
+set messageCode 0 #m0
+jump coreIgnore lessThan OriginItemLimit 0
+set messageCode 7 #m1
 jump originIgnore equal OriginBlock null #sets the Origin
 set Origin OriginBlock
 
@@ -134,7 +134,7 @@ sensor unitDied @unit @dead
 jump noValidUnitFound equal unitDied true
 jump validUnitFound lessThan controlled 2 #UHHHHHHHHHH
 noValidUnitFound:
-    set messageCode 5
+    set messageCode 26 #m5
     jump coreIgnore always 0 0
 validUnitFound:
     ulocate building core false @copper ox oy fo Origin
@@ -159,7 +159,7 @@ jump storageCheck greaterThanEq sC 25           #timer lel
 ItemDentify: #Part2!!!
     jump storageIsPresent notEqual v1 0 #do we even have a storage block?
         jump storageIsPresent equal IgnoreBlink true #Do not blink is IgnoreBlink is set to true
-        set messageCode 4             #Alert Message
+        set messageCode 23 #m4       #Alert Message
         op equal blink blink 0      #then start blinking
         set isA false                   #do not enable
         wait 0.5                    #no epilepsy
@@ -177,7 +177,7 @@ sensor powerStored PowerBlock @powerNetStored
 sensor powerCapacity PowerBlock @powerNetCapacity
 op div powerPercentage powerStored powerCapacity
 jump powerIsPresent greaterThanEq powerPercentage PowerStoredThreshold
-    set messageCode 6             #Alert Message
+    set messageCode 31  #m6          #Alert Message
         op equal blink blink 0      #then start blinking
         set isA false                   #do not enable
         wait 0.5                    #no epilepsy
@@ -292,7 +292,7 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.5 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.5\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 jump clusterMessage equal IsCluster true
 print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[#DDDDFF]Current Origin: [#BBBBEE]"
@@ -301,10 +301,10 @@ clusterMessage:
 print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster\n[#DDDDFF]Current Origin: [#BBBBEE]"
 messageArray:
 print Origin
-op mul selectMessage messageCode 8
-op add @counter selectMessage @counter
+op add @counter @counter messageCode
 
-operational: #0
+#0
+operational: #m0 - l7
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
 print MaxValue
 print " items"
@@ -312,9 +312,9 @@ jump skipMem1 lessThan MemoryReadLocation 0
 print "\n[#FFAAFF]Reading any binded cell for item configuration"
 skipMem1: ; printflush obj
 jump skip2 always 0 0
-end
 
-operationalWithOrigin: #1
+#7
+operationalWithOrigin: #m1 - l8
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
 print MaxValue
 print " items.\n[#FFFFAA]Internal RSS activated and set to "
@@ -324,56 +324,44 @@ print "\n[#FFAAFF]Reading any binded cell for item configuration"
 skipMem2: ; printflush obj
 jump skip2 always 0 0
 
-
-fullStorageBaseLine: #2
+#15
+fullStorageBaseLine: #m2 - l4
 print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
 print MaxValue
 printflush obj
 jump skip2 always 0 0
-end
-end
-end
-end
 
-fullStorageCluster: #3
+#19
+fullStorageCluster: #m3 - l4
 print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any total amount of items per type reaches below "
 print MaxValue
 printflush obj
 jump skip2 always 0 0
-end
-end
-end
-end
 
-noStorageDetected: #4
+#23
+noStorageDetected: #m4 - l3
 print "\n\n[#FFAAAA]error: No Storage Block Found\nPlease Bind to One"
 printflush obj
 jump skip2 always 0 0
-end
-end
-end
-end
-end
 
-noUnitDetected: #5
+#26
+noUnitDetected: #m5 - l5
 print "\n\n[#FFAAAA]error: No Valid "
 print FindCoreUnitType
 print " Found\n\nPlease either make the unit or configurate the settings to use a diffrent unit type"
 printflush obj
 jump skip2 always 0 0
-end
-end
-end
 
-powerLow: #6
+#31
+powerLow: #m6 - l6
 print "\n\n[#FFAAAA]disabled: Not Enough Power Stored. Its Less Than "
 print PowerStoredThreshold
 print "\n\nCurrent Power Percentage Stored: "
 print powerPercentage
 printflush obj
 jump skip2 always 0 0
-end
-end
+
+#37
 
 storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
@@ -561,19 +549,10 @@ end
 #item config (is it set to 0?, are ids right? is 1 + 1 = 10 or 2?)
 #Baseline/TotalItems (check storageCheck + MaxPercent, all op/sensor/set should be checked?)
 
-#log: version 3.5
-#Decreasing @itemCount, up to the highest id item possible
-        #Slight Optimization, since it matters now due to item count going from 16 > 22
-        #change message code system to use the message code as the counter destination
-            #op add @counter @counter messageCode
-
-#Note: its now in the 0.7 sec range rn, optimizations will take root to lower it
 
 #Plans:
 #RoadMap
 #(Internal Thinkng on which Feature is going into Hyper Proc or not)
-#ver 3.5 Warn: feature list will move to hyper
-    #Allow input of OriginAmount to be a Decimal/Percent
 #ver 3.6
     #External Schem for config setting in memBlock via 3.3 attempt on coustom config
     #Implementation of Reverse Mode
