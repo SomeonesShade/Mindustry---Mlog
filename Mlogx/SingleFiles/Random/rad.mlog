@@ -1,0 +1,9 @@
+wait 0.2
+print "Vault To Double T5 1.1 (Modified)"
+print "[white]Originally made by: [$i]Commanders\n"
+print "[white]Fixed by: [$i]Legendarybbk\n"
+print "[white]Modified by: [$i]Someone's Shadow\n"
+printflush message1
+end
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"

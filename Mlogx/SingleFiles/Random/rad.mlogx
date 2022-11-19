@@ -1,0 +1,8 @@
+#1yellow, 2green, 3black, 4pink, 5gold, 6grey, 7blue, 8purple, 9teal, 10orange, 11brown
+&for i of yellow
+wait 0.2
+print "Vault To Double T5 1.1 (Modified)"
+print "[white]Originally made by: [$i]Commanders\n"
+print "[white]Fixed by: [$i]Legendarybbk\n"
+print "[white]Modified by: [$i]Someone's Shadow\n"
+printflush message1
