@@ -1,0 +1,199 @@
+#anticlog that is for recons specifically
+#automatic conifg based on recon bind, t1-t5, message block, is in cluster mode
+#hardcode galore : D
+#note: use semi-anticlog as a basis along with the branch for autoconfig
+#then rewrite the entire storage system, actually alot more
+#make every. code get the # to deal with systems one at a time
+#actually mayube make it in scratch?
+
+#psudo code
+#check the targeted recons and know how much is needed
+#then loop through the amount of items in the system
+#finally calculate which item is prioritized and even nerf the speed
+#i would be moving this project in mlogx, since im planning to make this as hardcoded as possible
+
+#bugs: due to nature of doing this in cluster mode and not baseline
+#if the buffer is just too low, it clogs and will miss the lower storage blocks
+#can be semi mended with null loaders, but a better system is needed
+#still this is good enough for lowscale, you ca fix by either throttling throughoutput somehow, or get a baselline-cluster mix
+print "warning Reconstructor AntiClog is Extremely Buggy and is currently in Alpha"
+print "use in your own discrection"
+set buffer 0.95
+jump storageCheck notEqual prevLinks @links
+jump storageCheck equal reconCount 0
+jump skipSC equal enable true
+jump storageCheck greaterThan sc 25
+skipSC:
+#the fast part
+set prevLinks @links
+#sensor amount of items
+set metaglassAmount 0
+set graphiteAmount 0
+set titaniumAmount 0
+set siliconAmount 0
+set plastaniumAmount 0
+set phaseFabricAmount 0
+set surgeAlloyAmount 0
+set a 0
+reconSensorLoop:
+getlink obj a
+sensor meA obj @metaglass
+sensor grA obj @graphite
+sensor tiA obj @titanium
+sensor siA obj @silicon
+sensor plA obj @plastanium
+sensor pfA obj @phase-fabric
+sensor saA obj @surge-alloy
+op add metaglassAmount metaglassAmount meA
+op add graphiteAmount graphiteAmount grA
+op add titaniumAmount titaniumAmount tiA
+op add siliconAmount siliconAmount siA
+op add plastaniumAmount plastaniumAmount plA
+op add phaseFabricAmount phaseFabricAmount pfA
+op add surgeAlloyAmount surgeAlloyAmount saA
+skipS:
+op add a a 1
+jump reconSensorLoop lessThan a @links
+
+#configIdentification
+#place holder for a good item picker
+op div ifOverfilled metaglassAmount buffer
+jump check1 greaterThanEq ifOverfilled MetaglassCapacity
+set item @metaglass
+jump hasConfiged always 0 0
+check1:
+op div ifOverfilled graphiteAmount buffer
+jump check2 greaterThanEq ifOverfilled GraphiteCapacity
+set item @graphite
+jump hasConfiged always 0 0
+check2:
+op div ifOverfilled titaniumAmount buffer
+jump check3 greaterThanEq ifOverfilled TitaniumCapacity
+set item @titanium
+jump hasConfiged always 0 0
+check3:
+op div ifOverfilled siliconAmount buffer
+jump check4 greaterThanEq ifOverfilled SiliconCapacity
+set item @silicon
+jump hasConfiged always 0 0
+check4:
+op div ifOverfilled plastaniumAmount buffer
+jump check5 greaterThanEq ifOverfilled PlastaniumCapacity
+set item @plastanium
+jump hasConfiged always 0 0
+check5:
+op div ifOverfilled phaseFabricAmount buffer
+jump check6 greaterThanEq ifOverfilled PhaseFabricCapacity
+set item @phase-fabric
+jump hasConfiged always 0 0
+check6:
+op div ifOverfilled surgeAlloyAmount buffer
+jump skipConfig greaterThanEq ifOverfilled SurgeAlloyCapacity
+set item @surge-alloy
+jump hasConfiged always 0 0
+skipConfig:
+set item null
+set enable false
+op sc sc 5
+jump startConifg always 0 0
+hasConfiged:
+set enable true
+
+
+
+startConifg:
+#buildingConfigLoop
+set a 0
+buildingConfigLoop: 
+getlink obj a
+sensor type obj @type
+jump skipBuildingConfig equal type @additive-reconstructor
+jump skipBuildingConfig equal type @multiplicative-reconstructor
+jump skipBuildingConfig equal type @exponential-reconstructor
+jump skipBuildingConfig equal type @tetrative-reconstructor
+jump skipBuildingConfig equal type @mass-driver
+control config obj item
+control enabled obj enable
+skipBuildingConfig:
+op add a a 1
+jump buildingConfigLoop lessThan a @links
+op sc sc 1
+end
+
+#the slow part
+storageCheck:
+#identifying the amount of recons
+set sc 0
+set add 0
+set mul 0
+set exp 0
+set tet 0
+set a 0
+reconIdentifyLoop:
+getlink obj a
+sensor type obj @type
+jump m notEqual type @additive-reconstructor
+op add add add 1
+m:
+jump e notEqual type @multiplicative-reconstructor
+op add mul mul 1
+e:
+jump t notEqual type @exponential-reconstructor
+op add exp exp 1
+t:
+jump skipR notEqual type @tetrative-reconstructor
+op add tet tet 1
+skipR:
+op add a a 1
+jump reconIdentifyLoop lessThan a @links
+
+#var is any recon is found
+op add reconCount add mul
+op add reconCount reconCount exp
+op add reconCount reconCount tet
+
+#calculating the item capacity
+#metaglass
+op mul MetaglassCapacity mul 80
+#graphite
+op mul GraphiteCapacity add 80
+#titanium
+op mul titaniumCapM mul 160
+op mul titaniumCapE exp 1500
+op add TitaniumCapacity titaniumCapM titaniumCapE
+#silicon
+op mul siliconCapA add 80
+op mul siliconCapM mul 260
+op mul siliconCapE exp 1700
+op mul siliconCapT tet 2000
+op add siliconCapacity siliconCapA siliconCapM
+op add siliconCapacity siliconCapacity siliconCapE
+op add SiliconCapacity siliconCapacity siliconCapT
+#plastanium
+op mul plastaniumCapE exp 1300
+op mul plastaniumCapT tet 1200
+op add PlastaniumCapacity plastaniumCapE plastaniumCapT
+#phaseFabric
+op mul PhaseFabricCapacity tet 700
+#surgeAlloy
+op mul SurgeAlloyCapacity tet 1000
+
+#negative checks...
+op lessThanEq isNegative MetaglassCapacity 0
+op sub MetaglassCapacity MetaglassCapacity isNegative
+op lessThanEq isNegative GraphiteCapacity 0
+op sub GraphiteCapacity GraphiteCapacity isNegative
+op lessThanEq isNegative TitaniumCapacity 0
+op sub TitaniumCapacity TitaniumCapacity isNegative
+op lessThanEq isNegative SiliconCapacity 0
+op sub SiliconCapacity SiliconCapacity isNegative
+op lessThanEq isNegative PlastaniumCapacity 0
+op sub PlastaniumCapacity PlastaniumCapacity isNegative
+op lessThanEq isNegative PhaseFabricCapacity 0
+op sub PhaseFabricCapacity PhaseFabricCapacity isNegative
+op lessThanEq isNegative SurgeAlloyCapacity 0
+op sub SurgeAlloyCapacity SurgeAlloyCapacity isNegative
+jump skipSC always 0 0
+end
+print "Reconstructor AntiClog 0.5A made by: Someone' Shadow/Shade"
+print "massive help with mlogx for the hardcoding (github.com/BalaM314/mlogx/)" 
