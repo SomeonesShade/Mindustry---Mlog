@@ -18,7 +18,7 @@
 #still this is good enough for lowscale, you ca fix by either throttling throughoutput somehow, or get a baselline-cluster mix
 print "warning Reconstructor AntiClog is Extremely Buggy and is currently in Alpha"
 print "use in your own discrection"
-set buffer 0.95
+set buffer 0.75
 jump storageCheck notEqual prevLinks @links
 jump storageCheck equal reconCount 0
 jump skipSC equal enable true
@@ -57,49 +57,54 @@ jump reconSensorLoop lessThan a @links
 
 #configIdentification
 #place holder for a good item picker
-op div ifOverfilled metaglassAmount buffer
-jump check1 greaterThanEq ifOverfilled MetaglassCapacity
-set item @metaglass
-jump hasConfiged always 0 0
-check1:
-op div ifOverfilled graphiteAmount buffer
-jump check2 greaterThanEq ifOverfilled GraphiteCapacity
-set item @graphite
-jump hasConfiged always 0 0
-check2:
-op div ifOverfilled titaniumAmount buffer
-jump check3 greaterThanEq ifOverfilled TitaniumCapacity
-set item @titanium
-jump hasConfiged always 0 0
-check3:
-op div ifOverfilled siliconAmount buffer
-jump check4 greaterThanEq ifOverfilled SiliconCapacity
-set item @silicon
-jump hasConfiged always 0 0
-check4:
-op div ifOverfilled plastaniumAmount buffer
-jump check5 greaterThanEq ifOverfilled PlastaniumCapacity
-set item @plastanium
-jump hasConfiged always 0 0
-check5:
-op div ifOverfilled phaseFabricAmount buffer
-jump check6 greaterThanEq ifOverfilled PhaseFabricCapacity
-set item @phase-fabric
-jump hasConfiged always 0 0
-check6:
-op div ifOverfilled surgeAlloyAmount buffer
-jump skipConfig greaterThanEq ifOverfilled SurgeAlloyCapacity
-set item @surge-alloy
-jump hasConfiged always 0 0
-skipConfig:
+#note this can be volitile due to the capacity becomes -1
 set item null
+set enable true
+op mul threshold MetaglassCapacity buffer
+jump check1 greaterThanEq metaglassAmount threshold
+set item @metaglass
+op div buffer metaglassAmount threshold
+
+check1:
+op mul threshold GraphiteCapacity buffer
+jump check2 greaterThanEq graphiteAmount threshold
+set item @graphite
+op div buffer graphiteAmount threshold
+
+check2:
+op mul threshold TitaniumCapacity buffer
+jump check3 greaterThanEq titaniumAmount threshold
+set item @titanium
+op div buffer titaniumAmount threshold
+
+check3:
+op mul threshold SiliconCapacity buffer
+jump check4 greaterThanEq siliconAmount threshold
+set item @silicon
+op div buffer siliconAmount threshold
+
+check4:
+op mul threshold PlastaniumCapacity buffer
+jump check5 greaterThanEq plastaniumAmount threshold
+set item @plastanium
+op div buffer plastaniumAmount threshold
+
+check5:
+op mul threshold PhaseFabricCapacity buffer
+jump check6 greaterThanEq phaseFabricAmount threshold
+set item @phase-fabric
+op div buffer phaseFabricAmount threshold
+
+check6:
+op mul threshold SurgeAlloyCapacity buffer
+jump skipConfigItem greaterThanEq surgeAlloyAmount threshold
+set item @surge-alloy
+op div buffer surgeAlloyAmount threshold
+
+skipConfigItem:
+jump startConifg notEqual item null
 set enable false
 op sc sc 5
-jump startConifg always 0 0
-hasConfiged:
-set enable true
-
-
 
 startConifg:
 #buildingConfigLoop
@@ -117,7 +122,7 @@ control enabled obj enable
 skipBuildingConfig:
 op add a a 1
 jump buildingConfigLoop lessThan a @links
-op sc sc 1
+op add sc sc 1
 end
 
 #the slow part
@@ -178,22 +183,14 @@ op mul PhaseFabricCapacity tet 700
 #surgeAlloy
 op mul SurgeAlloyCapacity tet 1000
 
-#negative checks...
-op lessThanEq isNegative MetaglassCapacity 0
-op sub MetaglassCapacity MetaglassCapacity isNegative
-op lessThanEq isNegative GraphiteCapacity 0
-op sub GraphiteCapacity GraphiteCapacity isNegative
-op lessThanEq isNegative TitaniumCapacity 0
-op sub TitaniumCapacity TitaniumCapacity isNegative
-op lessThanEq isNegative SiliconCapacity 0
-op sub SiliconCapacity SiliconCapacity isNegative
-op lessThanEq isNegative PlastaniumCapacity 0
-op sub PlastaniumCapacity PlastaniumCapacity isNegative
-op lessThanEq isNegative PhaseFabricCapacity 0
-op sub PhaseFabricCapacity PhaseFabricCapacity isNegative
-op lessThanEq isNegative SurgeAlloyCapacity 0
-op sub SurgeAlloyCapacity SurgeAlloyCapacity isNegative
+op mul MetaglassCapacityThreshold MetaglassCapacity buffer
+op mul GraphiteCapacityThreshold GraphiteCapacity buffer
+op mul TitaniumCapacityThreshold TitaniumCapacity buffer
+op mul SiliconCapacityThreshold SiliconCapacity buffer
+op mul PlastaniumCapacityThreshold PlastaniumCapacity buffer
+op mul PhaseFabricCapacityThreshold PhaseFabricCapacity buffer
+op mul SurgeAlloyCapacityThreshold SurgeAlloyCapacity buffer
 jump skipSC always 0 0
 end
-print "Reconstructor AntiClog 0.5A made by: Someone' Shadow/Shade"
+print "Reconstructor AntiClog 0.7A made by: Someone' Shadow/Shade"
 print "massive help with mlogx for the hardcoding (github.com/BalaM314/mlogx/)" 
