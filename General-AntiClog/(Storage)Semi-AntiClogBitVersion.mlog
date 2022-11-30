@@ -104,9 +104,26 @@ itemCountEnd:
 op add itemCount count 1
 #__pls check
 
-set storageMessage 15 #m2
-jump ignoreMessageStorage equal IsCluster false
-set storageMessage 19 #m3
+PrintCalculation:
+    jump clusterMessage equal IsCluster true
+    set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[#DDDDFF]Current Origin: [#BBBBEE]"
+    jump skipMemA1 always 0 0
+    clusterMessage:
+    set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster\n[#DDDDFF]Current Origin: [#BBBBEE]"
+    skipMemA1:
+
+    set memReadAMessage " items"
+    set memReadBMessage ""
+    jump skipMemA2 lessThan MemoryReadLocation 0
+    set memReadAMessage " items\n[#FFAAFF]Reading any binded cell for item configuration"
+    set memReadBMessage "\n[#FFAAFF]Reading any binded cell for item configuration"
+    skipMemA2:
+
+    set fullStorageModeMessage "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
+    jump skipMemA3 equal IsCluster false
+    set fullStorageModeMessage "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if the total amount of items from all types reaches below "
+    skipMemA3:
+
 ignoreMessageStorage:
 op greaterThanEq shouldOverideMaxPercent MaxPercent 1.01
 set OriginItemLimit MinOriginAmount
@@ -120,7 +137,7 @@ set skipVars 1
 configIgnore:
 set messageCode 0 #m0
 jump coreIgnore lessThan OriginItemLimit 0
-set messageCode 7 #m1
+set messageCode 5 #m1
 jump originIgnore equal OriginBlock null #sets the Origin
 set Origin OriginBlock
 
@@ -134,7 +151,7 @@ sensor unitDied @unit @dead
 jump noValidUnitFound equal unitDied true
 jump validUnitFound lessThan controlled 2 #UHHHHHHHHHH
 noValidUnitFound:
-    set messageCode 26 #m5
+    set messageCode 19 #m5
     jump coreIgnore always 0 0
 validUnitFound:
     ulocate building core false @copper ox oy fo Origin
@@ -159,7 +176,7 @@ jump storageCheck greaterThanEq sC 25           #timer lel
 ItemDentify: #Part2!!!
     jump storageIsPresent notEqual v1 0 #do we even have a storage block?
         jump storageIsPresent equal IgnoreBlink true #Do not blink is IgnoreBlink is set to true
-        set messageCode 23 #m4       #Alert Message
+        set messageCode 16 #m4       #Alert Message
         op equal blink blink 0      #then start blinking
         set isA false                   #do not enable
         wait 0.5                    #no epilepsy
@@ -177,7 +194,7 @@ sensor powerStored PowerBlock @powerNetStored
 sensor powerCapacity PowerBlock @powerNetCapacity
 op div powerPercentage powerStored powerCapacity
 jump powerIsPresent greaterThanEq powerPercentage PowerStoredThreshold
-    set messageCode 31  #m6          #Alert Message
+    set messageCode 24  #m6          #Alert Message
         op equal blink blink 0      #then start blinking
         set isA false                   #do not enable
         wait 0.5                    #no epilepsy
@@ -264,8 +281,8 @@ powerIsPresent:
 jump j3 equal isA true #is everything full?
     set typec null
     set dataItem 0
-jump j3 greaterThan messageCode storageMessage
-    set messageCode storageMessage
+jump j3 greaterThan messageCode 12 #m2
+    set messageCode 12 #m2
 
     j3:
         set a -1
@@ -292,59 +309,52 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.5\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.6 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
-jump clusterMessage equal IsCluster true
-print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[#DDDDFF]Current Origin: [#BBBBEE]"
-jump messageArray always 0 0
-clusterMessage:
-print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster\n[#DDDDFF]Current Origin: [#BBBBEE]"
-messageArray:
+print storageModeMessage
 print Origin
 op add @counter @counter messageCode
 
+#do message count rechecks!
 #0
-operational: #m0 - l7
+operational: #m0 - l5
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
 print MaxValue
-print " items"
-jump skipMem1 lessThan MemoryReadLocation 0
-print "\n[#FFAAFF]Reading any binded cell for item configuration"
-skipMem1: ; printflush obj
+print memReadAMessage
+printflush obj
 jump skip2 always 0 0
 
-#7
-operationalWithOrigin: #m1 - l8
+#5
+operationalWithOrigin: #m1 - l7
 print "\n\n[#AAFFAA]Operational!\nTargeting for "
 print MaxValue
 print " items.\n[#FFFFAA]Internal RSS activated and set to "
 print OriginItemLimit
-jump skipMem2 lessThan MemoryReadLocation 0
-print "\n[#FFAAFF]Reading any binded cell for item configuration"
-skipMem2: ; printflush obj
+print memReadBMessage
+printflush obj
 jump skip2 always 0 0
 
-#15
-fullStorageBaseLine: #m2 - l4
-print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
+#12
+fullStorage: #m2 - l4
+print fullStorageModeMessage
 print MaxValue
 printflush obj
 jump skip2 always 0 0
 
-#19
-fullStorageCluster: #m3 - l4
-print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any total amount of items per type reaches below "
-print MaxValue
-printflush obj
-jump skip2 always 0 0
+#16
+depreciated: #m3 - l0
+#print "m3 is depreciated"
+#print "..."
+#printflush obj
+#jump skip2 always 0 0
 
-#23
+#16
 noStorageDetected: #m4 - l3
 print "\n\n[#FFAAAA]error: No Storage Block Found\nPlease Bind to One"
 printflush obj
 jump skip2 always 0 0
 
-#26
+#19
 noUnitDetected: #m5 - l5
 print "\n\n[#FFAAAA]error: No Valid "
 print FindCoreUnitType
@@ -352,7 +362,7 @@ print " Found\n\nPlease either make the unit or configurate the settings to use 
 printflush obj
 jump skip2 always 0 0
 
-#31
+#24
 powerLow: #m6 - l6
 print "\n\n[#FFAAAA]disabled: Not Enough Power Stored. Its Less Than "
 print PowerStoredThreshold
@@ -361,7 +371,7 @@ print powerPercentage
 printflush obj
 jump skip2 always 0 0
 
-#37
+#30
 
 storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
@@ -538,28 +548,18 @@ set @counter goBack
 set select_output null
 set @counter goBack
 end
-#Critical Points of Failure (if something goes wrong, here is a list):
-#itemCount calculation (goes wrong/unupdated?)
-#storage detection (skips a block or isnt updated for some reason during linking?)
-#overfill! (storage items unaccounted maybe due to md shenanigans or maxpercent too high?)
-#messageblock (incorrect amount of "end" for each block?)
-#power/vault detection (shenanigans related to @dead maybe?)
-#FindCore Core (failure if unit ded, or @dead shenanigans again?)
-#MemBlock (incorrect interpretation, self feedback, or external noise?)
-#item config (is it set to 0?, are ids right? is 1 + 1 = 10 or 2?)
-#Baseline/TotalItems (check storageCheck + MaxPercent, all op/sensor/set should be checked?)
-
-
+#ver 3.6 Beta
+#3.6.-1 - message system improved
+    #adding in in message on which items are available, and optimizing the messages with var strings
+        #some of the messages can be optimized to having the setting prints already made
 #Plans:
 #RoadMap
-#(Internal Thinkng on which Feature is going into Hyper Proc or not)
 #ver 3.6
     #External Schem for config setting in memBlock via 3.3 attempt on coustom config
     #Implementation of Reverse Mode
         #>allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)
         #this needs to take into account with Core as well... there is a wai to get reversmode in though...
         #! What is actually needed is a way to make the core into v1
-
 #Finishes Goals: 
     #External Schem for config via mem block display, or message block for instructions [non-associated]
         #(more QOL, and easier time for people who dont know to set the config of the proc)
