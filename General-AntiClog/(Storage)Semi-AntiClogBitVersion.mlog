@@ -1,27 +1,25 @@
+#reorganize the settings for a final time. plus add in the v1 override for a possible core as origin
 set OriginBlock null #the block used in reversemode, or rss
 jump configIgnore equal skipVars 1
 print "(Block/Bool) The StorageBlock where the items come from. If set to false, disables origin functionality"
+
+jump pt1 always 0 0
+print "Threshold Settings"
+end; pt1: 
+
 set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
 print "(decimal/whole number) determines the maxinum percentage of an item in a storage block, if whole number it uses that value instead"
-set FindCore true
-print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
-set FindCoreUnitType @mono
-print "(unitType) Unit used to detect core automatically"
-paRSS: 
-jump paRSS notEqual 0 0
-print "Resource Saver (RSS)"
-paRSS1:
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
 print "(integer/decimal) Determines the mininum amount/percentage of an item to start working"
 set PowerStoredThreshold 0.4
 print "(decimal) If Power Stored in Power Grid amount/capacity goes below this percentage, deactivate"
-set PowerRSSBlockType @power-node
-print "(BlockType) What BlockType to measure battery from"
-pa1: 
-jump pa1 notEqual 0 0
+set IsCluster false #if dealing. chained or seperated storages, no diffrence if single
+print "(bool) If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
+
+jump pa1 always 0 0
 print "Item Configuration"
-pa2: 
-jump pa2 notEqual 0 0
+end; pa1: 
+
 print "for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
 op shl  false 0
 op shl  1 1
@@ -46,28 +44,37 @@ op shl  false 19
 op shl  false 20
 op shl  false 21
 
-pb1: 
-jump pb1 notEqual 0 0
-print "MultiStorage/Processor Settings for high amounts of distance or items/s"
-pb2: 
-jump pb2 notEqual 0 0
-set IsCluster false #if dealing. chained or seperated storages, no diffrence if single
-print "(bool) If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
-set ReadMemoryBlock cell1
-print "(memoryblock) the read cell block for configuration"
+jump pb1 always 0 0
+print "Memory Settings"
+end; pb1:
+
 set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
 print "(whole number) doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
 set MemoryReadLocation -1
 print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
-pc1: 
-jump pc1 notEqual 0 0
-print "Random Settings"
-pc2: 
-jump pc2 notEqual 0 0
+
+jump pc1 always 0 0
+print "Miscellaneous Settings"
+end; pc1:
+
+set FindCore true
+print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
+set FindCoreUnitType @mono
+print "(unitType) Unit used to detect core automatically"
+set PowerRSSBlockType @power-node
+print "(BlockType) What BlockType to measure battery from"
+set ReadMemoryBlock cell1
+print "(memoryblock) the read cell block for configuration"
 set IgnoreBlink false
 print "(bool) disables 'blinking' (it happens when there are no vaults detected)"
 
+jump pEnd always 0 0
+end
+end
 print "Do not modify from this point, unless you know how it works lel"
+end
+end; pEnd:
+
 op add bitSelection   #compile config into a single number (ex: 101 as an example)
 op add bitSelection bitSelection 
 op add bitSelection bitSelection 
@@ -552,6 +559,9 @@ end
 #3.6.-1 - message system improved
     #adding in in message on which items are available, and optimizing the messages with var strings
         #some of the messages can be optimized to having the setting prints already made
+#3.6.-0.5 - Var Positions Rearranged
+    #making the setting positions even better!
+
 #Plans:
 #RoadMap
 #ver 3.6
