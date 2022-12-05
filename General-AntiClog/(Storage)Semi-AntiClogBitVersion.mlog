@@ -67,6 +67,8 @@ set ReadMemoryBlock cell1
 print "(memoryblock) the read cell block for configuration"
 set IgnoreBlink false
 print "(bool) disables 'blinking' (it happens when there are no vaults detected)"
+set SetStorageAsCore false #This is so broken lol
+print "(bool)[BETA] Sets one storage in the code as the Core"
 
 jump pEnd always 0 0
 end
@@ -143,31 +145,54 @@ set skipVars 1
 
 configIgnore:
 set messageCode 0 #m0
-jump coreIgnore lessThan OriginItemLimit 0
+jump originCoreIgnore lessThan OriginItemLimit 0
 set messageCode 5 #m1
+
 jump originIgnore equal OriginBlock null #sets the Origin
 set Origin OriginBlock
-
 originIgnore:
 sensor hasOriginDied Origin @dead
 jump originPercentage equal hasOriginDied false
-jump coreIgnore equal FindCore false
-    ubind FindCoreUnitType
-    sensor controlled @unit @controlled
-sensor unitDied @unit @dead
-jump noValidUnitFound equal unitDied true
-jump validUnitFound lessThan controlled 2 #UHHHHHHHHHH
-noValidUnitFound:
-    set messageCode 19 #m5
-    jump coreIgnore always 0 0
-validUnitFound:
-    ulocate building core false @copper ox oy fo Origin
+
+originCoreFind: #this break a lot of stuff
+    jump originCoreIgnore equal FindCore false
+        ubind FindCoreUnitType
+        sensor controlled @unit @controlled
+    sensor unitDied @unit @dead
+    jump noValidUnitFoundA equal unitDied true
+    jump validUnitFoundA lessThan controlled 2 #UHHHHHHHHHH
+    noValidUnitFoundA:
+        set messageCode 19 #m5
+        jump originCoreIgnore always 0 0
+    validUnitFoundA:
+        ulocate building core false @copper ox oy fo Origin
+
 originPercentage:
-    jump coreIgnore greaterThanEq MinOriginAmount 1
+    jump originCoreIgnore greaterThanEq MinOriginAmount 1
     sensor originCapacity Origin @itemCapacity
     op mul OriginItemLimit originCapacity MinOriginAmount
 
+originCoreIgnore:
+jump coreIgnore equal SetStorageAsCore false
+
+sensor hasOverrideDied V1CoreOverride @dead
+jump bitStart equal hasOverrideDied false
+coreFind:
+        ubind FindCoreUnitType
+        sensor controlled @unit @controlled
+    sensor unitDied @unit @dead
+    jump noValidUnitFound equal unitDied true
+    jump validUnitFound lessThan controlled 2 #UHHHHHHHHHH part 2
+    noValidUnitFound:
+        set messageCode 19 #m5
+        jump coreIgnore always 0 0
+    validUnitFound:
+        ulocate building core false @copper ox oy fo V1CoreOverride
+    jump bitStart always 0 0
 coreIgnore:
+set V1CoreOverride 0
+
+bitStart:
 jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
@@ -421,7 +446,18 @@ storageDetectionLoop: #detect storages via getlink loop
     set PowerBlock obj
     skip0:
     	jump storageDetectionLoop lessThan lp @links
-    
+
+#!dangerous    
+    jump noOverride equal V1CoreOverride 0
+    jump hasOverriden equal loopOnceOverrideCheck true
+        set obj V1CoreOverride
+        set loopOnceOverrideCheck true
+        jump select always 0 0
+    hasOverriden:
+    set loopOnceOverrideCheck false
+noOverride:
+#!dangerous
+
     set select_readMode 2 #no need to write on second part of the code, just read
     set MaxValue BaseLineValue
 jump clusterIgnore equal IsCluster false #is this cluter mode?
@@ -561,15 +597,14 @@ end
         #some of the messages can be optimized to having the setting prints already made
 #3.6.-0.5 - Var Positions Rearranged
     #making the setting positions even better!
+#3.6.-0.25 - V1CoreOveride
+    #anticlog for the distant core now possible
+    #Reverse mode is now complete with the origin system and this option
 
 #Plans:
 #RoadMap
 #ver 3.6
     #External Schem for config setting in memBlock via 3.3 attempt on coustom config
-    #Implementation of Reverse Mode
-        #>allows for a diffrent form of anti-clog via Origin (Origin unloader incinerator as an example)
-        #this needs to take into account with Core as well... there is a wai to get reversmode in though...
-        #! What is actually needed is a way to make the core into v1
 #Finishes Goals: 
     #External Schem for config via mem block display, or message block for instructions [non-associated]
         #(more QOL, and easier time for people who dont know to set the config of the proc)
@@ -582,7 +617,8 @@ end
     #Starting the Recon Version/Simple version
         #If its possible this includes an array for each factory
     #Updating the external schem for default configs
-    #Severe Optimizations to the message system
+    #Severe Optimizations to the message system (closer than i thought really)
+    #set up wireless memory send/recieve (ext schem or internal idk)
 #Finishes Goals:
     #Recon/Factory Intergration
         #(issue: recons/factories cant hold every item, which means dynamic config and...
