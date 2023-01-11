@@ -2,9 +2,10 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.5
-@itemCount and message code system has been optimized
-MinOriginAmount can now work with decimals/percentage%
+|Semi-AntiClog 3.6
+Variable/Configurations are now finalized, being more organized
+Slight Improvements to Message system
+SetStorageAsCore Config Added
 
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
@@ -100,7 +101,24 @@ Logs:
 #change message code system to use the message code as the counter destination
     #op add @counter @counter messageCode
 
-
+#log: 3.6.-1: - message system improved .-0.5: - Var Positions Rearranged .-0.25: - V1CoreOveride
+#log: 3.6.0:
+    #internal changes to descriptions and enforcing style guide
+    #renamed V1CoreOveride to StorageOveride
+        
+    >random
+        #adding in in message on which items are available, and optimizing the messages with var strings 
+        #some of the messages can be optimized to having the setting prints already made
+        
+        #making the setting positions even better!
+        
+        #anticlog for the distant core now possible
+    #Reverse mode is now complete with the origin system and this option
+        #gonna use this feature to potentially have external binding using getblock from ucontrol
+        #or use memoryblock system really..., the other semiAC can detect the storage in the md really so detect that instead?
+        #could solve the problem of needing an md on the unloader side if using multiple semiAC with memory connection (allows to use phase conv instead)
+        #yeah that can work...
+    >random
 
 Also Old Description: Might be useful for later
 Features/Variables:

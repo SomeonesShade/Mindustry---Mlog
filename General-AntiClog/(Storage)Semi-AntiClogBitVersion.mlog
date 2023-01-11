@@ -12,9 +12,9 @@ print "(decimal/whole number) determines the maxinum percentage of an item in a 
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
 print "(integer/decimal) Determines the mininum amount/percentage of an item to start working"
 set PowerStoredThreshold 0.4
-print "(decimal) If Power Stored in Power Grid amount/capacity goes below this percentage, deactivate"
+print "(decimal) If the Power Stored in Power Grid amount/capacity goes below this percentage, deactivate (in PowerRSSBlockType)"
 set IsCluster false #if dealing. chained or seperated storages, no diffrence if single
-print "(bool) If the anticlog will want to have a baseline of items in all storages, or a total amount of items in all storages"
+print "(bool) If the anticlog will want to have a baseline of items in all storages (false), or a total amount of items in all storages (true)"
 
 jump pa1 always 0 0
 print "Item Configuration"
@@ -113,7 +113,7 @@ itemCountEnd:
 op add itemCount count 1
 #__pls check
 
-PrintCalculation:
+printCalculation:
     jump clusterMessage equal IsCluster true
     set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[#DDDDFF]Current Origin: [#BBBBEE]"
     jump skipMemA1 always 0 0
@@ -175,7 +175,7 @@ originPercentage:
 originCoreIgnore:
 jump coreIgnore equal SetStorageAsCore false
 
-sensor hasOverrideDied V1CoreOverride @dead
+sensor hasOverrideDied StorageOverride @dead
 jump bitStart equal hasOverrideDied false
 coreFind:
         ubind FindCoreUnitType
@@ -187,10 +187,10 @@ coreFind:
         set messageCode 19 #m5
         jump coreIgnore always 0 0
     validUnitFound:
-        ulocate building core false @copper ox oy fo V1CoreOverride
+        ulocate building core false @copper ox oy fo StorageOverride
     jump bitStart always 0 0
 coreIgnore:
-set V1CoreOverride 0
+set StorageOverride 0
 
 bitStart:
 jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
@@ -341,7 +341,7 @@ jump j3 greaterThan messageCode 12 #m2
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.6 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.6\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 print storageModeMessage
 print Origin
@@ -444,13 +444,14 @@ storageDetectionLoop: #detect storages via getlink loop
     jump select equal oType @core-nucleus
     jump skip0 notEqual oType PowerRSSBlockType
     set PowerBlock obj
+
     skip0:
-    	jump storageDetectionLoop lessThan lp @links
+jump storageDetectionLoop lessThan lp @links
 
 #!dangerous    
-    jump noOverride equal V1CoreOverride 0
+    jump noOverride equal StorageOverride 0
     jump hasOverriden equal loopOnceOverrideCheck true
-        set obj V1CoreOverride
+        set obj StorageOverride
         set loopOnceOverrideCheck true
         jump select always 0 0
     hasOverriden:
@@ -591,25 +592,18 @@ set @counter goBack
 set select_output null
 set @counter goBack
 end
-#ver 3.6 Beta
-#3.6.-1 - message system improved
-    #adding in in message on which items are available, and optimizing the messages with var strings
-        #some of the messages can be optimized to having the setting prints already made
-#3.6.-0.5 - Var Positions Rearranged
-    #making the setting positions even better!
-#3.6.-0.25 - V1CoreOveride
-    #anticlog for the distant core now possible
-    #Reverse mode is now complete with the origin system and this option
+#ver 3.6
+
+
+#Reminder to self:
+#this personal project has a fundamental flaw, it may get more into golden hammer ness
+#mainly reverse mode is prob not needed, very rare case, and a lot of stuff in this logic have niche uses (you even have dedicated logic for maninging core clog)
+#will think about later
+#stil always fit the theme of transporting from one storage to another with unloader + transport, do not deviate
+
 
 #Plans:
 #RoadMap
-#ver 3.6
-    #External Schem for config setting in memBlock via 3.3 attempt on coustom config
-#Finishes Goals: 
-    #External Schem for config via mem block display, or message block for instructions [non-associated]
-        #(more QOL, and easier time for people who dont know to set the config of the proc)
-    #QOL changes
-        #(variable decl, and making it even easier to use... somehow)
         
 #ver Unkown/4.0
     #Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed
