@@ -348,7 +348,7 @@ jump j3 greaterThan messageCode 12 #m2
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.7 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.7\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 print storageModeMessage
 print Origin
@@ -584,12 +584,11 @@ set @counter goBack
 set select_output null
 set @counter goBack
 end
-#Semi-Anticlog 3.7.-1 Beta
-#severe changes prep for 4.0
-#itemloop sensor + operation check updated
-#saving storages into v1-v8 updated
-#part 2 storageCheck now non existant
-#removed the multiple jump-if for baseline mode
+#Semi-Anticlog 3.7
+#Performance Update that warants its own update
+#Optmizations made to the item loop and storage check
+#Will be the last version for 3.x
+#further changes will be performance or synced changes from 4.x
 
 #style guide:
 #jump label conditon (if)

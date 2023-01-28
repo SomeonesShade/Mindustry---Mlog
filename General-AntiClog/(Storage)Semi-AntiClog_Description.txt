@@ -2,11 +2,11 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.6
-Variable/Configurations are now finalized, being more organized
-Slight Improvements to Message system
-SetStorageAsCore Config Added
-
+|Semi-AntiClog 3.7
+Performance Update that warants its own update
+Optmizations made to the item loop and storage check
+This will be the last version for 3.x...
+further changes will be performance or synced changes from 4.x
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
@@ -119,6 +119,13 @@ Logs:
         #could solve the problem of needing an md on the unloader side if using multiple semiAC with memory connection (allows to use phase conv instead)
         #yeah that can work...
     >random
+
+#log: 3.7.-1: (same as 3.7.0)
+#severe changes prep for 4.0
+#itemloop sensor + operation check updated
+#saving storages into v1-v8 updated
+#part 2 storageCheck now non existant
+#removed the multiple jump-if for baseline mode
 
 Also Old Description: Might be useful for later
 Features/Variables:
