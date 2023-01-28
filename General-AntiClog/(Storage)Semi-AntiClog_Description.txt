@@ -5,8 +5,7 @@ Description:
 |Semi-AntiClog 3.7
 Performance Update that warants its own update
 Optmizations made to the item loop and storage check
-This will be the last version for 3.x...
-further changes will be performance or synced changes from 4.x
+Potentially the last version for 3.x...
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
