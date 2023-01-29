@@ -1,4 +1,4 @@
-&for i of @duct @overflow-duct @underflow-duct @duct-router @duct-bridge @overflow-gate @underflow-gate @inverted-sorter @sorter @power-node @steam-generator @differential-generator @rtg-generator {
+&for i of @laser-drill @blast-drill @silicon-arc-furnace @thorium-reactor @impact-reactor @ripple @foreshadow @titan @scathe {
     set damage 3
     set i 0
     a$i:
@@ -7,7 +7,7 @@
     fetch build b @sharded i $i
     sensor x b @x
     sensor y b @y
-    explosion @crux x y 1 damage false true false
+    explosion @crux x y 0.1 damage false true true
     op add i i 1
     jump a$i lessThan i dC
     s$i:

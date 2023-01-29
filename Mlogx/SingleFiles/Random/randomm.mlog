@@ -1,0 +1,112 @@
+set damage 3
+set i 0
+a@laser-drill:
+fetch buildCount dC @sharded 0 @laser-drill
+jump s@laser-drill equal dC 0
+fetch build b @sharded i @laser-drill
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@laser-drill lessThan i dC
+s@laser-drill:
+set damage 3
+set i 0
+a@blast-drill:
+fetch buildCount dC @sharded 0 @blast-drill
+jump s@blast-drill equal dC 0
+fetch build b @sharded i @blast-drill
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@blast-drill lessThan i dC
+s@blast-drill:
+set damage 3
+set i 0
+a@silicon-arc-furnace:
+fetch buildCount dC @sharded 0 @silicon-arc-furnace
+jump s@silicon-arc-furnace equal dC 0
+fetch build b @sharded i @silicon-arc-furnace
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@silicon-arc-furnace lessThan i dC
+s@silicon-arc-furnace:
+set damage 3
+set i 0
+a@thorium-reactor:
+fetch buildCount dC @sharded 0 @thorium-reactor
+jump s@thorium-reactor equal dC 0
+fetch build b @sharded i @thorium-reactor
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@thorium-reactor lessThan i dC
+s@thorium-reactor:
+set damage 3
+set i 0
+a@impact-reactor:
+fetch buildCount dC @sharded 0 @impact-reactor
+jump s@impact-reactor equal dC 0
+fetch build b @sharded i @impact-reactor
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@impact-reactor lessThan i dC
+s@impact-reactor:
+set damage 3
+set i 0
+a@ripple:
+fetch buildCount dC @sharded 0 @ripple
+jump s@ripple equal dC 0
+fetch build b @sharded i @ripple
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@ripple lessThan i dC
+s@ripple:
+set damage 3
+set i 0
+a@foreshadow:
+fetch buildCount dC @sharded 0 @foreshadow
+jump s@foreshadow equal dC 0
+fetch build b @sharded i @foreshadow
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@foreshadow lessThan i dC
+s@foreshadow:
+set damage 3
+set i 0
+a@titan:
+fetch buildCount dC @sharded 0 @titan
+jump s@titan equal dC 0
+fetch build b @sharded i @titan
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@titan lessThan i dC
+s@titan:
+set damage 3
+set i 0
+a@scathe:
+fetch buildCount dC @sharded 0 @scathe
+jump s@scathe equal dC 0
+fetch build b @sharded i @scathe
+sensor x b @x
+sensor y b @y
+explosion @crux x y 0.1 damage false true true
+op add i i 1
+jump a@scathe lessThan i dC
+s@scathe:
+wait 10
+end
+print "thanks to mlogx for making mlog easier on this lol"
+print "github.com/BalaM314/mlogx/"

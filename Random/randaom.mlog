@@ -1,0 +1,23 @@
+setrate 30
+set i 0
+loop:
+fetch unit unit @sharded i @conveyor
+fetch unitCount unitCount @sharded i @conveyor
+sensor type unit @type
+jump yes equal type @dagger
+jump yes equal type @nova
+jump yes equal type @crawler
+jump yes equal type @risso
+jump yes equal type @atrax
+jump yes equal type @elude
+jump ye equal type @minke
+jump ye equal type @stell
+jump skip notEqual type @mace
+yes:
+status false overdrive unit 40
+ye:
+status false boss unit 40
+skip:
+op add i i 1
+jump loop lessThan i unitCount
+wait 30

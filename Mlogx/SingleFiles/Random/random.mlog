@@ -1,17 +1,163 @@
-op lessThanEq isNegative MetaglassCapacity 0
-op sub MetaglassCapacity MetaglassCapacity isNegative
-op lessThanEq isNegative GraphiteCapacity 0
-op sub GraphiteCapacity GraphiteCapacity isNegative
-op lessThanEq isNegative TitaniumCapacity 0
-op sub TitaniumCapacity TitaniumCapacity isNegative
-op lessThanEq isNegative SiliconCapacity 0
-op sub SiliconCapacity SiliconCapacity isNegative
-op lessThanEq isNegative PlastaniumCapacity 0
-op sub PlastaniumCapacity PlastaniumCapacity isNegative
-op lessThanEq isNegative PhaseFabricCapacity 0
-op sub PhaseFabricCapacity PhaseFabricCapacity isNegative
-op lessThanEq isNegative SurgeAlloyCapacity 0
-op sub SurgeAlloyCapacity SurgeAlloyCapacity isNegative
+set damage 3
+set i 0
+a@duct:
+fetch buildCount dC @sharded 0 @duct
+jump s@duct equal dC 0
+fetch build b @sharded i @duct
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@duct lessThan i dC
+s@duct:
+set damage 3
+set i 0
+a@overflow-duct:
+fetch buildCount dC @sharded 0 @overflow-duct
+jump s@overflow-duct equal dC 0
+fetch build b @sharded i @overflow-duct
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@overflow-duct lessThan i dC
+s@overflow-duct:
+set damage 3
+set i 0
+a@underflow-duct:
+fetch buildCount dC @sharded 0 @underflow-duct
+jump s@underflow-duct equal dC 0
+fetch build b @sharded i @underflow-duct
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@underflow-duct lessThan i dC
+s@underflow-duct:
+set damage 3
+set i 0
+a@duct-router:
+fetch buildCount dC @sharded 0 @duct-router
+jump s@duct-router equal dC 0
+fetch build b @sharded i @duct-router
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@duct-router lessThan i dC
+s@duct-router:
+set damage 3
+set i 0
+a@duct-bridge:
+fetch buildCount dC @sharded 0 @duct-bridge
+jump s@duct-bridge equal dC 0
+fetch build b @sharded i @duct-bridge
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@duct-bridge lessThan i dC
+s@duct-bridge:
+set damage 3
+set i 0
+a@overflow-gate:
+fetch buildCount dC @sharded 0 @overflow-gate
+jump s@overflow-gate equal dC 0
+fetch build b @sharded i @overflow-gate
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@overflow-gate lessThan i dC
+s@overflow-gate:
+set damage 3
+set i 0
+a@underflow-gate:
+fetch buildCount dC @sharded 0 @underflow-gate
+jump s@underflow-gate equal dC 0
+fetch build b @sharded i @underflow-gate
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@underflow-gate lessThan i dC
+s@underflow-gate:
+set damage 3
+set i 0
+a@inverted-sorter:
+fetch buildCount dC @sharded 0 @inverted-sorter
+jump s@inverted-sorter equal dC 0
+fetch build b @sharded i @inverted-sorter
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@inverted-sorter lessThan i dC
+s@inverted-sorter:
+set damage 3
+set i 0
+a@sorter:
+fetch buildCount dC @sharded 0 @sorter
+jump s@sorter equal dC 0
+fetch build b @sharded i @sorter
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@sorter lessThan i dC
+s@sorter:
+set damage 3
+set i 0
+a@power-node:
+fetch buildCount dC @sharded 0 @power-node
+jump s@power-node equal dC 0
+fetch build b @sharded i @power-node
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@power-node lessThan i dC
+s@power-node:
+set damage 3
+set i 0
+a@steam-generator:
+fetch buildCount dC @sharded 0 @steam-generator
+jump s@steam-generator equal dC 0
+fetch build b @sharded i @steam-generator
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@steam-generator lessThan i dC
+s@steam-generator:
+set damage 3
+set i 0
+a@differential-generator:
+fetch buildCount dC @sharded 0 @differential-generator
+jump s@differential-generator equal dC 0
+fetch build b @sharded i @differential-generator
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@differential-generator lessThan i dC
+s@differential-generator:
+set damage 3
+set i 0
+a@rtg-generator:
+fetch buildCount dC @sharded 0 @rtg-generator
+jump s@rtg-generator equal dC 0
+fetch build b @sharded i @rtg-generator
+sensor x b @x
+sensor y b @y
+explosion @crux x y 1 damage false true false
+op add i i 1
+jump a@rtg-generator lessThan i dC
+s@rtg-generator:
+wait 10
+end
+print "thanks to mlogx for making mlog easier on this lol"
+print "github.com/BalaM314/mlogx/"
 end
 print "Made with mlogx"
 print "github.com/BalaM314/mlogx/"
