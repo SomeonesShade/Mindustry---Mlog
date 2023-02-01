@@ -1,0 +1,668 @@
+#reorganize the settings for a final time. plus add in the v1 override for a possible core as origin
+set OriginBlock null #the block used in reversemode, or rss
+jump configIgnore equal skipVars 1
+print "(Block/Bool) The StorageBlock where the items come from. If set to false, disables origin functionality"
+
+jump pt1 always 0 0
+print "Threshold Settings"
+end; pt1: 
+
+set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
+print "(decimal/whole number) determines the maxinum percentage of an item in a storage block, if whole number it uses that value instead"
+set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
+print "(integer/decimal) Determines the mininum amount/percentage of an item to start working"
+set PowerStoredThreshold 0.4
+print "(decimal) If the Power Stored in Power Grid amount/capacity goes below this percentage, deactivate (in PowerRSSBlockType)"
+set IsCluster false #if dealing. chained or seperated storages, no diffrence if single
+print "(bool) If the anticlog will want to have a baseline of items in all storages (false), or a total amount of items in all storages (true)"
+
+jump pa1 always 0 0
+print "Item Configuration"
+end; pa1: 
+
+print "for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
+op shl  false 0
+op shl  1 1
+op shl  1 2
+op shl  1 3
+op shl  false 4
+op shl  1 5
+op shl  1 6
+op shl  false 7
+op shl  false 8
+op shl  1 9
+op shl  1 10
+op shl  1 11
+op shl  1 12
+op shl  false 13
+op shl  false 14
+op shl  false 15
+op shl  false 16
+op shl fissile-matter false 17 #unused
+op shl dormant-cyst false 18 #unused
+op shl  false 19
+op shl  false 20
+op shl  false 21
+
+jump pb1 always 0 0
+print "Memory Settings"
+end; pb1:
+
+set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
+print "(whole number) doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
+set MemoryReadLocation -1
+print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
+
+jump pc1 always 0 0
+print "Miscellaneous Settings"
+end; pc1:
+
+set FindCore true
+print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
+set FindCoreUnitType @mono
+print "(unitType) Unit used to detect core automatically"
+set PowerRSSBlockType @power-node
+print "(BlockType) What BlockType to measure battery from"
+set ReadMemoryBlock cell1
+print "(memoryblock) the read cell block for configuration"
+set IgnoreBlink false
+print "(bool) disables 'blinking' (it happens when there are no vaults detected)"
+set SetStorageAsCore false #This is so broken lol
+print "(bool)[BETA] Sets one storage in the code as the Core"
+
+jump pEnd always 0 0
+end
+end
+print "Do not modify from this point, unless you know how it works lel"
+end
+end; pEnd:
+
+op add bitSelection   #compile config into a single number (ex: 101 as an example)
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection fissile-matter
+op add bitSelection bitSelection dormant-cyst
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+op add bitSelection bitSelection 
+
+printflush null
+
+#__this may breaking something + bug fix
+set count @itemCount
+itemCountCheck:
+op shl bitLocation 1 count
+op and isSelected bitLocation bitSelection
+jump itemCountEnd notEqual isSelected 0
+op sub count count 1
+jump itemCountCheck greaterThanEq count 0
+itemCountEnd:
+op add itemCount count 1
+#__pls check
+
+-printCalculation:
+    jump clusterMessage equal IsCluster true
+    set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[#DDDDFF]Current Origin: [#BBBBEE]"
+    jump skipMemA1 always 0 0
+    clusterMessage:
+    set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster\n[#DDDDFF]Current Origin: [#BBBBEE]"
+    skipMemA1:
+
+    set memReadAMessage " items"
+    set memReadBMessage ""
+    jump skipMemA2 lessThan MemoryReadLocation 0
+    set memReadAMessage " items\n[#FFAAFF]Reading any binded cell for item configuration"
+    set memReadBMessage "\n[#FFAAFF]Reading any binded cell for item configuration"
+    skipMemA2:
+
+    set fullStorageModeMessage "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
+    jump skipMemA3 equal IsCluster false
+    set fullStorageModeMessage "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if the total amount of items from all types reaches below "
+    skipMemA3:
+
+ignoreMessageStorage:
+op greaterThanEq shouldOverideMaxPercent MaxPercent 1.01
+set OriginItemLimit MinOriginAmount
+jump originDisable strictEqual OriginBlock false
+jump endOfSettings always 0 0
+originDisable:
+set OriginItemLimit -1
+endOfSettings:
+set skipVars 1
+
+configIgnore:
+set messageCode 0 #m0
+jump originCoreIgnore lessThan OriginItemLimit 0
+set messageCode 5 #m1
+
+jump originIgnore equal OriginBlock null #sets the Origin
+set Origin OriginBlock
+originIgnore:
+sensor hasOriginDied Origin @dead
+jump originPercentage equal hasOriginDied false
+
+originCoreFind: #this break a lot of stuff
+    jump originCoreIgnore equal FindCore false
+        ubind FindCoreUnitType
+        sensor controlled @unit @controlled
+    sensor unitDied @unit @dead
+    jump noValidUnitFoundA equal unitDied true
+    jump validUnitFoundA lessThan controlled 2 #UHHHHHHHHHH
+    noValidUnitFoundA:
+        set messageCode 19 #m5
+        jump originCoreIgnore always 0 0
+    validUnitFoundA:
+        ulocate building core false @copper ox oy fo Origin
+
+originPercentage:
+    jump originCoreIgnore greaterThanEq MinOriginAmount 1
+    sensor originCapacity Origin @itemCapacity
+    op mul OriginItemLimit originCapacity MinOriginAmount
+
+originCoreIgnore:
+jump coreIgnore equal SetStorageAsCore false
+
+sensor hasOverrideDied StorageOverride @dead
+jump bitStart equal hasOverrideDied false
+coreFind:
+        ubind FindCoreUnitType
+        sensor controlled @unit @controlled
+    sensor unitDied @unit @dead
+    jump noValidUnitFound equal unitDied true
+    jump validUnitFound lessThan controlled 2 #UHHHHHHHHHH part 2
+    noValidUnitFound:
+        set messageCode 19 #m5
+        jump coreIgnore always 0 0
+    validUnitFound:
+        ulocate building core false @copper ox oy fo StorageOverride
+    jump bitStart always 0 0
+coreIgnore:
+set StorageOverride 0
+
+bitStart:
+jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
+jump bitSkip lessThan MemoryReadLocation 0
+    read bitSelection cell1 MemoryReadLocation
+#hmm
+    set itemCount @itemCount
+#hmm
+
+bitSkip: #Determines when to check for Storages
+jump storageCheck notEqual @links prevLinks     #trigger storageCheck if any link (amount) is changed
+jump ItemDentify equal isA true                    #do not trigger storageCheck if it is currently working
+jump storageCheck greaterThanEq sC 25           #timer lel
+
+ItemDentify: #Part2!!!
+    jump storageIsPresent notEqual v1 0 #do we even have a storage block?
+        jump storageIsPresent equal IgnoreBlink true #Do not blink is IgnoreBlink is set to true
+        set messageCode 16 #m4       #Alert Message
+        op equal blink blink 0      #then start blinking
+        set isA false                   #do not enable
+        wait 0.5                    #no epilepsy
+        op add sC sC 10             #increase checks so it can be updated asap
+        set dataItem 0              #do not send anything
+        set typec @blast-compound   #red (error color) or...
+        jump j3 equal blink 0
+        set typec null              #absolutely nothing
+    jump j3 always 0 0          #immediately skip itemLoop
+
+storageIsPresent:
+sensor powerBlockDead PowerBlock @dead
+jump powerIsPresent equal powerBlockDead true
+sensor powerStored PowerBlock @powerNetStored
+sensor powerCapacity PowerBlock @powerNetCapacity
+op div powerPercentage powerStored powerCapacity
+jump powerIsPresent greaterThanEq powerPercentage PowerStoredThreshold
+    set messageCode 24  #m6          #Alert Message
+        op equal blink blink 0      #then start blinking
+        set isA false                   #do not enable
+        wait 0.5                    #no epilepsy
+        set dataItem 0              #do not send anything
+        set typec @surge-alloy   #yellow (error color) or...
+        jump j3 equal blink 0
+        set typec null              #absolutely nothing
+    jump j3 always 0 0          #immediately skip itemLoop
+powerIsPresent:
+	set prevLinks @links #reset values used or update
+    set bitLocation 0
+    set dataItem 0
+    set mv MaxValue
+    set i 0
+    itemLoop: #label suggests, it loops to determine what item to use
+        lookup item type i
+        op shl bitLocation 1 i #is at the selcted position true?:
+        op and isSelected bitLocation bitSelection
+        jump skip1 equal isSelected 0 #check
+        sensor c1 Origin type
+        jump skip1 lessThan c1 OriginItemLimit #is there anything to unload?
+        
+    jump selectedAdd equal IsCluster true #take multi input or single?
+    
+    sensor amount v1 type
+    op add @counter @counter storage_offset #max 2
+        sensor r8 v8 type   #how much items
+        op min amount amount r8
+        sensor r7 v7 type
+        op min amount amount r7
+        sensor r6 v6 type
+        op min amount amount r6
+        sensor r5 v5 type
+        op min amount amount r5
+        sensor r4 v4 type
+        op min amount amount r4
+        sensor r3 v3 type
+        op min amount amount r3
+        sensor r2 v2 type
+        op min amount amount r2
+    jump amountCheck always 0 0
+
+        set select_index -1
+        storageMinRead: #what is contained in the storages?
+            op add select_index select_index 1                      #loop start
+            op add goBack @counter 1; jump storageSelect always 0 0 #function call...
+            jump amountCheck strictEqual select_output null         #does mentioned vault exist?
+            sensor rV select_output type                            #then: do operation:
+            op min amount amount rV
+            jump storageMinRead always 0 0
+    
+    selectedAdd:
+    sensor amount v1 type
+    op add @counter @counter storage_offset #max 2
+        sensor r8 v8 type   #how much items
+        op add amount amount r8
+        sensor r7 v7 type
+        op add amount amount r7
+        sensor r6 v6 type
+        op add amount amount r6
+        sensor r5 v5 type
+        op add amount amount r5
+        sensor r4 v4 type
+        op add amount amount r4
+        sensor r3 v3 type
+        op add amount amount r3
+        sensor r2 v2 type
+        op add amount amount r2
+    jump amountCheck always 0 0
+
+        set select_index -1
+        storageAddRead: #what is contained in the storages?
+            op add select_index select_index 1                      #loop start
+            op add goBack @counter 1; jump storageSelect always 0 0 #function call...
+            jump amountCheck strictEqual select_output null         #does mentioned vault exist?
+            sensor rV select_output type                            #then: do operation:
+            op add amount amount rV
+            jump storageAddRead always 0 0
+
+    amountCheck:
+        jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
+        set typec type #if so set the output
+        op add dataItem dataItem bitLocation
+        set mv amount
+
+    skip1:
+        op add i i 1
+        jump itemLoop lessThan i itemCount
+
+    op lessThan isA mv MaxValue
+jump j3 equal isA true #is everything full?
+    set typec null
+    set dataItem 0
+jump j3 greaterThan messageCode 12 #m2
+    set messageCode 12 #m2
+
+    j3:
+        set a -1
+    buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
+        op add a a 1
+        getlink obj a
+        sensor oType obj @type
+        jump jItemConfig equal oType @inverted-sorter #skip if storage block
+        jump jItemConfig equal oType @sorter
+        jump skip2 equal oType @mass-driver
+        jump messageDisplay equal oType @message
+        jump jEnable notEqual oType @memory-cell
+        jump datawrite lessThan MemoryReadLocation 0 
+        jump jEnable equal obj cell1
+    datawrite:
+        write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
+    jEnable:
+        control enabled obj isA #enable or disable
+    jItemConfig:
+        control config obj typec #set output
+    skip2:
+        jump buildingConfigLoop lessThan a @links
+	op add sC sC 1
+end
+
+messageDisplay:
+print "[#DDDDFF]Semi-AntiClog 3.7\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print typec
+print storageModeMessage
+print Origin
+op add @counter @counter messageCode
+
+#do message count rechecks!
+#0
+operational: #m0 - l5
+print "\n\n[#AAFFAA]Operational!\nTargeting for "
+print MaxValue
+print memReadAMessage
+printflush obj
+jump skip2 always 0 0
+
+#5
+operationalWithOrigin: #m1 - l7
+print "\n\n[#AAFFAA]Operational!\nTargeting for "
+print MaxValue
+print " items.\n[#FFFFAA]Internal RSS activated and set to "
+print OriginItemLimit
+print memReadBMessage
+printflush obj
+jump skip2 always 0 0
+
+#12
+fullStorage: #m2 - l4
+print fullStorageModeMessage
+print MaxValue
+printflush obj
+jump skip2 always 0 0
+
+#16
+-depreciated: #m3 - l0
+#print "m3 is depreciated"
+#print "..."
+#printflush obj
+#jump skip2 always 0 0
+
+#16
+noStorageDetected: #m4 - l3
+print "\n\n[#FFAAAA]error: No Storage Block Found\nPlease Bind to One"
+printflush obj
+jump skip2 always 0 0
+
+#19
+noUnitDetected: #m5 - l5
+print "\n\n[#FFAAAA]error: No Valid "
+print FindCoreUnitType
+print " Found\n\nPlease either make the unit or configurate the settings to use a diffrent unit type"
+printflush obj
+jump skip2 always 0 0
+
+#24
+powerLow: #m6 - l6
+print "\n\n[#FFAAAA]disabled: Not Enough Power Stored. Its Less Than "
+print PowerStoredThreshold
+print "\n\nCurrent Power Percentage Stored: "
+print powerPercentage
+printflush obj
+jump skip2 always 0 0
+
+#30
+
+storageCheck: #set variables
+	set sC 0 #reset storageCheck counter
+    set select_readMode 0
+    set storageCount 0
+    set v1 0 #reset storages
+	set v2 0
+	set v3 0
+	set v4 0
+    set v5 0
+    set v6 0
+    set v7 0
+    set v8 0
+jump storageArrayIgnore strictEqual v9 null
+
+    set select_index -1
+    set select_input null
+storageReset: #clear all storage
+    op add select_index select_index 1
+    op add goBack @counter 1; jump storageSelect always 0 0
+    jump storageReset notEqual select_index null
+
+storageArrayIgnore:
+	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = false)
+    set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = true)
+	
+    set select_index 0
+    set lp -1
+storageDetectionLoop: #detect storages via getlink loop
+    op add lp lp 1
+    getlink obj lp
+    jump skip0 equal obj Origin
+    sensor oType obj @type
+    jump select equal oType @container #which blocks are considered storages
+    jump select equal oType @vault
+    jump select equal oType @mass-driver
+    jump select equal oType @core-shard
+    jump select equal oType @core-foundation
+    jump select equal oType @core-nucleus
+    jump skip0 notEqual oType PowerRSSBlockType
+    set PowerBlock obj
+
+    skip0:
+jump storageDetectionLoop lessThan lp @links
+
+#!dangerous
+    jump noOverride equal StorageOverride 0
+    jump hasOverriden equal loopOnceOverrideCheck true
+        set obj StorageOverride
+        set loopOnceOverrideCheck true
+        jump select always 0 0
+    hasOverriden:
+    set loopOnceOverrideCheck false
+noOverride:
+#!dangerous
+
+    set select_readMode 2 #no need to write on second part of the code, just read
+    op max storage_offset storageCount 1
+    op sub storage_offset 8 storage_offset #7 being max - 1
+    op mul storage_offset storage_offset 2 #2 lines
+    
+    jump skip greaterThan storage_offset -1
+        set storage_offset 15 #(7 * 2) + 2
+    skip:
+
+jump overideMaxValue equal shouldOverideMaxPercent true
+    
+jump clusterIgnore equal IsCluster false #is this cluter mode?  
+-clusterNotIgnored:    
+    op mul MaxValue TotalMaxStorage MaxPercent
+    jump ItemDentify always 0 0
+end
+clusterIgnore:
+    set MaxValue BaseLineValue
+    jump ItemDentify always 0 0
+end
+overideMaxValue:
+    set MaxValue MaxPercent
+    jump ItemDentify always 0 0
+end
+
+select: #if we have found a storageblock, enter into memory
+    sensor ic obj @itemCapacity
+    op mul index storageCount 3
+    op min index index 24 
+    op add @counter @counter index
+set v1 obj
+    op add TotalMaxStorage TotalMaxStorage ic #and update TotalMaxStorage
+    jump j1 always 0 0
+      
+set v2 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+      
+set v3 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+      
+set v4 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+      
+set v5 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+      
+set v6 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+      
+set v7 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+      
+set v8 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
+jArray:
+    jump skip0 strictEqual select_index null #if hardcode storage has been reached, use this array
+    set select_input obj
+    op add goBack @counter 1; jump storageSelect always 0 0
+    op add select_index select_index 1
+    op add TotalMaxStorage TotalMaxStorage ic
+j1:
+    op add storageCount storageCount 1
+    op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
+    op min ic BaseLineValue ic #take smallest
+    set BaseLineValue ic #set as new BaseLineValue
+    jump skip0 always 0 0
+end
+
+storageSelect: #select_input, select_output, select_readMode, goBack, select_index
+op mul selectStorage select_index 4
+op add selectStorage selectStorage select_readMode
+op add @counter selectStorage @counter
+set v9 select_input
+set @counter goBack
+set select_output v9
+set @counter goBack
+set v10 select_input
+set @counter goBack
+set select_output v10
+set @counter goBack
+set v11 select_input
+set @counter goBack
+set select_output v11
+set @counter goBack
+set v12 select_input
+set @counter goBack
+set select_output v12
+set @counter goBack
+set v13 select_input
+set @counter goBack
+set select_output v13
+set @counter goBack
+set v14 select_input
+set @counter goBack
+set select_output v14
+set @counter goBack
+set v15 select_input
+set @counter goBack
+set select_output v15
+set @counter goBack
+set v16 select_input
+set @counter goBack
+set select_output v16
+set @counter goBack
+set select_index null
+set @counter goBack
+set select_output null
+set @counter goBack
+end
+#Semi-Anticlog 3.7
+#Performance Update that warants its own update
+#Optmizations made to the item loop and storage check
+#Will be the last version for 3.x
+#further changes will be performance or synced changes from 4.x
+
+#style guide:
+#jump label conditon (if)
+#   code
+#label:
+#
+#-jumplabel: <- unsused jumplabel
+#@counter related variables have _
+#camelCase
+
+#Reminder to self:
+#this personal project has a fundamental flaw, it may get more into golden hammer ness
+#mainly reverse mode is prob not needed, very rare case, and a lot of stuff in this logic have niche uses (you even have dedicated logic for maninging core clog)
+#will think about later
+#stil always fit the theme of transporting from one storage to another with unloader + transport, do not deviate
+
+
+#Plans:
+#TODO:
+#add in erekir block types, 
+    #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
+    #add reinforced vault and container
+#RoadMap
+        
+#ver Unkown/4.0
+    #Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed
+    #deciding if min/baseline mode is needed
+    #Starting the Recon Version/Simple version
+        #If its possible this includes an array for each factory
+    #Updating the external schem for default configs
+    #Severe Optimizations to the message system (closer than i thought really)
+    #set up wireless memory send/recieve (ext schem or internal idk)
+#Finishes Goals:
+    #Recon/Factory Intergration
+        #(issue: recons/factories cant hold every item, which means dynamic config and...
+        #recons have diffrent @itemCapacity for each item, which is a pain...
+        #if the issue can't be resolved, this cant be General and can only be Semi)
+    #Automatic Config + Overrides
+        #(this may be a reconstructor version feature, although might be ok?...
+        #automatically setting the config based on binds, and adding in items like (silicon)...
+        #if intergration is impossible, this is still applicable as QOL)
+    
+    #ideas/potential-features:
+    #compiling all is enable config etc in a bit storage
+        #faster block control loop overall (no more type checks in loop) 
+        #volitatile though if any link gets destroyed
+
+    #check if storage has "cloged" then unclog in a bool setting
+        #if so set warning system, send in a unit to unclog the factory
+        #may slow down the system, maybe gets into storage check?
+        #isA jump check blocks storage check though, seperate line potentially
+
+    #solving the recon problem
+        #in storage check calaculate the differnece of storage (based on type) between each item group (doing fancy math)
+            #ex: subtract metaOffset by x (pre determined)
+                #multiplicativeRecon:
+                #sub metaglassOffset metaglassOffset x
+                #sub titaniumOffset titaniumOffset x
+        #in the actual loop, subtract or add the amount for each item
+            #ex:
+            #op add setStartofLoop @counter num (predetermined or nah?, prevent volititly prob)
+            #set offset thorOffset
+            #jump skipOut always 0 0
+            #set offset metaOffset
+            #etc.
+
+            #sub amount amount offset
+            #jump exit condition
+            #op sub @counter setStartofLoop i
+            #exit:
+        #need other better method, but this is promising rn
+
+
+
+#In all versions
+#Performance Lockdown, to insure <1sec performance [general goal]
+    #at Best, less than 0.75 sec, that is max allowance
