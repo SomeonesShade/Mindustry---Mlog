@@ -1,0 +1,243 @@
+jump skipAll equal varsSet 1
+#varsets
+set bindDistance 100
+set dropRadius 2
+#Create flag
+op mul temp @thisx @maph
+op add Flag temp @thisy
+linkCheck:
+jump linkCheck lessThan @links 5
+#coords
+sensor x1 reconstructor1 @x
+sensor y1 reconstructor1 @y
+sensor x2 reconstructor2 @x
+sensor y2 reconstructor2 @y
+sensor x3 reconstructor3 @x
+sensor y3 reconstructor3 @y
+
+set varsSet 1
+skipAll:
+write 2636 cell1 1
+sensor ts @this @timescale
+op lessThan enab ts 2.3
+control enabled projector1 enab 0
+
+#Check if Recon is available
+sensor pC reconstructor1 @payloadCount 
+    jump normalSet1 equal pC 0
+    sensor progress reconstructor1 @progress
+    jump skip1 equal progress prevProgress1
+    set prevProgress1 progress
+    #skip if not
+
+normalSet1:
+#Check if we have unit already in memory
+sensor dead u1 @dead
+    jump bind1 equal dead true
+    #if we dont have, Ub
+
+#Check if its still valid
+ubind u1
+
+sensor ctrl @unit @controlled 
+    jump nullMemory1 greaterThan ctrl 1
+
+sensor flag @unit @flag 
+    jump nullMemory1 notEqual flag Flag
+
+jump moveInto1 always 0 0
+    #if not valid, 
+        #null memory
+        #deflag
+    #otherwise 
+        #jump A
+
+#Ub: Bind a new horzion
+nullMemory1:
+set u1 null
+bind1:
+ubind @horizon
+
+#Check if its a valid horizon
+sensor ctrl @unit @controlled 
+    jump skip1 greaterThan ctrl 0 #can be changed to 1 if needed
+
+sensor flag @unit @flag 
+    jump skip1 notEqual flag 0
+
+#distance check
+sensor x @unit @x
+op sub x x @thisx    
+sensor y @unit @y
+op sub y y @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy yy
+    jump skip1 greaterThan distance bindDistance
+
+#Save into Memory
+ucontrol flag Flag
+set u1 @unit
+
+#A: Perform Moving into recon
+moveInto1:
+ucontrol within x1 y1 dropRadius result
+    #if in proximity
+    jump approach1 notEqual result true
+        #payeneter
+        ucontrol payEnter
+    jump skip1 always 0 0
+    approach1:
+    #if not
+        #well aproach only
+        ucontrol move x1 y1
+
+skip1:
+#Check if Recon is available
+sensor pC reconstructor2 @payloadCount 
+    jump normalSet2 equal pC 0
+    sensor progress reconstructor2 @progress
+    jump skip2 equal progress prevProgress2
+    set prevProgress2 progress
+    #skip if not
+
+normalSet2:
+#Check if we have unit already in memory
+sensor dead u2 @dead
+    jump bind2 equal dead true
+    #if we dont have, Ub
+
+#Check if its still valid
+ubind u2
+
+sensor ctrl @unit @controlled 
+    jump nullMemory2 greaterThan ctrl 1
+
+sensor flag @unit @flag 
+    jump nullMemory2 notEqual flag Flag
+
+jump moveInto2 always 0 0
+    #if not valid, 
+        #null memory
+        #deflag
+    #otherwise 
+        #jump A
+
+#Ub: Bind a new horzion
+nullMemory2:
+set u2 null
+bind2:
+ubind @horizon
+
+#Check if its a valid horizon
+sensor ctrl @unit @controlled 
+    jump skip2 greaterThan ctrl 0 #can be changed to 1 if needed
+
+sensor flag @unit @flag 
+    jump skip2 notEqual flag 0
+
+#distance check
+sensor x @unit @x
+op sub x x @thisx    
+sensor y @unit @y
+op sub y y @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy yy
+    jump skip2 greaterThan distance bindDistance
+
+#Save into Memory
+ucontrol flag Flag
+set u2 @unit
+
+#A: Perform Moving into recon
+moveInto2:
+ucontrol within x2 y2 dropRadius result
+    #if in proximity
+    jump approach2 notEqual result true
+        #payeneter
+        ucontrol payEnter
+    jump skip2 always 0 0
+    approach2:
+    #if not
+        #well aproach only
+        ucontrol move x2 y2
+
+skip2:
+
+#Check if Recon is available
+sensor pC reconstructor3 @payloadCount 
+    jump normalSet3 equal pC 0
+    sensor progress reconstructor3 @progress
+    jump skip3 equal progress prevProgress3
+    set prevProgress3 progress
+    #skip if not
+
+normalSet3:
+#Check if we have unit already in memory
+sensor dead u3 @dead
+    jump bind3 equal dead true
+    #if we dont have, Ub
+
+#Check if its still valid
+ubind u3
+
+sensor ctrl @unit @controlled 
+    jump nullMemory3 greaterThan ctrl 1
+
+sensor flag @unit @flag 
+    jump nullMemory3 notEqual flag Flag
+
+jump moveInto3 always 0 0
+    #if not valid, 
+        #null memory
+        #deflag
+    #otherwise 
+        #jump A
+
+#Ub: Bind a new horzion
+nullMemory3:
+set u3 null
+bind3:
+ubind @horizon
+
+#Check if its a valid horizon
+sensor ctrl @unit @controlled 
+    jump skip3 greaterThan ctrl 0 #can be changed to 1 if needed
+
+sensor flag @unit @flag 
+    jump skip3 notEqual flag 0
+
+#distance check
+sensor x @unit @x
+op sub x x @thisx    
+sensor y @unit @y
+op sub y y @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy yy
+    jump skip3 greaterThan distance bindDistance
+
+#Save into Memory
+ucontrol flag Flag
+set u3 @unit
+
+#A: Perform Moving into recon
+moveInto3:
+ucontrol within x3 y3 dropRadius result
+    #if in proximity
+    jump approach3 notEqual result true
+        #payeneter
+        ucontrol payEnter
+    jump skip3 always 0 0
+    approach3:
+    #if not
+        #well aproach only
+        ucontrol move x3 y3
+
+skip3:
+end
+

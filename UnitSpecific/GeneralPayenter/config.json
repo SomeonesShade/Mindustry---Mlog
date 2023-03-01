@@ -1,0 +1,19 @@
+{
+	"compilerConstants": {
+		"uT1": "@horizon"
+	},
+	"compilerOptions": {
+		"removeCompilerMark": false,
+		"removeUnusedJumpLabels": true,
+		"checkTypes": true,
+		"prependFileName": true,
+		"mode": "single",
+		"compileWithErrors": true,
+		"removeComments": true,
+		"include": []
+	},
+	"authors": [
+		"Shade"
+	],
+	"name": "General Payenter"
+}

@@ -1,0 +1,84 @@
+jump jump_0_ equal varsSet 1
+
+set odCheck true
+set bindDistance 100
+set dropRadius 2
+op mul temp @thisx @maph
+op add Flag temp @thisy
+
+jump_1_: ; jump jump_1_ lessThan @links 5
+
+sensor x1 reconstructor1 @x
+sensor y1 reconstructor1 @y
+sensor x2 reconstructor2 @x
+sensor y2 reconstructor2 @y
+sensor x3 reconstructor3 @x
+sensor y3 reconstructor3 @y
+set varsSet 1
+jump_0_:
+
+write 2636 cell1 1
+    jump jump_2_ equal odCheck true
+
+sensor ts @this @timescale
+op lessThan enab ts 2.3
+control enabled projector1 enab
+jump_2_:
+
+sensor pC reconstructor1 @payloadCount
+    jump jump_3_ equal pC 0
+
+sensor progress reconstructor1 @progress
+    jump jump_8_ equal progress prevProgress1
+
+set prevProgress1 progress
+jump_3_:
+
+sensor dead u1 @dead
+    jump jump_5_ equal dead true
+
+ubind u1
+sensor ctrl @unit @controlled
+    jump jump_6_ greaterThan ctrl 1
+
+sensor flag @unit @flag
+    jump jump_6_ notEqual flag Flag
+
+    jump jump_5_ always
+
+jump_6_:
+
+set u1 null
+jump_5_:
+
+ubind $uT1
+sensor ctrl @unit @controlled
+    jump jump_8_ greaterThan ctrl 0
+
+sensor flag @unit @flag
+    jump jump_8_ notEqual flag 0
+
+sensor x @unit @x
+op sub x @thisx
+sensor y @unit @y
+op sub y @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy
+    jump jump_8_ greaterThan distance bindDistance
+
+ucontrol flag Flag
+set u1 @unit
+ucontrol within x1 y1 dropRadius result
+jump_7_:
+
+    jump jump_8_ notEqual result true
+
+ucontrol payEnter
+    jump jump_8_ always
+
+ucontrol move x1 y1
+jump_8_:
+
+end
