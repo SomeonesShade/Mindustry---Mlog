@@ -7,8 +7,8 @@ jump pt1 always 0 0
 print "Threshold Settings"
 end; pt1: 
 
-set MaxPercent 0.2  #this functions as a buffer (filling it to full will practically clog)
-print "(decimal/whole number) determines the maxinum percentage of an item in a storage block, if whole number it uses that value instead"
+set MaxAmount 200  #this functions as a buffer (filling it to full will practically clog)
+print "(whole number/decimal) determines the target amount of an item to maintain in a storage block. If it's in decimal/percent, takes the percent of all the linked storages instead"
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
 print "(integer/decimal) Determines the mininum amount/percentage of an item to start working"
 set PowerStoredThreshold 0.4
@@ -134,7 +134,7 @@ op add itemCount count 1
     skipMemA3:
 
 ignoreMessageStorage:
-op greaterThanEq shouldOverideMaxPercent MaxPercent 1.01
+op greaterThanEq shouldOverideMaxAmount MaxAmount 1.01
 set OriginItemLimit MinOriginAmount
 jump originDisable strictEqual OriginBlock false
 jump endOfSettings always 0 0
@@ -272,7 +272,7 @@ powerIsPresent:
         set select_index -1
         storageMinRead: #what is contained in the storages?
             op add select_index select_index 1                      #loop start
-            op add goBack @counter 1; jump storageSelect always 0 0 #function call...
+            op add go_back @counter 1; jump storageSelect always 0 0 #function call...
             jump amountCheck strictEqual select_output null         #does mentioned vault exist?
             sensor rV select_output type                            #then: do operation:
             op min amount amount rV
@@ -300,7 +300,7 @@ powerIsPresent:
         set select_index -1
         storageAddRead: #what is contained in the storages?
             op add select_index select_index 1                      #loop start
-            op add goBack @counter 1; jump storageSelect always 0 0 #function call...
+            op add go_back @counter 1; jump storageSelect always 0 0 #function call...
             jump amountCheck strictEqual select_output null         #does mentioned vault exist?
             sensor rV select_output type                            #then: do operation:
             op add amount amount rV
@@ -348,7 +348,7 @@ jump j3 greaterThan messageCode 12 #m2
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.7\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.7.1 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 print storageModeMessage
 print Origin
@@ -430,11 +430,11 @@ jump storageArrayIgnore strictEqual v9 null
     set select_input null
 storageReset: #clear all storage
     op add select_index select_index 1
-    op add goBack @counter 1; jump storageSelect always 0 0
+    op add go_back @counter 1; jump storageSelect always 0 0
     jump storageReset notEqual select_index null
 
 storageArrayIgnore:
-	op mul BaseLineValue 99999999 MaxPercent #this var is for setting the mininum items for each storage (IsCluster = false)
+	op mul BaseLineValue 99999999 MaxAmount #this var is for setting the mininum items for each storage (IsCluster = false)
     set TotalMaxStorage 0 #this var is for setting the maxinum sum of items of every storage (IsCluster = true)
 	
     set select_index 0
@@ -476,11 +476,11 @@ noOverride:
         set storage_offset 15 #(7 * 2) + 2
     skip:
 
-jump overideMaxValue equal shouldOverideMaxPercent true
+jump overideMaxValue equal shouldOverideMaxAmount true
     
 jump clusterIgnore equal IsCluster false #is this cluter mode?  
 -clusterNotIgnored:    
-    op mul MaxValue TotalMaxStorage MaxPercent
+    op mul MaxValue TotalMaxStorage MaxAmount
     jump ItemDentify always 0 0
 end
 clusterIgnore:
@@ -488,7 +488,7 @@ clusterIgnore:
     jump ItemDentify always 0 0
 end
 overideMaxValue:
-    set MaxValue MaxPercent
+    set MaxValue MaxAmount
     jump ItemDentify always 0 0
 end
 
@@ -532,63 +532,66 @@ set v8 obj
 jArray:
     jump skip0 strictEqual select_index null #if hardcode storage has been reached, use this array
     set select_input obj
-    op add goBack @counter 1; jump storageSelect always 0 0
+    op add go_back @counter 1; jump storageSelect always 0 0
     op add select_index select_index 1
     op add TotalMaxStorage TotalMaxStorage ic
 j1:
     op add storageCount storageCount 1
-    op mul ic ic MaxPercent #1000(V) or 300(C) * MaxPercent
+    op mul ic ic MaxAmount #1000(V) or 300(C) * MaxAmount
     op min ic BaseLineValue ic #take smallest
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always 0 0
 end
 
-storageSelect: #select_input, select_output, select_readMode, goBack, select_index
+storageSelect: #select_input, select_output, select_readMode, go_back, select_index
 op mul selectStorage select_index 4
 op add selectStorage selectStorage select_readMode
 op add @counter selectStorage @counter
 set v9 select_input
-set @counter goBack
+set @counter go_back
 set select_output v9
-set @counter goBack
+set @counter go_back
 set v10 select_input
-set @counter goBack
+set @counter go_back
 set select_output v10
-set @counter goBack
+set @counter go_back
 set v11 select_input
-set @counter goBack
+set @counter go_back
 set select_output v11
-set @counter goBack
+set @counter go_back
 set v12 select_input
-set @counter goBack
+set @counter go_back
 set select_output v12
-set @counter goBack
+set @counter go_back
 set v13 select_input
-set @counter goBack
+set @counter go_back
 set select_output v13
-set @counter goBack
+set @counter go_back
 set v14 select_input
-set @counter goBack
+set @counter go_back
 set select_output v14
-set @counter goBack
+set @counter go_back
 set v15 select_input
-set @counter goBack
+set @counter go_back
 set select_output v15
-set @counter goBack
+set @counter go_back
 set v16 select_input
-set @counter goBack
+set @counter go_back
 set select_output v16
-set @counter goBack
+set @counter go_back
 set select_index null
-set @counter goBack
+set @counter go_back
 set select_output null
-set @counter goBack
+set @counter go_back
 end
 #Semi-Anticlog 3.7
 #Performance Update that warants its own update
 #Optmizations made to the item loop and storage check
 #Will be the last version for 3.x
 #further changes will be performance or synced changes from 4.x
+#3.7.1
+#Changed Default Values of certain Vars, for more easy use
+    #renamed MaxPercent to MaxAmount, and changed default to 200
 
 #style guide:
 #jump label conditon (if)
