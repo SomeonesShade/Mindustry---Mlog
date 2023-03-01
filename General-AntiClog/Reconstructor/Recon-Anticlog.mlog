@@ -104,7 +104,7 @@ op div buffer surgeAlloyAmount threshold
 skipConfigItem:
 jump startConifg notEqual item null
 set enable false
-op sc sc 5
+op add sc sc 5
 
 startConifg:
 #buildingConfigLoop
