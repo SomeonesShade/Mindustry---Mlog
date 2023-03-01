@@ -1,4 +1,5 @@
 #this so error prone, needs to be revamped
+#PPT is now in eekir : c
 set prevTotal total
 control enabled door1 1
 sensor con @unit @controlled
