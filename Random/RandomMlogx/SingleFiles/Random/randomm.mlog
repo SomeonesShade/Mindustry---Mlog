@@ -110,3 +110,6 @@ wait 10
 end
 print "thanks to mlogx for making mlog easier on this lol"
 print "github.com/BalaM314/mlogx/"
+end
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"

@@ -1,0 +1,234 @@
+print "Modified Logic from Original - Shade"
+set unitRadius 100
+op mul flag @maph @thisx
+op add flag flag @thisy
+set ut1 @nova
+set ut2 @mono
+set ut3 @pulsar
+set ut4 @pulsar
+set ut5 @poly
+set ut6 @poly
+jump 10 notEqual @links 6
+sensor x1 reconstructor1 @x
+sensor y1 reconstructor1 @y
+sensor s1 reconstructor1 @size
+op div s1 s1 2
+op add s1 s1 1
+sensor x2 reconstructor2 @x
+sensor y2 reconstructor2 @y
+sensor s2 reconstructor2 @size
+op div s2 s2 2
+op add s2 s2 1
+sensor x3 reconstructor3 @x
+sensor y3 reconstructor3 @y
+sensor s3 reconstructor3 @size
+op div s3 s3 2
+op add s3 s3 1
+sensor x4 reconstructor4 @x
+sensor y4 reconstructor4 @y
+sensor s4 reconstructor4 @size
+op div s4 s4 2
+op add s4 s4 1
+sensor x5 reconstructor5 @x
+sensor y5 reconstructor5 @y
+sensor s5 reconstructor5 @size
+op div s5 s5 2
+op add s5 s5 1
+sensor x6 reconstructor6 @x
+sensor y6 reconstructor6 @y
+sensor s6 reconstructor6 @size
+op div s6 s6 2
+op add s6 s6 1
+ubind u1
+sensor brPayload reconstructor1 @payloadCount
+jump 51 equal brPayload 0
+sensor p reconstructor1 @progress
+jump 48 equal p lp1
+set lp1 p
+jump 51 notEqual p 0
+set u1 null
+ucontrol flag 0 0 0 0 0
+jump 73 always 0 0
+sensor uCont @unit @controlled
+jump 55 notEqual uCont 1
+sensor uFlag @unit @flag
+jump 68 equal uFlag flag
+set u1 null
+op add lTime @time 500
+jump 73 greaterThan @time lTime
+ubind ut1
+sensor uCont @unit @controlled
+jump 57 greaterThan uCont 1
+jump 64 equal uCont 0
+sensor uFlag @unit @flag
+jump 57 notEqual uFlag 0
+ucontrol within x1 y1 unitRadius cDrop 0
+jump 57 equal cDrop false
+ucontrol flag flag 0 0 0 0
+set u1 @unit
+ucontrol within x1 y1 s1 cDrop 0
+jump 71 equal cDrop false
+ucontrol payEnter 0 0 0 0 0
+ucontrol boost true 0 0 0 0
+ucontrol approach x1 y1 1 0 0
+ubind u2
+sensor brPayload reconstructor2 @payloadCount
+jump 83 equal brPayload 0
+sensor p reconstructor2 @progress
+jump 80 equal p lp2
+set lp2 p
+jump 83 notEqual p 0
+set u2 null
+ucontrol flag 0 0 0 0 0
+jump 105 always 0 0
+sensor uCont @unit @controlled
+jump 87 notEqual uCont 1
+sensor uFlag @unit @flag
+jump 100 equal uFlag flag
+set u2 null
+op add lTime @time 500
+jump 105 greaterThan @time lTime
+ubind ut2
+sensor uCont @unit @controlled
+jump 89 greaterThan uCont 1
+jump 96 equal uCont 0
+sensor uFlag @unit @flag
+jump 89 notEqual uFlag 0
+ucontrol within x1 y1 unitRadius cDrop 0
+jump 89 equal cDrop false
+ucontrol flag flag 0 0 0 0
+set u2 @unit
+ucontrol within x2 y2 s2 cDrop 0
+jump 103 equal cDrop false
+ucontrol payEnter 0 0 0 0 0
+ucontrol boost true 0 0 0 0
+ucontrol approach x2 y2 1 0 0
+ubind u3
+sensor brPayload reconstructor3 @payloadCount
+jump 115 equal brPayload 0
+sensor p reconstructor3 @progress
+jump 112 equal p lp3
+set lp3 p
+jump 115 notEqual p 0
+set u3 null
+ucontrol flag 0 0 0 0 0
+jump 137 always 0 0
+sensor uCont @unit @controlled
+jump 119 notEqual uCont 1
+sensor uFlag @unit @flag
+jump 132 equal uFlag flag
+set u3 null
+op add lTime @time 500
+jump 137 greaterThan @time lTime
+ubind ut3
+sensor uCont @unit @controlled
+jump 121 greaterThan uCont 1
+jump 128 equal uCont 0
+sensor uFlag @unit @flag
+jump 121 notEqual uFlag 0
+ucontrol within x1 y1 unitRadius cDrop 0
+jump 121 equal cDrop false
+ucontrol flag flag 0 0 0 0
+set u3 @unit
+ucontrol within x3 y3 s3 cDrop 0
+jump 135 equal cDrop false
+ucontrol payEnter 0 0 0 0 0
+ucontrol boost true 0 0 0 0
+ucontrol approach x3 y3 1 0 0
+ubind u4
+sensor brPayload reconstructor4 @payloadCount
+jump 147 equal brPayload 0
+sensor p reconstructor4 @progress
+jump 144 equal p lp4
+set lp4 p
+jump 147 notEqual p 0
+set u4 null
+ucontrol flag 0 0 0 0 0
+jump 169 always 0 0
+sensor uCont @unit @controlled
+jump 151 notEqual uCont 1
+sensor uFlag @unit @flag
+jump 164 equal uFlag flag
+set u4 null
+op add lTime @time 500
+jump 169 greaterThan @time lTime
+ubind ut4
+sensor uCont @unit @controlled
+jump 153 greaterThan uCont 1
+jump 160 equal uCont 0
+sensor uFlag @unit @flag
+jump 153 notEqual uFlag 0
+ucontrol within x1 y1 unitRadius cDrop 0
+jump 153 equal cDrop false
+ucontrol flag flag 0 0 0 0
+set u4 @unit
+ucontrol within x4 y4 s4 cDrop 0
+jump 167 equal cDrop false
+ucontrol payEnter 0 0 0 0 0
+ucontrol boost true 0 0 0 0
+ucontrol approach x4 y4 1 0 0
+ubind u5
+sensor brPayload reconstructor5 @payloadCount
+jump 179 equal brPayload 0
+sensor p reconstructor5 @progress
+jump 176 equal p lp5
+set lp5 p
+jump 179 notEqual p 0
+set u5 null
+ucontrol flag 0 0 0 0 0
+jump 201 always 0 0
+sensor uCont @unit @controlled
+jump 183 notEqual uCont 1
+sensor uFlag @unit @flag
+jump 196 equal uFlag flag
+set u5 null
+op add lTime @time 500
+jump 201 greaterThan @time lTime
+ubind ut5
+sensor uCont @unit @controlled
+jump 185 greaterThan uCont 1
+jump 192 equal uCont 0
+sensor uFlag @unit @flag
+jump 185 notEqual uFlag 0
+ucontrol within x1 y1 unitRadius cDrop 0
+jump 185 equal cDrop false
+ucontrol flag flag 0 0 0 0
+set u5 @unit
+ucontrol within x5 y5 s5 cDrop 0
+jump 199 equal cDrop false
+ucontrol payEnter 0 0 0 0 0
+ucontrol boost true 0 0 0 0
+ucontrol approach x5 y5 1 0 0
+ubind u6
+sensor brPayload reconstructor6 @payloadCount
+jump 211 equal brPayload 0
+sensor p reconstructor6 @progress
+jump 208 equal p lp6
+set lp6 p
+jump 211 notEqual p 0
+set u6 null
+ucontrol flag 0 0 0 0 0
+jump 233 always 0 0
+sensor uCont @unit @controlled
+jump 215 notEqual uCont 1
+sensor uFlag @unit @flag
+jump 228 equal uFlag flag
+set u6 null
+op add lTime @time 500
+jump 233 greaterThan @time lTime
+ubind ut6
+sensor uCont @unit @controlled
+jump 217 greaterThan uCont 1
+jump 224 equal uCont 0
+sensor uFlag @unit @flag
+jump 217 notEqual uFlag 0
+ucontrol within x1 y1 unitRadius cDrop 0
+jump 217 equal cDrop false
+ucontrol flag flag 0 0 0 0
+set u6 @unit
+ucontrol within x6 y6 s6 cDrop 0
+jump 231 equal cDrop false
+ucontrol payEnter 0 0 0 0 0
+ucontrol boost true 0 0 0 0
+ucontrol approach x6 y6 1 0 0
+jump 41 always 0 0
