@@ -1,7 +1,9 @@
-#reorganize the settings for a final time. plus add in the v1 override for a possible core as origin
 set OriginBlock null #the block used in reversemode, or rss
+set ReadMemoryBlock cell1
+
 jump configIgnore equal skipVars 1
 print "(Block/Bool) The StorageBlock where the items come from. If set to false, disables origin functionality"
+print "(memoryblock) The cell block for reading configuration"
 
 jump pt1 always 0 0
 print "Threshold Settings"
@@ -10,17 +12,17 @@ end; pt1:
 set MaxAmount 200  #this functions as a buffer (filling it to full will practically clog)
 print "(whole number/decimal) determines the target amount of an item to maintain in a storage block. If it's in decimal/percent, takes the percent of all the linked storages instead"
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
-print "(integer/decimal) Determines the mininum amount/percentage of an item to start working"
+print "(integer/decimal) Determines the mininum amount/percentage of an item inside the origin to start working"
 set PowerStoredThreshold 0.4
 print "(decimal) If the Power Stored in Power Grid amount/capacity goes below this percentage, deactivate (in PowerRSSBlockType)"
-set IsCluster false #if dealing. chained or seperated storages, no diffrence if single
-print "(bool) If the anticlog will want to have a baseline of items in all storages (false), or a total amount of items in all storages (true)"
+set IsCluster true #if dealing. chained or seperated storages, no diffrence if single
+print "(bool) If the anticlog will want to have a total amount of items in all storages (true), or a baseline of items in all storages (false)"
 
 jump pa1 always 0 0
 print "Item Configuration"
 end; pa1: 
 
-print "for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
+print "(bool) for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
 op shl  false 0
 op shl  1 1
 op shl  1 2
@@ -47,9 +49,9 @@ op shl  false 21
 jump pb1 always 0 0
 print "Memory Settings"
 end; pb1:
-
+#set memread to -1 if only write
 set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
-print "(whole number) doesn't write at cell 1 if MemoryReadLocation >= 0, sends out item bit config"
+print "(whole number) doesn't write at ReadMemoryBlock if MemoryReadLocation >= 0, sends out item bit config"
 set MemoryReadLocation -1
 print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
 
@@ -58,15 +60,13 @@ print "Miscellaneous Settings"
 end; pc1:
 
 set FindCore true
-print "(bool) If to set the Origin as the Core (via a mono), only works if OriginBlock is null"
+print "(bool) If this should set the Origin as the Core (via a mono), only works if OriginBlock is null"
 set FindCoreUnitType @mono
 print "(unitType) Unit used to detect core automatically"
 set PowerRSSBlockType @power-node
 print "(BlockType) What BlockType to measure battery from"
-set ReadMemoryBlock cell1
-print "(memoryblock) the read cell block for configuration"
 set IgnoreBlink false
-print "(bool) disables 'blinking' (it happens when there are no vaults detected)"
+print "(bool) disables 'blinking' (it happens when there are no storages detected)"
 set SetStorageAsCore false #This is so broken lol
 print "(bool)[BETA] Sets one storage in the code as the Core"
 
@@ -101,7 +101,7 @@ op add bitSelection bitSelection 
 
 printflush null
 
-#__this may breaking something + bug fix
+#__caution
 set count @itemCount
 itemCountCheck:
 op shl bitLocation 1 count
@@ -111,7 +111,7 @@ op sub count count 1
 jump itemCountCheck greaterThanEq count 0
 itemCountEnd:
 op add itemCount count 1
-#__pls check
+#__caution
 
 -printCalculation:
     jump clusterMessage equal IsCluster true
@@ -592,6 +592,9 @@ end
 #3.7.1
 #Changed Default Values of certain Vars, for more easy use
     #renamed MaxPercent to MaxAmount, and changed default to 200
+    #IsCluster is now true by default
+#Fixed bug of memcell not being read
+
 
 #style guide:
 #jump label conditon (if)
@@ -610,6 +613,11 @@ end
 
 
 #Plans:
+#TODO:
+#add in erekir block types, 
+    #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
+    #add reinforced vault and container
+#add in slight guide if binded to duo, via message prob
 #RoadMap
         
 #ver Unkown/4.0
@@ -629,6 +637,37 @@ end
         #(this may be a reconstructor version feature, although might be ok?...
         #automatically setting the config based on binds, and adding in items like (silicon)...
         #if intergration is impossible, this is still applicable as QOL)
+    
+    #ideas/potential-features:
+    #compiling all is enable config etc in a bit storage
+        #faster block control loop overall (no more type checks in loop) 
+        #volitatile though if any link gets destroyed
+
+    #check if storage has "cloged" then unclog in a bool setting
+        #if so set warning system, send in a unit to unclog the factory
+        #may slow down the system, maybe gets into storage check?
+        #isA jump check blocks storage check though, seperate line potentially
+
+    #solving the recon problem
+        #in storage check calaculate the differnece of storage (based on type) between each item group (doing fancy math)
+            #ex: subtract metaOffset by x (pre determined)
+                #multiplicativeRecon:
+                #sub metaglassOffset metaglassOffset x
+                #sub titaniumOffset titaniumOffset x
+        #in the actual loop, subtract or add the amount for each item
+            #ex:
+            #op add setStartofLoop @counter num (predetermined or nah?, prevent volititly prob)
+            #set offset thorOffset
+            #jump skipOut always 0 0
+            #set offset metaOffset
+            #etc.
+
+            #sub amount amount offset
+            #jump exit condition
+            #op sub @counter setStartofLoop i
+            #exit:
+        #need other better method, but this is promising rn
+
 
 
 #In all versions
