@@ -2,10 +2,11 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.7
-Performance Update that warants its own update
-Optmizations made to the item loop and storage check
-Potentially the last version for 3.x...
+|Semi-AntiClog 3.7.1
+Changed Default Values of certain Vars, for more easy use
+renamed MaxPercent to MaxAmount, and changed default to 200
+IsCluster is now true by default
+Fixed bug of memcell not being read
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
@@ -34,9 +35,6 @@ Memory Block Support, allowing for specialized relay/long distance chaining
     Note: (will work on docs for how this works eventually)
 Internal Item and Power RSS, with Wireless/Bindless Core Detection
 MessageBlock Information For Easy TroubleShooting and Information
-
-Potential Additions: (maybe it will happen, maybe not)
-    Recontructor/Factory Support For Cluster Mode (4.0?)
 
 -Shade
 _____
@@ -125,6 +123,11 @@ Logs:
 #saving storages into v1-v8 updated
 #part 2 storageCheck now non existant
 #removed the multiple jump-if for baseline mode
+#log: 3.7.1
+#Changed Default Values of certain Vars, for more easy use
+    #renamed MaxPercent to MaxAmount, and changed default to 200
+    #IsCluster is now true by default
+#Fixed bug of memcell not being read
 
 Also Old Description: Might be useful for later
 Features/Variables:
