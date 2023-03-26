@@ -348,7 +348,7 @@ jump j3 greaterThan messageCode 12 #m2
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.7.1 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.7.1\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 print storageModeMessage
 print Origin
