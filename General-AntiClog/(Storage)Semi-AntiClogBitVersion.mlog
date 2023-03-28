@@ -253,7 +253,23 @@ powerIsPresent:
     
     sensor amount v1 type
     op add @counter @counter storage_offset #max 2
-        sensor r8 v8 type   #how much items
+        sensor r16 v16 type   #how much items
+        op add amount amount r16
+        sensor r15 v15 type
+        op add amount amount r15
+        sensor r14 v14 type
+        op add amount amount r14
+        sensor r13 v13 type
+        op add amount amount r13
+        sensor r12 v12 type
+        op add amount amount r12
+        sensor r11 v11 type
+        op add amount amount r11
+        sensor r10 v10 type
+        op add amount amount r10
+        sensor r9 v9 type
+        op add amount amount r9
+        sensor r8 v8 type
         op min amount amount r8
         sensor r7 v7 type
         op min amount amount r7
@@ -281,7 +297,23 @@ powerIsPresent:
     selectedAdd:
     sensor amount v1 type
     op add @counter @counter storage_offset #max 2
-        sensor r8 v8 type   #how much items
+        sensor r16 v16 type   #how much items
+        op add amount amount r16
+        sensor r15 v15 type
+        op add amount amount r15
+        sensor r14 v14 type
+        op add amount amount r14
+        sensor r13 v13 type
+        op add amount amount r13
+        sensor r12 v12 type
+        op add amount amount r12
+        sensor r11 v11 type
+        op add amount amount r11
+        sensor r10 v10 type
+        op add amount amount r10
+        sensor r9 v9 type
+        op add amount amount r9
+        sensor r8 v8 type
         op add amount amount r8
         sensor r7 v7 type
         op add amount amount r7
@@ -348,7 +380,7 @@ jump j3 greaterThan messageCode 12 #m2
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.7.1\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.8 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 print storageModeMessage
 print Origin
@@ -416,7 +448,7 @@ storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
     set select_readMode 0
     set storageCount 0
-    set v1 0 #reset storages
+    set v1 0 #reset storages #NOTE: add counter array for optimization
 	set v2 0
 	set v3 0
 	set v4 0
@@ -424,7 +456,15 @@ storageCheck: #set variables
     set v6 0
     set v7 0
     set v8 0
-jump storageArrayIgnore strictEqual v9 null
+    set v9 0
+    set v10 0
+    set v11 0
+    set v12 0
+    set v13 0
+    set v14 0
+    set v15 0
+    set v16 0
+jump storageArrayIgnore strictEqual v17 null
 
     set select_index -1
     set select_input null
@@ -469,11 +509,11 @@ noOverride:
 
     set select_readMode 2 #no need to write on second part of the code, just read
     op max storage_offset storageCount 1
-    op sub storage_offset 8 storage_offset #7 being max - 1
+    op sub storage_offset 16 storage_offset #7 being max - 1
     op mul storage_offset storage_offset 2 #2 lines
     
     jump skip greaterThan storage_offset -1
-        set storage_offset 15 #(7 * 2) + 2
+        set storage_offset 31 #(15 * 2) + 1
     skip:
 
 jump overideMaxValue equal shouldOverideMaxAmount true
@@ -495,7 +535,7 @@ end
 select: #if we have found a storageblock, enter into memory
     sensor ic obj @itemCapacity
     op mul index storageCount 3
-    op min index index 24 
+    op min index index 48 #(16 * 3)
     op add @counter @counter index
 set v1 obj
     op add TotalMaxStorage TotalMaxStorage ic #and update TotalMaxStorage
@@ -529,6 +569,38 @@ set v8 obj
     op add TotalMaxStorage TotalMaxStorage ic
     jump j1 always 0 0
 
+set v9 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
+set v10 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
+set v11 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
+set v12 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
+set v13 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
+set v14 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
+set v15 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
+set v16 obj
+    op add TotalMaxStorage TotalMaxStorage ic
+    jump j1 always 0 0
+
 jArray:
     jump skip0 strictEqual select_index null #if hardcode storage has been reached, use this array
     set select_input obj
@@ -547,53 +619,73 @@ storageSelect: #select_input, select_output, select_readMode, go_back, select_in
 op mul selectStorage select_index 4
 op add selectStorage selectStorage select_readMode
 op add @counter selectStorage @counter
-set v9 select_input
+set v17 select_input
 set @counter go_back
-set select_output v9
+set select_output v17
 set @counter go_back
-set v10 select_input
+set v18 select_input
 set @counter go_back
-set select_output v10
+set select_output v18
 set @counter go_back
-set v11 select_input
+set v19 select_input
 set @counter go_back
-set select_output v11
+set select_output v19
 set @counter go_back
-set v12 select_input
+set v20 select_input
 set @counter go_back
-set select_output v12
+set select_output v20
 set @counter go_back
-set v13 select_input
+set v21 select_input
 set @counter go_back
-set select_output v13
+set select_output v21
 set @counter go_back
-set v14 select_input
+set v22 select_input
 set @counter go_back
-set select_output v14
+set select_output v22
 set @counter go_back
-set v15 select_input
+set v23 select_input
 set @counter go_back
-set select_output v15
+set select_output v23
 set @counter go_back
-set v16 select_input
+set v24 select_input
 set @counter go_back
-set select_output v16
+set select_output v24
 set @counter go_back
-set select_index null
+set v25 select_input
 set @counter go_back
-set select_output null
+set select_output v25
+set @counter go_back
+set v26 select_input
+set @counter go_back
+set select_output v26
+set @counter go_back
+set v27 select_input
+set @counter go_back
+set select_output v27
+set @counter go_back
+set v28 select_input
+set @counter go_back
+set select_output v28
+set @counter go_back
+set v29 select_input
+set @counter go_back
+set select_output v29
+set @counter go_back
+set v30 select_input
+set @counter go_back
+set select_output v30
+set @counter go_back
+set v31 select_input
+set @counter go_back
+set select_output v31
+set @counter go_back
+set v32 select_input
+set @counter go_back
+set select_output v32
 set @counter go_back
 end
-#Semi-Anticlog 3.7
-#Performance Update that warants its own update
-#Optmizations made to the item loop and storage check
-#Will be the last version for 3.x
-#further changes will be performance or synced changes from 4.x
-#3.7.1
-#Changed Default Values of certain Vars, for more easy use
-    #renamed MaxPercent to MaxAmount, and changed default to 200
-    #IsCluster is now true by default
-#Fixed bug of memcell not being read
+#Semi-Anticlog 3.8
+#increased storages to 16
 
 
 #style guide:
@@ -614,6 +706,14 @@ end
 
 #Plans:
 #TODO:
+#3.8 is next, the ungolden hammer update
+    #yeet the ff:
+        #core bind
+        #unessary stuff
+    #check the 4.0 branch to copy improvements
+    #re-stylize the code, and improve slightly by rearrangement
+    #lastly finally get the full 16 storage and 32 max
+
 #add in erekir block types, 
     #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
     #add reinforced vault and container
