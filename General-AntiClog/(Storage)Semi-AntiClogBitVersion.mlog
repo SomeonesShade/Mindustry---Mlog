@@ -150,6 +150,7 @@ jump originCoreIgnore lessThan OriginItemLimit 0
 
     jump originIgnore equal OriginBlock null #sets the Origin
     set Origin OriginBlock
+
     originIgnore:
     sensor hasOriginDied Origin @dead
 jump originPercentage equal hasOriginDied false
@@ -339,7 +340,7 @@ itemLoop: #label suggests, it loops to determine what item to use
             op add amount amount rV
             jump storageAddRead always 0 0
 
-    amountCheck:
+    amountCheck: #the heart of the itemLoop
         jump skip1 greaterThanEq amount mv #is it the smallest out of the items?
         set typec type #if so set the output
         op add dataItem dataItem bitLocation
@@ -607,7 +608,7 @@ select: #if we have found a storageblock, enter into memory
         op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
 
-jArray:
+-jArray:
     jump skip0 strictEqual select_index null #if hardcode storage has been reached, use this array
     set select_input obj
     op add go_back @counter 1; jump storageSelect always 0 0
@@ -715,13 +716,13 @@ end
 
 #Plans:
 #TODO:
-#3.8 is next, the ungolden hammer update
+#3.8 is next
     #yeet the ff:
-        #core bind
-        #unessary stuff
     #check the 4.0 branch to copy improvements
     #re-stylize the code, and improve slightly by rearrangement
     #lastly finally get the full 16 storage and 32 max
+    #config memread set to 1 automatically
+    #change message to report out if memread if actually reading, and message on OriginAmount on full 
 
 #add in erekir block types, 
     #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
