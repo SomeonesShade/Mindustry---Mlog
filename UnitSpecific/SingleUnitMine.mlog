@@ -1,0 +1,64 @@
+jump skipUbind notEqual unitType null
+ubind @
+sensor unitType @unit @type
+skipUbind:
+#----
+set noBindIfFull true
+sensor Item sorter1 @config
+getlink Location 1
+jump skipFullCheck strictEqual Location null
+sensor locationAmount Location Item
+sensor locationCapacity Location @itemCapacity
+jump skipFullCheck equal noBindIfFull false
+jump 0 equal locationAmount locationCapacity
+skipFullCheck:
+#----
+jump skipVars notEqual unitFlag 0 
+op mul tx @thisx @maph  #create flag... note: its not worth to add in a check if x and y is both 0
+op add unitFlag tx @thisy
+skipVars:
+#----Main Logic----
+sensor con @unit @controlled
+sensor cor @unit @controller
+sensor fla @unit @flag
+#check if:
+jump unitbind strictEqual @unit null    #we dont have a unit binded? ubind.
+jump unitbind notEqual fla unitFlag        #it isnt our flag? ubind.
+jump keepUnit always            #if it passes the checks its safe! 
+unitbind: #get vars
+ubind unitType
+sensor con @unit @controlled
+sensor fla @unit @flag
+jump unitbind notEqual fla 0 #cant use it?/is it not flag 0? ubind.
+sensor itemCapacity @unit @itemCapacity
+keepUnit:
+jump unitbind greaterThanEq con 2     #is it under player control/formation? ubind.
+ucontrol flag unitFlag
+#------------------
+jump noBind equal Item null
+jump startLogic notEqual Location null
+noBind:
+ucontrol move @thisx @thisy
+end
+startLogic:
+sensor posX Location @x #getvars
+sensor posY Location @y
+sensor itemType @unit @firstItem
+jump goOre equal itemType Item     #does unit either have the item we want
+jump goOre equal itemType null     #or no items? then goOre
+ulocate building core false @copper ox oy found Core #otherwise itemDrop to Ore
+ucontrol approach ox oy 1
+ucontrol itemDrop Core 999
+end
+goOre:
+sensor itemAmount @unit Item
+jump deliverToLocation greaterThanEq itemAmount itemCapacity         #Do we have enough of the item?
+ulocate ore core false Item ox oy found 0    #if not resupply
+jump deliverToLocation equal found false
+ucontrol approach ox oy 9
+ucontrol mine ox oy
+end
+deliverToLocation:
+ucontrol move posX posY         #From previous checks, this means we are delivering to Location!
+ucontrol itemDrop Location 999
+end
