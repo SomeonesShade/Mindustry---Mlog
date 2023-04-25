@@ -101,17 +101,11 @@ op add bitSelection bitSelection 
 
 printflush null
 
-#__caution
-set count @itemCount
-itemCountCheck:
-op shl bitLocation 1 count
-op and isSelected bitLocation bitSelection
-jump itemCountEnd notEqual isSelected 0
-op sub count count 1
-jump itemCountCheck greaterThanEq count 0
-itemCountEnd:
-op add itemCount count 1
-#__caution
+#hmm ln(bitSelection * 2)/ln(2)
+op shl bitTemp bitSelection 1
+op log bitTemp bitTemp 0
+op div itemCount bitTemp 0.6931471805599453
+#hmm
 
 -printCalculation:
     jump clusterMessage equal IsCluster true
@@ -197,9 +191,10 @@ bitStart:
 jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
-#hmm
-    set itemCount @itemCount
-#hmm
+#hmm ln(bitSelection * 2)/ln(2) a bit slower on max sadly (i wish log2 were a thing)
+    op shl bitTemp bitSelection 1
+    op log bitTemp bitTemp 0
+    op div itemCount bitTemp 0.6931471805599453
 
 bitSkip: #Determines when to check for Storages
     jump storageCheck notEqual @links prevLinks     #trigger storageCheck if any link (amount) is changed
@@ -697,6 +692,8 @@ end
 #Semi-Anticlog 3.8
 #increased storages to 16
 
+#Internal Changes:
+#Changed on how itemCount is calculated
 
 #style guide:
 #jump label conditon (if)
