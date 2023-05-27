@@ -433,9 +433,10 @@ noUnitDetected: #m5 - l5
     printflush obj
     jump skip2 always 0 0
 
-#24
-powerLow: #m6 - l6
-    print "\n\n[#FFAAAA]disabled: Not Enough Power Stored. Its Less Than "
+powerLow: #m6 - l7
+    print "\n[#DDDDFF]Current Measured Power Block: [#BBBBEE]"
+    print PowerBlock
+    print "\n\n[#FFAAAA]Disabled: Not Enough Power Stored. Power Percentage Threshold: "
     print PowerStoredThreshold
     print "\n\nCurrent Power Percentage Stored: "
     print powerPercentage
