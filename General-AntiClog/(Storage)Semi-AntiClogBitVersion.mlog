@@ -52,7 +52,7 @@ end; pb1:
 #set memread to -1 if only write
 set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
 print "(whole number) doesn't write at ReadMemoryBlock if MemoryReadLocation >= 0, sends out item bit config"
-set MemoryReadLocation -1
+set MemoryReadLocation 1
 print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
 
 jump pc1 always 0 0
@@ -109,18 +109,18 @@ op div itemCount bitTemp 0.6931471805599453
 
 -printCalculation:
     jump clusterMessage equal IsCluster true
-    set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[#DDDDFF]Current Origin: [#BBBBEE]"
+    set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[]Current Origin: [#BBBBEE]"
     jump skipMemA1 always 0 0
     clusterMessage:
-    set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster\n[#DDDDFF]Current Origin: [#BBBBEE]"
+    set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster\n[]Current Origin: [#BBBBEE]"
     skipMemA1:
 
-    set memReadAMessage " items"
-    set memReadBMessage ""
-    jump skipMemA2 lessThan MemoryReadLocation 0
-    set memReadAMessage " items\n[#FFAAFF]Reading any binded cell for item configuration"
-    set memReadBMessage "\n[#FFAAFF]Reading any binded cell for item configuration"
-    skipMemA2:
+#    set memReadAMessage " items"
+#    set memReadBMessage ""
+#    jump skipMemA2 lessThan MemoryReadLocation 0
+#    set memReadAMessage " items\n[#FFAAFF]Reading any binded cell for item configuration"
+#    set memReadBMessage "\n[#FFAAFF]Reading any binded cell for item configuration"
+#    skipMemA2:
 
     set fullStorageModeMessage "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
     jump skipMemA3 equal IsCluster false
@@ -140,7 +140,7 @@ set skipVars 1
 configIgnore:
 set message_code 0 #m0
 jump originCoreIgnore lessThan OriginItemLimit 0
-    set message_code 5 #m1
+#   set message_code 5 #m1
 
     jump originIgnore equal OriginBlock null #sets the Origin
     set Origin OriginBlock
@@ -157,7 +157,7 @@ originCoreFind: #this break a lot of stuff
     jump noValidUnitFoundA equal unitDied true
     jump validUnitFoundA lessThan controlled 2 #UHHHHHHHHHH
     noValidUnitFoundA:
-        set message_code 19 #m5
+        set message_code 20 #m5
         jump originCoreIgnore always 0 0
     validUnitFoundA:
         ulocate building core false @copper ox oy fo Origin
@@ -179,7 +179,7 @@ coreFind:
     jump noValidUnitFound equal unitDied true
     jump validUnitFound lessThan controlled 2 #UHHHHHHHHHH part 2
     noValidUnitFound:
-        set message_code 19 #m5
+        set message_code 20 #m5
         jump coreIgnore always 0 0
     validUnitFound:
         ulocate building core false @copper ox oy fo StorageOverride
@@ -196,7 +196,13 @@ jump bitSkip lessThan MemoryReadLocation 0
     op log bitTemp bitTemp 0
     op div itemCount bitTemp 0.6931471805599453
 
-bitSkip: #Determines when to check for Storages
+    set memReadAMessage " items\n[#FFAAFF]Reading any binded cell for item configuration"
+jump storageLoopCheck always 0 0
+
+bitSkip:
+set memReadAMessage " items"
+
+storageLoopCheck: #Determines when to check for Storages
     jump storageCheck notEqual @links prevLinks     #trigger storageCheck if any link (amount) is changed
     jump ItemDentify equal isA true                    #do not trigger storageCheck if it is currently working
     jump storageCheck greaterThanEq sC 25           #timer lel
@@ -204,7 +210,7 @@ bitSkip: #Determines when to check for Storages
 ItemDentify: #Part2!!!
     jump isStoragePresent notEqual v1 0 #do we even have a storage block?
     jump isStoragePresent equal IgnoreBlink true #Do not blink is IgnoreBlink is set to true
-        set message_code 16 #m4       #Alert Message
+        set message_code 17 #m4       #Alert Message
         op equal blink blink 0      #then start blinking
         set isA false                   #do not enable
         wait 0.5                    #no epilepsy
@@ -222,7 +228,7 @@ isStoragePresent:
     sensor powerCapacity PowerBlock @powerNetCapacity
     op div powerPercentage powerStored powerCapacity
     jump powerIsPresent greaterThanEq powerPercentage PowerStoredThreshold
-    set message_code 24  #m6          #Alert Message
+    set message_code 27 #m6          #Alert Message
         op equal blink blink 0      #then start blinking
         set isA false                   #do not enable
         wait 0.5                    #no epilepsy
@@ -352,8 +358,8 @@ itemLoop: #label suggests, it loops to determine what item to use
         set typec null
         set dataItem 0
     
-    jump j3 greaterThan message_code 12 #m2  #TODO: this may need a revision
-    set message_code 12 #m2
+    jump j3 greaterThan message_code 9 #m2  #TODO: this may need a revision
+    set message_code 9 #m2
 j3:
     set a -1
     buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
@@ -380,59 +386,70 @@ j3:
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.8 Beta\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.8 Beta\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
-print storageModeMessage
-print Origin
+
+-counterMessageStart:
 op add @counter @counter message_code
 
 #do message count rechecks!
 #0
-operational: #m0 - l5
+operational: #m0 - l9
+    print storageModeMessage
+    print Origin
+    print "\n[#DDDDFF]Current RSS Threshold is set to: [#BBBBEE]"
+    print OriginItemLimit
     print "\n\n[#AAFFAA]Operational!\nTargeting for "
     print MaxValue
     print memReadAMessage
     printflush obj
     jump skip2 always 0 0
 
-#5
-operationalWithOrigin: #m1 - l7
-    print "\n\n[#AAFFAA]Operational!\nTargeting for "
-    print MaxValue
-    print " items.\n[#FFFFAA]Internal RSS activated and set to "
-    print OriginItemLimit
-    print memReadBMessage
-    printflush obj
-    jump skip2 always 0 0
+#9
+-depreciated: #m1 - l0
+    #print "\n\n[#AAFFAA]Operational!\nTargeting for "
+    #print MaxValue
+    #print " items.\n[#FFFFAA]Internal RSS activated and set to "
+    #print OriginItemLimit
+    #print memReadBMessage
+    #printflush obj
+    #jump skip2 always 0 0
 
-#12
-fullStorage: #m2 - l4
+#9
+fullStorage: #m2 - l8
+    print storageModeMessage
+    print Origin
+    print "\n[#DDDDFF]Current RSS Threshold is set to: [#BBBBEE]"
+    print OriginItemLimit
     print fullStorageModeMessage
     print MaxValue
     printflush obj
     jump skip2 always 0 0
 
-#16
+#17
 -depreciated: #m3 - l0
     #print "m3 is depreciated"
     #print "..."
     #printflush obj
     #jump skip2 always 0 0
 
-#16
+#17
 noStorageDetected: #m4 - l3
     print "\n\n[#FFAAAA]error: No Storage Block Found\nPlease Bind to One"
     printflush obj
     jump skip2 always 0 0
 
-#19
-noUnitDetected: #m5 - l5
+#20
+noUnitDetected: #m5 - l7
+    print "\n[#DDDDFF]Current Origin: [#BBBBEE]"
+    print Origin
     print "\n\n[#FFAAAA]error: No Valid "
     print FindCoreUnitType
     print " Found\n\nPlease either make the unit or configurate the settings to use a diffrent unit type"
     printflush obj
     jump skip2 always 0 0
 
+#27
 powerLow: #m6 - l7
     print "\n[#DDDDFF]Current Measured Power Block: [#BBBBEE]"
     print PowerBlock
@@ -443,7 +460,7 @@ powerLow: #m6 - l7
     printflush obj
     jump skip2 always 0 0
 
-#30
+#34
 
 storageCheck: #set variables
 	set sC 0 #reset storageCheck counter
@@ -716,11 +733,14 @@ end
 #TODO:
 #3.8 is next
     #yeet the ff:
-    #check the 4.0 branch to copy improvements
-    #re-stylize the code, and improve slightly by rearrangement
-    #lastly finally get the full 16 storage and 32 max
-    #config memread set to 1 automatically
-    #change message to report out if memread if actually reading, and message on OriginAmount on full 
+        #check the 4.0 branch to copy improvements
+        #re-stylize the code, and improve slightly by rearrangement
+    #DONE: 
+        #lastly finally get the full 16 storage and 32 max
+        #config memread set to 1 automatically
+        #change message to report out if memread if actually reading, and message on OriginAmount on full 
+        #or revamp how the message system is organized... hmmm
+    #OnProgress:
 
 #add in erekir block types, 
     #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
