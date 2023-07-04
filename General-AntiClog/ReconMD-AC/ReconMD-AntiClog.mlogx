@@ -1,0 +1,31 @@
+sensor massdriver1_progress driver1 @progress
+sensor massdriver2_progress driver2 @progress
+op lessThan isBulletInAir massdriver1_progress massdriver2_progress
+
+&for i of @silicon @metaglass @titanium {
+    sensor $i1 reconstructor1 $i
+    sensor $i2 driver1 $i
+    sensor $i3 driver2 $i
+    op add $i_total $i1 $i2
+    jump other$i equal isBulletInAir false
+    op add $i_total $i_total previous$i
+    jump other2$i always 0 0
+other$i:
+    set previous$i $i2
+other2$i:
+    op add $i_total $i_total $i3
+    jump next$i greaterThanEq $i_total 260
+    control config unloader1 $i
+    control config unloader2 $i
+    control config unloader3 $i
+    jump enable always
+next$i:
+}
+control enabled unloader1 0
+control enabled unloader2 0
+control enabled unloader3 0
+end
+enable:
+control enabled unloader1 1
+control enabled unloader2 1
+control enabled unloader3 1

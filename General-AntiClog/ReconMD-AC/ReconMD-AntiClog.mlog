@@ -1,0 +1,65 @@
+sensor massdriver1_progress driver1 @progress
+sensor massdriver2_progress driver2 @progress
+op lessThan isBulletInAir massdriver1_progress massdriver2_progress
+sensor @silicon1 reconstructor1 @silicon
+sensor @silicon2 driver1 @silicon
+sensor @silicon3 driver2 @silicon
+op add @silicon_total @silicon1 @silicon2
+jump other@silicon equal isBulletInAir false
+op add @silicon_total @silicon_total previous@silicon
+jump other2@silicon always 0 0
+other@silicon:
+set previous@silicon @silicon2
+other2@silicon:
+op add @silicon_total @silicon_total @silicon3
+jump next@silicon greaterThanEq @silicon_total 260
+control config unloader1 @silicon
+control config unloader2 @silicon
+control config unloader3 @silicon
+jump enable always 0 0
+next@silicon:
+sensor @metaglass1 reconstructor1 @metaglass
+sensor @metaglass2 driver1 @metaglass
+sensor @metaglass3 driver2 @metaglass
+op add @metaglass_total @metaglass1 @metaglass2
+jump other@metaglass equal isBulletInAir false
+op add @metaglass_total @metaglass_total previous@metaglass
+jump other2@metaglass always 0 0
+other@metaglass:
+set previous@metaglass @metaglass2
+other2@metaglass:
+op add @metaglass_total @metaglass_total @metaglass3
+jump next@metaglass greaterThanEq @metaglass_total 80
+control config unloader1 @metaglass
+control config unloader2 @metaglass
+control config unloader3 @metaglass
+jump enable always 0 0
+next@metaglass:
+sensor @titanium1 reconstructor1 @titanium
+sensor @titanium2 driver1 @titanium
+sensor @titanium3 driver2 @titanium
+op add @titanium_total @titanium1 @titanium2
+jump other@titanium equal isBulletInAir false
+op add @titanium_total @titanium_total previous@titanium
+jump other2@titanium always 0 0
+other@titanium:
+set previous@titanium @titanium2
+other2@titanium:
+op add @titanium_total @titanium_total @titanium3
+jump next@titanium greaterThanEq @titanium_total 160
+control config unloader1 @titanium
+control config unloader2 @titanium
+control config unloader3 @titanium
+jump enable always 0 0
+next@titanium:
+control enabled unloader1 0
+control enabled unloader2 0
+control enabled unloader3 0
+end
+enable:
+control enabled unloader1 1
+control enabled unloader2 1
+control enabled unloader3 1
+end
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"
