@@ -2,10 +2,10 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.7.1
-Changed Default Values of certain Vars, for more easy use
-renamed MaxPercent to MaxAmount, and changed default to 200
-IsCluster is now true by default
+|Semi-AntiClog 3.8
+Increased storages to 16, counter/unoptimized storages up to 32
+Memory read is now defaulted to 1 for easy mem config
+Message system is tweaked for the essentiall information only
 Fixed bug of memcell not being read
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
@@ -30,8 +30,8 @@ And you have your transport!
 
 Features:
 Automatic Storage and Config Block Detection
-Up to 16 Receiving Storageblocks (8 Optimized)
-Memory Block Support, allowing for specialized relay/long distance chaining 
+Up to 32 Receiving Storageblocks (16 Optimized)
+Memory Block Support, allowing for specialized relay/long distance chaining
     Note: (will work on docs for how this works eventually)
 Internal Item and Power RSS, with Wireless/Bindless Core Detection
 MessageBlock Information For Easy TroubleShooting and Information
@@ -129,9 +129,27 @@ Logs:
     #IsCluster is now true by default
 #Fixed bug of memcell not being read
 
+#log: 3.8
+#increased storages to 16, counter storages up to v32
+#memory read is now on defaulted to 1 for easy mem config
+#messages are now tweaked
+    #Internal Changes:
+    #Changed on how itemCount is calculated
+    
+    #other remaing messages
+        #3.8 is next
+            #yeet the ff:
+            #check the 4.0 branch to copy improvements
+            #re-stylize the code, and improve slightly by rearrangement
+            #DONE: 
+            #lastly finally get the full 16 storage and 32 max
+            #config memread set to 1 automatically
+            #change message to report out if memread if actually reading, and message on OriginAmount on full 
+            #or revamp how the message system is organized... hmmm
+
 Also Old Description: Might be useful for later
 Features/Variables:
-Up to 16 receiving storageblocks (8 optimized), automatic storage and config block detection, and fast performance in a logic processor
+Up to 32 receiving storageblocks (16 optimized), automatic storage and config block detection, and fast performance in a logic processor
 Includes Message Block Support for additional information
 
 Main Configuration Variables:

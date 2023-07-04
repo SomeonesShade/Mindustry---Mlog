@@ -7,7 +7,7 @@ print "(memoryblock) The cell block for reading configuration"
 
 jump pt1 always 0 0
 print "Threshold Settings"
-end; pt1: 
+end; end; pt1:
 
 set MaxAmount 200  #this functions as a buffer (filling it to full will practically clog)
 print "(whole number/decimal) determines the target amount of an item to maintain in a storage block. If it's in decimal/percent, takes the percent of all the linked storages instead"
@@ -20,7 +20,7 @@ print "(bool) If the anticlog will want to have a total amount of items in all s
 
 jump pa1 always 0 0
 print "Item Configuration"
-end; pa1: 
+end; end; pa1: 
 
 print "(bool) for config selection, set to true(1) or false(0)" #bit selection from Username, best QOL config lel
 op shl  false 0
@@ -48,7 +48,7 @@ op shl  false 21
 
 jump pb1 always 0 0
 print "Memory Settings"
-end; pb1:
+end; end; pb1:
 #set memread to -1 if only write
 set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
 print "(whole number) doesn't write at ReadMemoryBlock if MemoryReadLocation >= 0, sends out item bit config"
@@ -57,7 +57,7 @@ print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
 
 jump pc1 always 0 0
 print "Miscellaneous Settings"
-end; pc1:
+end; end; pc1:
 
 set FindCore true
 print "(bool) If this should set the Origin as the Core (via a mono), only works if OriginBlock is null"
@@ -71,11 +71,9 @@ set SetStorageAsCore false #This is so broken lol
 print "(bool)[BETA] Sets one storage in the code as the Core"
 
 jump pEnd always 0 0
-end
-end
+end; end;
 print "Do not modify from this point, unless you know how it works lel"
-end
-end; pEnd:
+end; end; pEnd:
 
 op add bitSelection   #compile config into a single number (ex: 101 as an example)
 op add bitSelection bitSelection 
@@ -386,7 +384,7 @@ j3:
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.8 Beta\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.8\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 
 -counterMessageStart:
@@ -708,7 +706,9 @@ end
 
 
 #Semi-Anticlog 3.8
-#increased storages to 16
+#increased storages to 16, counter storages up to v32
+#memory read is now on defaulted to 1 for easy mem config
+#messages are now tweaked
 
 #Internal Changes:
 #Changed on how itemCount is calculated
@@ -731,15 +731,7 @@ end
 
 #Plans:
 #TODO:
-#3.8 is next
-    #yeet the ff:
-        #check the 4.0 branch to copy improvements
-        #re-stylize the code, and improve slightly by rearrangement
-    #DONE: 
-        #lastly finally get the full 16 storage and 32 max
-        #config memread set to 1 automatically
-        #change message to report out if memread if actually reading, and message on OriginAmount on full 
-        #or revamp how the message system is organized... hmmm
+    
     #OnProgress:
 
 #add in erekir block types, 
@@ -749,7 +741,7 @@ end
 #RoadMap
         
 #ver Unkown/4.0
-    #Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed
+    #####Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed DONE
     #deciding if min/baseline mode is needed
     #Starting the Recon Version/Simple version
         #If its possible this includes an array for each factory
@@ -766,7 +758,7 @@ end
         #automatically setting the config based on binds, and adding in items like (silicon)...
         #if intergration is impossible, this is still applicable as QOL)
     
-    #ideas/potential-features:
+#ideas/potential-features:
     #compiling all is enable config etc in a bit storage
         #faster block control loop overall (no more type checks in loop) 
         #volitatile though if any link gets destroyed
