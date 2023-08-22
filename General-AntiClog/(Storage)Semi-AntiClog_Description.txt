@@ -2,11 +2,9 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.8
-Increased storages to 16, counter/unoptimized storages up to 32
-Memory read is now defaulted to 1 for easy mem config
-Message system is tweaked for the essentiall information only
-Fixed bug of memcell not being read
+|Semi-AntiClog 3.8.1
+Fixed memory bug with ReadMemoryBlock not working properly
+Changed error item config on no item or optional powergon
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
@@ -146,6 +144,10 @@ Logs:
             #config memread set to 1 automatically
             #change message to report out if memread if actually reading, and message on OriginAmount on full 
             #or revamp how the message system is organized... hmmm
+
+#log: 3.8.1
+#fixed memory bug with ReadMemoryBlock not working properly
+#changed error item config on no item or optional powergon
 
 Also Old Description: Might be useful for later
 Features/Variables:

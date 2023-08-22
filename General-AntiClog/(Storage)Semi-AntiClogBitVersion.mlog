@@ -186,7 +186,8 @@ coreIgnore:
 set StorageOverride 0
 
 bitStart:
-jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
+sensor isMemDead ReadMemoryBlock @dead
+jump bitSkip equal isMemDead true #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
 #hmm ln(bitSelection * 2)/ln(2) a bit slower on max sadly (i wish log2 were a thing)
@@ -214,7 +215,7 @@ ItemDentify: #Part2!!!
         wait 0.5                    #no epilepsy
         op add sC sC 10             #increase checks so it can be updated asap
         set dataItem 0              #do not send anything
-        set typec @blast-compound   #red (error color) or...
+        set typec @dormant-cyst     #dark-orange (error color) or...
         jump j3 equal blink 0
         set typec null              #absolutely nothing
     jump j3 always 0 0          #immediately skip itemLoop
@@ -231,9 +232,9 @@ isStoragePresent:
         set isA false                   #do not enable
         wait 0.5                    #no epilepsy
         set dataItem 0              #do not send anything
-        set typec @surge-alloy   #yellow (error color) or...
+        set typec @dormant-cyst     #dark-orange (error color) or...
         jump j3 equal blink 0
-        set typec null              #absolutely nothing
+        set typec @fissile-matter   #other unused content, to prevent leaking weird items if placed in hyperproc 
     jump j3 always 0 0          #immediately skip itemLoop
 
 powerIsPresent:
@@ -370,7 +371,7 @@ j3:
             jump messageDisplay equal oType @message
             jump jEnable notEqual oType @memory-cell
             jump datawrite lessThan MemoryReadLocation 0 
-            jump jEnable equal obj cell1
+            jump jEnable equal obj ReadMemoryBlock #ohmygod was hardcoded to cell1 lmao
     
     datawrite:
         write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
@@ -384,7 +385,7 @@ j3:
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.8\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.8.1\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 
 -counterMessageStart:
@@ -705,13 +706,9 @@ op add @counter selectStorage @counter
 end
 
 
-#Semi-Anticlog 3.8
-#increased storages to 16, counter storages up to v32
-#memory read is now on defaulted to 1 for easy mem config
-#messages are now tweaked
-
-#Internal Changes:
-#Changed on how itemCount is calculated
+#Semi-Anticlog 3.8.1
+#fixed memory bug with ReadMemoryBlock not working properly
+#changed error item config on no item or optional powergon
 
 #style guide:
 #jump label conditon (if)
