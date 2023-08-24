@@ -2,9 +2,10 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.8.1
+|Semi-AntiClog 3.8.1b
 Fixed memory bug with ReadMemoryBlock not working properly
 Changed error item config on no item or optional powergon
+b: Reverted Hidden Change of using @dead for checking memory cell 
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
@@ -148,6 +149,7 @@ Logs:
 #log: 3.8.1
 #fixed memory bug with ReadMemoryBlock not working properly
 #changed error item config on no item or optional powergon
+b: Reverted Hidden Change of using @dead for checking memory cell 
 
 Also Old Description: Might be useful for later
 Features/Variables:
