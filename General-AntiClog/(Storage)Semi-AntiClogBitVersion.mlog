@@ -105,6 +105,17 @@ op log bitTemp bitTemp 0
 op div itemCount bitTemp 0.6931471805599453
 #hmm
 
+#__caution (itemStartingID Check)
+set itemStartingID 0
+itemStartingIDCheck:
+op shl bitLocation 1 itemStartingID
+op and isSelected bitLocation bitSelection
+jump itemStartingIDEnd notEqual isSelected 0
+op add itemStartingID itemStartingID 1
+jump itemStartingIDCheck lessThan itemStartingID itemCount
+itemStartingIDEnd:
+#__caution
+
 -printCalculation:
     jump clusterMessage equal IsCluster true
     set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[]Current Origin: [#BBBBEE]"
@@ -125,7 +136,7 @@ op div itemCount bitTemp 0.6931471805599453
     set fullStorageModeMessage "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if the total amount of items from all types reaches below "
     skipMemA3:
 
-ignoreMessageStorage:
+-ignoreMessageStorage:
     op greaterThanEq shouldOverideMaxAmount MaxAmount 1.01
     set OriginItemLimit MinOriginAmount
     jump originDisable strictEqual OriginBlock false
@@ -241,7 +252,7 @@ powerIsPresent:
     set bitLocation 0
     set dataItem 0
     set mv MaxValue
-    set i 0
+    set i itemStartingID
 itemLoop: #label suggests, it loops to determine what item to use
         lookup item type i
         op shl bitLocation 1 i #is at the selcted position true?:
@@ -384,7 +395,7 @@ j3:
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.8.1b\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.9.-1 Beta\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 
 -counterMessageStart:
@@ -705,10 +716,8 @@ op add @counter selectStorage @counter
 end
 
 
-#Semi-Anticlog 3.8.1b
-#fixed memory bug with ReadMemoryBlock not working properly
-#changed error item config on no item or optional powergon
-#b: Reverted Hidden Change of using @dead for checking memory cell 
+#Semi-AntiClog 3.9.-1
+#Internal: Processor Works Faster by skipping the initial 0s if the bit config has them
 
 #style guide:
 #jump label conditon (if)
@@ -720,20 +729,23 @@ end
 #camelCase
 
 #Reminder to self:
-#this personal project has a fundamental flaw, it may get more into golden hammer ness
-#mainly reverse mode is prob not needed, very rare case, and a lot of stuff in this logic have niche uses (you even have dedicated logic for maninging core clog)
-#will think about later
+#try not to overscope the project too much, although has the golden hammer feel of the project
+#something more focused should be done on T-AC (Transport Anti-Clog, develop this after 3.9, to handle unit recon and specific item rss)
 #stil always fit the theme of transporting from one storage to another with unloader + transport, do not deviate
-
+#
 
 #Plans:
 #TODO:
-    
+    #GetLink at a distance, bind to an arc to shoot at a distance to get either a new storage block or memcell
+    #Memory System rework?, this is difficult to do but needs to happen since there are flaws in it(might be only possible on T-AC though)
+
     #OnProgress:
+    #General Performance Imporvements
+        #also prep for 146, reverse lookup is going to be awesome for this
 
 #add in erekir block types, 
     #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
-    #add reinforced vault and container
+    #add reinforced vault and container #need 146
 #add in slight guide if binded to duo, via message prob
 #RoadMap
         
@@ -765,7 +777,7 @@ end
         #may slow down the system, maybe gets into storage check?
         #isA jump check blocks storage check though, seperate line potentially
 
-    #solving the recon problem
+    #solving the recon problem (this is solved in T-AC)
         #in storage check calaculate the differnece of storage (based on type) between each item group (doing fancy math)
             #ex: subtract metaOffset by x (pre determined)
                 #multiplicativeRecon:
