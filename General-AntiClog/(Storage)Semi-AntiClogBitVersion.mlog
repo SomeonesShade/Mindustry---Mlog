@@ -379,12 +379,18 @@ j3:
             jump jItemConfig equal oType @sorter
             jump skip2 equal oType @mass-driver
             jump messageDisplay equal oType @message
+            jump jUnloader equal oType @unloader #jUnloader
             jump jEnable notEqual oType @memory-cell
             jump datawrite lessThan MemoryReadLocation 0 
             jump jEnable equal obj ReadMemoryBlock #ohmygod was hardcoded to cell1 lmao
     
     datawrite:
         write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
+        jump skip2 always 0 0
+    jUnloader: #this is slow... but it's forced to have no null loader shenanigans
+        sensor config obj @config
+        jump jEnable notEqual config null
+        control config obj typec #set output
     jEnable:
         control enabled obj isA #enable or disable
     jItemConfig:
@@ -395,7 +401,7 @@ j3:
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.9.-1 Beta\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.9.- Beta\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 
 -counterMessageStart:
@@ -716,8 +722,10 @@ op add @counter selectStorage @counter
 end
 
 
-#Semi-AntiClog 3.9.-1
+#Semi-AntiClog 3.9.-0.5
 #Internal: Processor Works Faster by skipping the initial 0s if the bit config has them
+#Bugfix: no potential item leaking when enabling from null unloaders
+
 
 #style guide:
 #jump label conditon (if)
@@ -741,7 +749,6 @@ end
 
     #OnProgress:
     #General Performance Imporvements
-        #also prep for 146, reverse lookup is going to be awesome for this
 
 #add in erekir block types, 
     #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
