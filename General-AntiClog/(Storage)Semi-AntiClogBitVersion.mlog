@@ -10,7 +10,7 @@ print "Threshold Settings"
 end; end; pt1:
 
 set MaxAmount 200  #this functions as a buffer (filling it to full will practically clog)
-print "(whole number/decimal) determines the target amount of an item to maintain in a storage block. If it's in decimal/percent, takes the percent of all the linked storages instead"
+print "(whole number/decimal) determines the target amount of an item to maintain in a storage block. If it's in decimal/percent, takes the percentage of the smallest storage into account"
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
 print "(integer/decimal) Determines the mininum amount/percentage of an item inside the origin to start working"
 set PowerStoredThreshold 0.4
@@ -67,6 +67,8 @@ set PowerRSSBlockType @power-node
 print "(BlockType) What BlockType to measure battery from"
 set IgnoreBlink false
 print "(bool) disables 'blinking' (it happens when there are no storages detected)"
+set IncludeMassDriverInStorageCalculation false
+print "(bool) removes massdrivers in calculating the MaxValue, will still detect massdrivers for items"
 set SetStorageAsCore false #This is so broken lol
 print "(bool)[BETA] Sets one storage in the code as the Core"
 
@@ -554,12 +556,14 @@ noOverride:
 jump overideMaxValue equal shouldOverideMaxAmount true
     
 jump clusterIgnore equal IsCluster false #is this cluter mode?  
--clusterNotIgnored:    
-    op mul MaxValue TotalMaxStorage MaxAmount
+-clusterNotIgnored: #MaxValue = TotalMaxStorage + BaseLineValue(MaxAmount - 1)
+    op sub temp MaxAmount 1
+    op mul temp temp BaseLineValue
+    op add MaxValue TotalMaxStorage temp
     jump ItemDentify always 0 0
 end
 clusterIgnore:
-    set MaxValue BaseLineValue
+    op mul MaxValue BaseLineValue MaxAmount
     jump ItemDentify always 0 0
 end
 overideMaxValue:
@@ -569,71 +573,56 @@ end
 
 select: #if we have found a storageblock, enter into memory
     sensor ic obj @itemCapacity
-    op mul index storageCount 3
-    op min index index 48 #(16 * 3)
+    op mul index storageCount 2
+    op min index index 32 #(16 * 2)
     op add @counter @counter index
-    set v1 obj
-        op add TotalMaxStorage TotalMaxStorage ic #and update TotalMaxStorage
+
+    set v1 obj #and update TotalMaxStorage
         jump baselineCalculation always 0 0
-          
+
     set v2 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
           
     set v3 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
           
     set v4 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
           
     set v5 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
           
     set v6 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
           
     set v7 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
           
     set v8 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
     
     set v9 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
     
     set v10 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
     
     set v11 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
     
     set v12 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
     
     set v13 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
     
     set v14 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
     
     set v15 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
     
     set v16 obj
-        op add TotalMaxStorage TotalMaxStorage ic
         jump baselineCalculation always 0 0
 
 -jArray:
@@ -641,11 +630,13 @@ select: #if we have found a storageblock, enter into memory
     set select_input obj
     op add go_back @counter 1; jump storageSelect always 0 0
     op add select_index select_index 1
-    op add TotalMaxStorage TotalMaxStorage ic
 
 baselineCalculation:
     op add storageCount storageCount 1
-    op mul ic ic MaxAmount #1000(V) or 300(C) * MaxAmount
+    jump storageStatsCalculation notEqual oType @mass-driver
+    jump skip0 equal IncludeMassDriverInStorageCalculation false
+storageStatsCalculation: 
+    op add TotalMaxStorage TotalMaxStorage ic
     op min ic BaseLineValue ic #take smallest
     set BaseLineValue ic #set as new BaseLineValue
     jump skip0 always 0 0
@@ -722,10 +713,11 @@ op add @counter selectStorage @counter
 end
 
 
-#Semi-AntiClog 3.9.-0.5
+#Semi-AntiClog 3.9.-0.25
+#Behavior Change: MaxAmount Calculation Revised for Percentage Input when IsCluster is true
+#added IncludeMassDriverInStorageCalculation to compliment the above change
 #Internal: Processor Works Faster by skipping the initial 0s if the bit config has them
 #Bugfix: no potential item leaking when enabling from null unloaders
-
 
 #style guide:
 #jump label conditon (if)
