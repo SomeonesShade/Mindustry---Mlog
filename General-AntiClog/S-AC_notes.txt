@@ -1,0 +1,83 @@
+
+#style guide:
+#jump label conditon (if)
+#   code
+#label:
+#
+#-jumplabel: <- unsused jumplabel
+#@counter related variables have _
+#camelCase
+
+#Reminder to self:
+#try not to overscope the project too much, although has the golden hammer feel of the project
+#something more focused should be done on T-AC (Transport Anti-Clog, develop this after 3.9, to handle unit recon and specific item rss)
+#stil always fit the theme of transporting from one storage to another with unloader + transport, do not deviate
+#
+
+#Plans:
+#TODO:
+    #GetLink at a distance, bind to an arc to shoot at a distance to get either a new storage block or memcell
+    #Memory System rework?, this is difficult to do but needs to happen since there are flaws in it(might be only possible on T-AC though)
+
+    #OnProgress:
+    #General Performance Imporvements
+
+#add in erekir block types, 
+    #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
+    #add reinforced vault and container #need 146
+#add in slight guide if binded to duo, via message prob
+#RoadMap
+        
+#ver Unkown/4.0
+    #####Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed DONE
+    #deciding if min/baseline mode is needed
+    #Starting the Recon Version/Simple version
+        #If its possible this includes an array for each factory
+    #Updating the external schem for default configs
+    #Severe Optimizations to the message system (closer than i thought really)
+    #set up wireless memory send/recieve (ext schem or internal idk)
+#Finishes Goals:
+    #Recon/Factory Intergration
+        #(issue: recons/factories cant hold every item, which means dynamic config and...
+        #recons have diffrent @itemCapacity for each item, which is a pain...
+        #if the issue can't be resolved, this cant be General and can only be Semi)
+    #Automatic Config + Overrides
+        #(this may be a reconstructor version feature, although might be ok?...
+        #automatically setting the config based on binds, and adding in items like (silicon)...
+        #if intergration is impossible, this is still applicable as QOL)
+    
+#ideas/potential-features:
+    #compiling all is enable config etc in a bit storage
+        #faster block control loop overall (no more type checks in loop) 
+        #volitatile though if any link gets destroyed
+
+    #check if storage has "cloged" then unclog in a bool setting
+        #if so set warning system, send in a unit to unclog the factory
+        #may slow down the system, maybe gets into storage check?
+        #isA jump check blocks storage check though, seperate line potentially
+
+    #solving the recon problem (this is solved in T-AC)
+        #in storage check calaculate the differnece of storage (based on type) between each item group (doing fancy math)
+            #ex: subtract metaOffset by x (pre determined)
+                #multiplicativeRecon:
+                #sub metaglassOffset metaglassOffset x
+                #sub titaniumOffset titaniumOffset x
+        #in the actual loop, subtract or add the amount for each item
+            #ex:
+            #op add setStartofLoop @counter num (predetermined or nah?, prevent volititly prob)
+            #set offset thorOffset
+            #jump skipOut always 0 0
+            #set offset metaOffset
+            #etc.
+
+            #sub amount amount offset
+            #jump exit condition
+            #op sub @counter setStartofLoop i
+            #exit:
+        #need other better method, but this is promising rn
+
+
+
+#In all versions
+#Performance Lockdown, to insure <1sec performance [general goal]
+    #at Best, less than 0.75 sec, that is max allowance

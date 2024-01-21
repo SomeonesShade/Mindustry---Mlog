@@ -10,7 +10,7 @@ print "Threshold Settings"
 end; end; pt1:
 
 set MaxAmount 0.65  #this functions as a buffer (filling it to full will practically clog)
-print "(whole number/decimal) determines the target amount of an item to maintain in a storage block. If it's in decimal/percent, takes the percentage of the smallest storage into account"
+print "(whole number/decimal) determines the target amount of an item to maintain in a storage block. If it's in decimal (as a percentage), takes the percentage of the smallest storage into account"
 set MinOriginAmount 2000 #acts as a threshold for reverse mode and dont kill core lel
 print "(integer/decimal) Determines the mininum amount/percentage of an item inside the origin to start working"
 set PowerStoredThreshold 0.4
@@ -53,7 +53,7 @@ end; end; pb1:
 set MemoryWriteLocation 1 #write and read allows multiproc behavior for mainly long distance, or multiple origins
 print "(whole number) doesn't write at ReadMemoryBlock if MemoryReadLocation >= 0, sends out item bit config"
 set MemoryReadLocation 1
-print "(integer) reads at cell1 only, doesnt read if MemoryReadLocation < 0"
+print "(integer) reads at ReadMemoryBlock only, doesnt read if MemoryReadLocation < 0"
 
 jump pc1 always 0 0
 print "Miscellaneous Settings"
@@ -68,9 +68,24 @@ print "(BlockType) What BlockType to measure battery from"
 set IgnoreBlink false
 print "(bool) disables 'blinking' (it happens when there are no storages detected)"
 set IncludeMassDriverInStorageCalculation false
-print "(bool) removes massdrivers in calculating the MaxValue, will still detect massdrivers for items"
+print "(bool) removes massdrivers in calculating the MaxValue (except if its the only storage blocks present), will still detect massdrivers for items"
+set OnlyMassDriversValue 120
+print "(whole number) what to set the BaseLineValue & TotalMaxStorage to if massdrivers is the only storage type binded (relevant if IncludeMassDriverInStorageCalculation = false)"
 set SetStorageAsCore false #This is so broken lol
-print "(bool)[BETA] Sets one storage in the code as the Core"
+print "(bool) Sets one storage in the code as the Core"
+
+jump pd1 always 0 0
+print "Additional Notes/Behavior"
+end; end; pd1:
+print "if (MaxAmount > 1.01) {whole number} else {decimal}"
+print "MaxAmount (whole number) -> Overrides regardless: MaxValue = MaxAmount"
+print "MaxAmount (decimal): ..."
+print "-> IsCluster (true) -> MaxValue = TotalMaxStorage + BaseLineValue(MaxAmount - 1)"
+print "-> IsCluster (false) -> MaxValue = BaseLineValue(MaxAmount)"
+print "Memory System: ..."
+print "-> (writing behavior): Outputs the current dataItem (bit representation of config) into any selected binded memcells (except ReadMemoryBlock) at MemoryWriteLocation"
+print "-> (reading behavior): reads at ReadMemoryBlock & at MemoryReadLocation to get a configuration (in bit representation) that overrides bitSelection"
+
 
 jump pEnd always 0 0
 end; end;
@@ -125,14 +140,6 @@ itemStartingIDEnd:
     clusterMessage:
     set storageModeMessage "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]Cluster\n[]Current Origin: [#BBBBEE]"
     skipMemA1:
-
-#    set memReadAMessage " items"
-#    set memReadBMessage ""
-#    jump skipMemA2 lessThan MemoryReadLocation 0
-#    set memReadAMessage " items\n[#FFAAFF]Reading any binded cell for item configuration"
-#    set memReadBMessage "\n[#FFAAFF]Reading any binded cell for item configuration"
-#    skipMemA2:
-
     set fullStorageModeMessage "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if any item for each storage reaches below "
     jump skipMemA3 equal IsCluster false
     set fullStorageModeMessage "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if the total amount of items from all types reaches below "
@@ -484,7 +491,7 @@ storageCheck: #set variables
     set select_readMode 0
     set storageCount 0
     set massDriverCount 0
-    set v1 0 #reset storages #NOTE: add counter array for optimization
+    set v1 0 #reset storages #NOTE: add counter array for optimization? (issue is determining the storageCount in first run)
 	set v2 0
 	set v3 0
 	set v4 0
@@ -557,24 +564,8 @@ noOverride:
 jump validStorageArray equal IncludeMassDriverInStorageCalculation true #incl in calc?
 jump validStorageArray lessThan massDriverCount storageCount #are all of the storages only mass drivers
 
-op sub mass-Driver-index 16 massDriverCount
-op add @counter @counter mass-Driver-index
-set v16 0
-set v15 0
-set v14 0
-set v13 0
-set v12 0
-set v11 0
-set v10 0
-set v9 0
-set v8 0
-set v7 0
-set v6 0
-set v5 0
-set v4 0
-set v3 0
-set v2 0
-set v1 0
+set BaseLineValue OnlyMassDriversValue
+set TotalMaxStorage OnlyMassDriversValue
 
 validStorageArray:
 jump overideMaxValue equal shouldOverideMaxAmount true
@@ -740,94 +731,12 @@ op add @counter selectStorage @counter
 end
 print "if somehow 32 storages is not enough, you can add more manually via the format"
 
-#Semi-AntiClog 3.9.-0.125
+#Semi-AntiClog 3.9.-0.0625
 #Behavior Change: MaxAmount Calculation Revised for Percentage Input when IsCluster is true
 #added IncludeMassDriverInStorageCalculation to compliment the above change
 #Internal:  minor comments in the storage array
 #Internal: Processor Works Faster by skipping the initial 0s if the bit config has them
 #Bugfix: no potential item leaking when enabling from null unloaders
-
+#Added Additional Documentation
 #Bugfix: to -0.25, only md bind can clear storages
-
-#style guide:
-#jump label conditon (if)
-#   code
-#label:
-#
-#-jumplabel: <- unsused jumplabel
-#@counter related variables have _
-#camelCase
-
-#Reminder to self:
-#try not to overscope the project too much, although has the golden hammer feel of the project
-#something more focused should be done on T-AC (Transport Anti-Clog, develop this after 3.9, to handle unit recon and specific item rss)
-#stil always fit the theme of transporting from one storage to another with unloader + transport, do not deviate
-#
-
-#Plans:
-#TODO:
-    #GetLink at a distance, bind to an arc to shoot at a distance to get either a new storage block or memcell
-    #Memory System rework?, this is difficult to do but needs to happen since there are flaws in it(might be only possible on T-AC though)
-
-    #OnProgress:
-    #General Performance Imporvements
-
-#add in erekir block types, 
-    #switch between reinforced messageblock/message if any binded block (check in storage check) is armored
-    #add reinforced vault and container #need 146
-#add in slight guide if binded to duo, via message prob
-#RoadMap
-        
-#ver Unkown/4.0
-    #####Hardcoding all v1 to v16, while leaving the array system, if v17+ is somehow needed DONE
-    #deciding if min/baseline mode is needed
-    #Starting the Recon Version/Simple version
-        #If its possible this includes an array for each factory
-    #Updating the external schem for default configs
-    #Severe Optimizations to the message system (closer than i thought really)
-    #set up wireless memory send/recieve (ext schem or internal idk)
-#Finishes Goals:
-    #Recon/Factory Intergration
-        #(issue: recons/factories cant hold every item, which means dynamic config and...
-        #recons have diffrent @itemCapacity for each item, which is a pain...
-        #if the issue can't be resolved, this cant be General and can only be Semi)
-    #Automatic Config + Overrides
-        #(this may be a reconstructor version feature, although might be ok?...
-        #automatically setting the config based on binds, and adding in items like (silicon)...
-        #if intergration is impossible, this is still applicable as QOL)
-    
-#ideas/potential-features:
-    #compiling all is enable config etc in a bit storage
-        #faster block control loop overall (no more type checks in loop) 
-        #volitatile though if any link gets destroyed
-
-    #check if storage has "cloged" then unclog in a bool setting
-        #if so set warning system, send in a unit to unclog the factory
-        #may slow down the system, maybe gets into storage check?
-        #isA jump check blocks storage check though, seperate line potentially
-
-    #solving the recon problem (this is solved in T-AC)
-        #in storage check calaculate the differnece of storage (based on type) between each item group (doing fancy math)
-            #ex: subtract metaOffset by x (pre determined)
-                #multiplicativeRecon:
-                #sub metaglassOffset metaglassOffset x
-                #sub titaniumOffset titaniumOffset x
-        #in the actual loop, subtract or add the amount for each item
-            #ex:
-            #op add setStartofLoop @counter num (predetermined or nah?, prevent volititly prob)
-            #set offset thorOffset
-            #jump skipOut always 0 0
-            #set offset metaOffset
-            #etc.
-
-            #sub amount amount offset
-            #jump exit condition
-            #op sub @counter setStartofLoop i
-            #exit:
-        #need other better method, but this is promising rn
-
-
-
-#In all versions
-#Performance Lockdown, to insure <1sec performance [general goal]
-    #at Best, less than 0.75 sec, that is max allowance
+#Behavior Change: to -0.125, only md bind will just default to 1 md storage or OnlyMassDriversValue
