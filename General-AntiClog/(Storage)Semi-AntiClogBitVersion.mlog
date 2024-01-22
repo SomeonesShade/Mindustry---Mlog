@@ -77,6 +77,7 @@ print "(bool) Sets one storage in the code as the Core"
 jump pd1 always 0 0
 print "Additional Notes/Behavior"
 end; end; pd1:
+
 print "if (MaxAmount > 1.01) {whole number} else {decimal}"
 print "MaxAmount (whole number) -> Overrides regardless: MaxValue = MaxAmount"
 print "MaxAmount (decimal): ..."
@@ -410,7 +411,7 @@ j3:
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.9.- Beta\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.9\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 
 -counterMessageStart:
@@ -731,7 +732,7 @@ op add @counter selectStorage @counter
 end
 print "if somehow 32 storages is not enough, you can add more manually via the format"
 
-#Semi-AntiClog 3.9.-0.0625
+#Semi-AntiClog 3.9
 #Behavior Change: MaxAmount Calculation Revised for Percentage Input when IsCluster is true
 #added IncludeMassDriverInStorageCalculation to compliment the above change
 #Internal:  minor comments in the storage array
@@ -740,3 +741,8 @@ print "if somehow 32 storages is not enough, you can add more manually via the f
 #Added Additional Documentation
 #Bugfix: to -0.25, only md bind can clear storages
 #Behavior Change: to -0.125, only md bind will just default to 1 md storage or OnlyMassDriversValue
+
+#TODO 3.9.1: 
+#Add a cap with the MinOriginAmount if set to decimal, following standard rss rules
+#Add connect something form a distance (two options, arcbind and manual xy coord)
+#manual config generation (with the old 3.3) + an override bitselection due to it

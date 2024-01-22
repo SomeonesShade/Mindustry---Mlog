@@ -2,14 +2,17 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.8.1b
-Fixed memory bug with ReadMemoryBlock not working properly
-Changed error item config on no item or optional powergon
-b: Reverted Hidden Change of using @dead for checking memory cell 
+|Semi-AntiClog 3.9
+Behavior Change: MaxAmount Calculation Revised for Percentage Input when IsCluster is true
+-> added IncludeMassDriverInStorageCalculation and OnlyMassDriversValue to compliment the above change
+Internal: Processor Works Faster by skipping the initial 0s if the bit config has them
+Bugfix: no potential item leaking when enabling from null unloaders
+Added Additional Documentation
 
 Desc: Anti Clog for any General Storage-unloader-Storage Transport
 
 Source Code: https://github.com/SomeonesShade/Mindustry---Mlog/blob/master/General-AntiClog/(Storage)Semi-AntiClogBitVersion.mlog
+Raw Schem: https://github.com/SomeonesShade/Shades-Mindustry-SchemLibrary/blob/main/Anti-Clog/Semi-AntiClog.msch
 
 Disclaimer:
 This is not specialized on one specific schematic, it more used on a variety of schems. Its something you may modify on use on the fly
@@ -31,9 +34,11 @@ Features:
 Automatic Storage and Config Block Detection
 Up to 32 Receiving Storageblocks (16 Optimized)
 Memory Block Support, allowing for specialized relay/long distance chaining
-    Note: (will work on docs for how this works eventually)
 Internal Item and Power RSS, with Wireless/Bindless Core Detection
 MessageBlock Information For Easy TroubleShooting and Information
+
+might be the last 3.x version, getting into limitations with current setup
+finalizing with 3.9.x versions probably
 
 -Shade
 _____
@@ -151,12 +156,23 @@ Logs:
 #changed error item config on no item or optional powergon
 b: Reverted Hidden Change of using @dead for checking memory cell 
 
+#Semi-AntiClog 3.9 or 3.9.-0.0625
+#Behavior Change: MaxAmount Calculation Revised for Percentage Input when IsCluster is true
+#added IncludeMassDriverInStorageCalculation to compliment the above change
+#Internal:  minor comments in the storage array
+#Internal: Processor Works Faster by skipping the initial 0s if the bit config has them
+#Bugfix: no potential item leaking when enabling from null unloaders
+#Added Additional Documentation
+#Bugfix: to -0.25, only md bind can clear storages
+#Behavior Change: to -0.125, only md bind will just default to 1 md storage or OnlyMassDriversValue
+
+
 Also Old Description: Might be useful for later
 Features/Variables:
 Up to 32 receiving storageblocks (16 optimized), automatic storage and config block detection, and fast performance in a logic processor
 Includes Message Block Support for additional information
 
-Main Configuration Variables:
+Main Configuration Variables: (OUTDATED)
 MaxPercent - what is the target quota of items in storageblock/s, and provides a buffer as if it is too high, a clog will happen
 OriginBlock - setting up what storageblock has the items, If set to false, disables origin functionality.
 MinOriginAmount - Allows rss (resource saver) by not requesting the items from OriginBlock, essentially dont cause resource-gon
