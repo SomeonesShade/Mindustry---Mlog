@@ -1,0 +1,28 @@
+#@blast-compound @dormant-cyst @copper @pyratite @phase-fabric @sand @surge-alloy @plastanium @beryllium @fissile-matter @tungsten @titanium @graphite @lead @carbide @spore-pod @coal @silicon @scrap @oxide @metaglass @thorium
+set team @crux
+set cell cell1
+set a 0
+loop:
+getlink obj a
+sensor x obj @x
+sensor y obj @y
+op mul fx x @maph
+op add flag flag y
+write flag cell a
+op add a a 1
+jump loop lessThan a @links
+set amount @links
+b:
+&for i of @blast-compound @dormant-cyst @copper @pyratite @phase-fabric @sand @surge-alloy @plastanium @beryllium @fissile-matter @tungsten @titanium @graphite @lead @carbide @spore-pod @coal @silicon @scrap @oxide @metaglass @thorium {
+    set a 0
+loop$i:
+    read location cell1 a
+    op mod y location @maph
+    op sub x location y
+    #setblock block @sorter x y team 0
+    #getblock block obj x y
+    control config obj $i
+    op add a a 1
+    jump loop$i lessThan a amount
+}
+jump b always 

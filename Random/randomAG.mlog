@@ -1,0 +1,8 @@
+#t2-t4 logic
+#then t1
+sensor result reconstructor4 @silicon
+sensor r reconstructor3 @silicon
+sensor r reconstructor2 @silicon
+sensor r reconstructor1 @silicon
+sensor r reconstructor1 @silicon
+sensor r factory1 @config

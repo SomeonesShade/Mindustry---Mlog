@@ -1,0 +1,236 @@
+
+set team @crux
+set cell cell1
+set a 0
+loop:
+getlink obj a
+sensor x obj @x
+sensor y obj @y
+op mul fx x @maph
+op add flag flag y
+write flag cell a
+op add a a 1
+jump loop lessThan a @links
+set amount @links
+b:
+set a 0
+loop@blast-compound:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @blast-compound
+op add a a 1
+jump loop@blast-compound lessThan a amount
+set a 0
+loop@dormant-cyst:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @dormant-cyst
+op add a a 1
+jump loop@dormant-cyst lessThan a amount
+set a 0
+loop@copper:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @copper
+op add a a 1
+jump loop@copper lessThan a amount
+set a 0
+loop@pyratite:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @pyratite
+op add a a 1
+jump loop@pyratite lessThan a amount
+set a 0
+loop@phase-fabric:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @phase-fabric
+op add a a 1
+jump loop@phase-fabric lessThan a amount
+set a 0
+loop@sand:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @sand
+op add a a 1
+jump loop@sand lessThan a amount
+set a 0
+loop@surge-alloy:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @surge-alloy
+op add a a 1
+jump loop@surge-alloy lessThan a amount
+set a 0
+loop@plastanium:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @plastanium
+op add a a 1
+jump loop@plastanium lessThan a amount
+set a 0
+loop@beryllium:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @beryllium
+op add a a 1
+jump loop@beryllium lessThan a amount
+set a 0
+loop@fissile-matter:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @fissile-matter
+op add a a 1
+jump loop@fissile-matter lessThan a amount
+set a 0
+loop@tungsten:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @tungsten
+op add a a 1
+jump loop@tungsten lessThan a amount
+set a 0
+loop@titanium:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @titanium
+op add a a 1
+jump loop@titanium lessThan a amount
+set a 0
+loop@graphite:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @graphite
+op add a a 1
+jump loop@graphite lessThan a amount
+set a 0
+loop@lead:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @lead
+op add a a 1
+jump loop@lead lessThan a amount
+set a 0
+loop@carbide:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @carbide
+op add a a 1
+jump loop@carbide lessThan a amount
+set a 0
+loop@spore-pod:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @spore-pod
+op add a a 1
+jump loop@spore-pod lessThan a amount
+set a 0
+loop@coal:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @coal
+op add a a 1
+jump loop@coal lessThan a amount
+set a 0
+loop@silicon:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @silicon
+op add a a 1
+jump loop@silicon lessThan a amount
+set a 0
+loop@scrap:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @scrap
+op add a a 1
+jump loop@scrap lessThan a amount
+set a 0
+loop@oxide:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @oxide
+op add a a 1
+jump loop@oxide lessThan a amount
+set a 0
+loop@metaglass:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @metaglass
+op add a a 1
+jump loop@metaglass lessThan a amount
+set a 0
+loop@thorium:
+read location cell1 a
+op mod y location @maph
+op sub x location y
+setblock block @sorter x y team 0
+getblock block obj x y
+control config obj @thorium
+op add a a 1
+jump loop@thorium lessThan a amount
+jump b always 0 0

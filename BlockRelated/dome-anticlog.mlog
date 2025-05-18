@@ -1,0 +1,74 @@
+variableDecleration:
+set configBlock unloader1
+set firstBridgeBlock conveyor1
+set endBridgeBlock conveyor2
+set dome dome1
+jump variableDecleration lessThan @links 4
+
+siliconStart:
+sensor siliconDome dome @silicon
+sensor siliconEndBridgeBlock endBridgeBlock @silicon
+jump phase-fabricStart greaterThan siliconEndBridgeBlock 0
+jump phase-fabricStart greaterThan siliconDome 5
+
+siliconState1:
+sensor totalItems1stBridge firstBridgeBlock @totalItems
+jump siliconState2 greaterThanEq totalItems1stBridge 10
+
+-preperationProcedure:
+control config configBlock @silicon
+control enabled configBlock 1
+control enabled firstBridgeBlock 0
+jump siliconState1 always 0 0
+
+siliconState2:
+sensor totalItemsLastBridge endBridgeBlock @totalItems
+jump siliconState3 greaterThanEq totalItemsLastBridge 10 
+
+-sendingProcedure:
+control enabled configBlock 0
+control enabled endBridgeBlock 0
+#wait 0.1
+control enabled firstBridgeBlock 1
+jump siliconState2 always 0 0
+
+siliconState3:
+control enabled endBridgeBlock 1
+
+end
+
+phase-fabricStart:
+sensor phase-fabricDome dome @phase-fabric
+sensor phase-fabricEndBridgeBlock endBridgeBlock @phase-fabric
+jump idleState greaterThan phase-fabricEndBridgeBlock 0
+jump idleState greaterThan phase-fabricDome 5
+
+phase-fabricState1:
+sensor totalItems1stBridge firstBridgeBlock @totalItems
+jump phase-fabricState2 greaterThanEq totalItems1stBridge 10
+
+-preperationProcedure:
+control config configBlock @phase-fabric
+control enabled configBlock 1
+control enabled firstBridgeBlock 0
+jump phase-fabricState1 always 0 0
+
+phase-fabricState2:
+sensor totalItemsLastBridge endBridgeBlock @totalItems
+jump phase-fabricState3 greaterThanEq totalItemsLastBridge 10 
+
+-sendingProcedure:
+control enabled configBlock 0
+control enabled endBridgeBlock 0
+#wait 0.1
+control enabled firstBridgeBlock 1
+jump phase-fabricState2 always 0 0
+
+phase-fabricState3:
+control enabled endBridgeBlock 1
+
+end
+idleState:
+control enabled configBlock 0
+control enabled firstBridgeBlock 0
+control enabled endBridgeBlock 1

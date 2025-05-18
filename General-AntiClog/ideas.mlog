@@ -1,0 +1,154 @@
+#Notes on how to approach this
+#This will be a more smaller and more streamlined version of semi-AC, only with the neeeded vars
+#Specifically desgined for 2 MDs setups, to compete with cirro etc.
+#will only add in one buffer storage block
+
+#Reach below 0.6 proc speed
+
+#read all md and storages amount should not reach threshold
+#use @progress in md, to take into account for bullet items while on launch
+#and to check if the reciving md has recived it
+
+#so if shooter progress goes down, it means save the prev value, if the reciver goes down, reset the progress
+#so 
+#the 3 unloaders must be configed correctly for some rainbow, or if its fast enough idk
+#inbuilt rss?
+
+#Optional: Memblock configuration
+
+#psuedo code
+#first initialize vars (which items)
+#loop:
+#check item in system 
+    #{
+    #   sensor the item
+    #   add in the bullet stage if needed
+    #}:
+
+    #is it in goal?
+    #{
+        #sweet! go to next item
+        #otherwise set the unloader immediately
+    #}
+
+#config unloaders for items
+
+
+
+ItemLoop:
+sensor amount reconstructor1 item_type
+    op add @counter @counter storage_offset #max 2
+        sensor reconstructor5_Item reconstructor5 item_type
+        op add amount amount reconstructor5_Item
+        sensor reconstructor4_Item reconstructor4 item_type
+        op add amount amount reconstructor4_Item
+        sensor reconstructor3_Item reconstructor3 item_type
+        op add amount amount reconstructor3_Item
+        sensor reconstructor2_Item reconstructor2 item_type
+        op add amount amount reconstructor2_Item
+
+
+
+
+sensor massdriver1_@progress driver1 @progress
+sensor massdriver2_@progress driver2 @progress
+op lessThan isBulletInAir massdriver1_@progress massdriver2_@progress
+
+control config unloader1 @item
+control config unloader2 @item
+control config unloader3 @item
+
+sensor metaglass1 driver1 @metaglass
+sensor metaglass2 driver2 @metaglass
+op add totalMetaglass metaglass1 metaglass2
+jump 7 greaterThan totalMetaglass 19
+control config unloader1 @metaglass 0 0 0
+control config unloader2 @metaglass 0 0 0
+control config unloader3 @metaglass 0 0 0
+
+
+#Psuedo code again lol
+#Starting Configuration:
+#wait for confirmation to start...
+#Determine the limit for each item:
+#   determine the amount of massdriver and recons
+#       multiply the # of recons with their item config respectively
+#   
+#send 2nd mass driver coordinates to micro proc to handle clogs
+#Runtime:
+#get the current resources in circulation
+#   sensor storage blocks
+#       recons: add all items in one set
+#       md: current items in set + current items in the air (second mass driver @progress < 1?: 0, 1) * last items sent)
+#compute for what resources to send
+#   first rank computation (first item comes first served)
+#   do not deliver if the item reaches the max limit
+#   unloader configuration:
+#       random
+
+#the slow part
+storageCheck:
+#identifying the amount of recons
+set additiveRecon_Count 0
+set multiplicativeRecon_Count 0
+set exponentialRecon_Count 0
+set tetrativeRecon_Count 0
+set a 0
+reconIdentifyLoop:
+getlink obj a
+sensor type obj @type
+jump m notEqual type @additive-reconstructor
+op add additiveRecon_Count additiveRecon_Count 1
+m:
+jump e notEqual type @multiplicative-reconstructor
+op add multiplicativeRecon_Count multiplicativeRecon_Count 1
+e:
+jump t notEqual type @exponential-reconstructor
+op add exponentialRecon_Count exponentialRecon_Count 1
+t:
+jump skipR notEqual type @tetrativeRecon_Countrative-reconstructor
+op add tetrativeRecon_Count tetrativeRecon_Count 1
+skipR:
+op add a a 1
+jump reconIdentifyLoop lessThan a @links
+
+#var is any recon is found
+op add reconCount additiveRecon_Count multiplicativeRecon_Count
+op add reconCount reconCount exponentialRecon_Count
+op add reconCount reconCount tetrativeRecon_Count
+
+#calculating the item capacity
+#metaglass
+op mul MetaglassCapacity multiplicativeRecon_Count 80
+#graphite
+op mul GraphiteCapacity additiveRecon_Count 80
+#titanium
+op mul titaniumCapM multiplicativeRecon_Count 160
+op mul titaniumCapE exponentialRecon_Count 1500
+op add TitaniumCapacity titaniumCapM titaniumCapE
+#silicon
+op mul siliconCapA additiveRecon_Count 80
+op mul siliconCapM multiplicativeRecon_Count 260
+op mul siliconCapE exponentialRecon_Count 1700
+op mul siliconCapT tetrativeRecon_Count 2000
+op add siliconCapacity siliconCapA siliconCapM
+op add siliconCapacity siliconCapacity siliconCapE
+op add SiliconCapacity siliconCapacity siliconCapT
+#plastanium
+op mul plastaniumCapE exponentialRecon_Count 1300
+op mul plastaniumCapT tetrativeRecon_Count 1200
+op add PlastaniumCapacity plastaniumCapE plastaniumCapT
+#phaseFabric
+op mul PhaseFabricCapacity tetrativeRecon_Count 700
+#surgeAlloy
+op mul SurgeAlloyCapacity tetrativeRecon_Count 1000
+
+op mul MetaglassCapacityThreshold MetaglassCapacity buffer
+op mul GraphiteCapacityThreshold GraphiteCapacity buffer
+op mul TitaniumCapacityThreshold TitaniumCapacity buffer
+op mul SiliconCapacityThreshold SiliconCapacity buffer
+op mul PlastaniumCapacityThreshold PlastaniumCapacity buffer
+op mul PhaseFabricCapacityThreshold PhaseFabricCapacity buffer
+op mul SurgeAlloyCapacityThreshold SurgeAlloyCapacity buffer
+jump skipSC always 0 0
+end

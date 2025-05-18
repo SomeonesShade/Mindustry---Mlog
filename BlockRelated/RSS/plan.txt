@@ -1,0 +1,60 @@
+Intitalization Of Variables
+
+Message Block: What messageBlock to output
+PowerThreshold: If power goes below this, disable all binded blocks (set to -1, if no PowerRSS)
+Default State Input and Outut: -1 gets replaced
+Lists of Items with a limit to activate: Example
+    set (copperPicture)Limit 0: Do not Consider in Calc
+    set (leadPicture)Limit -1: Default State
+    set (graphitePicture)Limit 2022: if Coreitems is below this disable nullloader or (selectedItem)loader, and null all sorters binded
+DisableTransportBlocks: If a transport block contains output item: Disable
+DisableIf Full: Disables Everything if one of the outputs is full
+Items Being Outputed
+    set (phasefabricPicture) 400: if Coreitems is above this value disable all binded blocks with this item
+    set (surgeAlloyPicture) -400: negative here means Core - 400 beforechecking like normal
+Binded or UnitDetection For Core (OriginBlock): if a building, use that as "Core"
+FindCore if Origin is null, find core via unit
+Generate Starter Bits: replace -1 values with Default State, then create a bit set based on Limits
+    These will be two, one for input and output
+
+Calculation
+
+Storage Core + Dead Check
+Storage PowerBlock + Dead Check
+set UsedBits StarterBits (I and O)
+PowerCheck: if below threshold => disable everything and jump to Action
+Generate Bits: Do Input Set Checks first, modifying Used Bits, then output based on it
+
+Action
+If powergon: just disable everything then end
+Looping through everyblock
+    if unloader: check config via reverse lookup (manual grr) and disable/enable
+    if sorter/inv: check via input, then just set to null
+    anything else: check all of its items, then do outputUsedBits check (reverse lookup again Aahdhifgf)
+
+Message
+Important Part, Will be executed via 2 Message Codes
+
+Format:
+Name Of Project
+Author
+
+MessageCode1: What Values To Show (0 if error)
+    0: Nothing
+    1: Normal Operation: Swicthes Between 2 and 3
+    2: Input Variables: Force
+    3: Output Variables: Force
+
+MessageCode2: Current Status
+    0: All Operational, Have a lovely day
+    1: PowerGon: Ohno
+    2: Item Input Is too low: Show Item that is bellow with Item < Var
+    3: Outputing Item Too High: Disabling all Binded Blocks with it
+    4: Both Input and Output is UnHappy: Cant Display all so just say stuff is getting disabled
+
+#This... Is gonna be a ton of if checks
+
+Overall Plan:
+Support Normal RSS Features
+Support MultiItem Output:
+Hardcode, Unrolled Loops 2: Make It fast as possible

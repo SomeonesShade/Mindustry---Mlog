@@ -294,7 +294,7 @@ jump j3 greaterThan messageCode storageMessage
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.5\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.5 (extconfigbranch)\nmade by: [black]|[white]Someone's [black]Shade\n[#DDDDFF]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 jump clusterMessage equal IsCluster true
 print "\n[#DDDDFF]Current Storage Mode: [#BBBBEE]BaseLine\n[#DDDDFF]Current Origin: [#BBBBEE]"
@@ -402,13 +402,10 @@ storageDetectionLoop: #detect storages via getlink loop
     jump select equal oType @core-shard
     jump select equal oType @core-foundation
     jump select equal oType @core-nucleus
-<<<<<<< HEAD:General-AntiClog/(Storage)Semi-AntiClogBitVersion.mlog
+    jump externalConfiguration equal oType ConfigTurretType
     jump skip0 notEqual oType PowerRSSBlockType
     set PowerBlock obj
-=======
-    jump externalConfiguration equal oType ConfigTurretType
 
->>>>>>> ExternalConfiguration:General-AntiClog/(Storage)Semi-AntiClogBitVersion(3_3)(EXTSCHEM.mlog
     skip0:
     	jump storageDetectionLoop lessThan lp @links
     

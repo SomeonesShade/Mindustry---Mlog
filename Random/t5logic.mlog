@@ -1,0 +1,148 @@
+start:
+control enabled unloader1 0
+control enabled unloader2 0
+control enabled conveyor1 0
+control enabled conveyor2 0
+control enabled unloader3 0
+jump start lessThan @links 10
+
+startLoop:
+sensor pC1 reconstructor1 @payloadCount
+jump everythingElse equal pC1 1
+sensor pC2 reconstructor2 @payloadCount
+jump everythingElse equal pC2 1
+sensor pC3 reconstructor3 @payloadCount
+jump everythingElse equal pC3 1
+
+jump stateOne equal enableTransport false
+sensor pC4 reconstructor4 @payloadCount
+jump everythingElse equal pC4 1
+
+#state one
+stateOne:
+
+control enabled conveyor1 0
+control enabled conveyor2 0
+control enabled unloader1 0
+control enabled unloader2 0
+sensor siliconConv conveyor2 @totalItems
+jump t1Feed equal siliconConv 10
+control config unloader3 @silicon
+control enabled unloader3 1
+jump stateOne always 0 0
+
+#t1 feed
+t1Feed:
+control enabled unloader3 1 #buggy
+sensor config factory1 @config
+jump mono equal config @mono
+
+end
+
+mono:
+sensor siliconT1 factory1 @silicon
+jump leadMono greaterThan siliconT1 30
+control config unloader3 @silicon
+end
+leadMono:
+sensor leadT1 factory1 @lead
+jump startLoop greaterThan leadT1 15
+control config unloader3 @lead
+end
+
+#t2-5 feed
+everythingElse:
+
+#set controlOffset 0
+control enabled unloader1 enableTransport
+control enabled unloader2 enableTransport
+control enabled unloader3 enableTransport
+control enabled conveyor1 enableTransport
+control enabled conveyor2 enableTransport
+
+set enableTransport 1
+
+-siliconConfig:
+sensor siliconT2 reconstructor1 @silicon
+sensor siliconT3 reconstructor2 @silicon
+sensor siliconT4 reconstructor3 @silicon
+sensor siliconT5 reconstructor4 @silicon
+
+op add totalSilicon siliconT2 siliconT3
+op add totalSilicon totalSilicon siliconT4
+op add totalSilicon totalSilicon siliconT5
+
+jump graphiteConfig greaterThan totalSilicon 4000 #4040 total minus 40 (from the t2)
+
+control config unloader1 @silicon
+control config unloader2 @silicon
+control config unloader3 @silicon
+jump startLoop always 0 0
+
+graphiteConfig: 
+sensor totalGraphite reconstructor1 @graphite
+
+jump metaglassConfig greaterThan totalGraphite 60 #80 minus 20
+
+control config unloader1 @graphite
+control config unloader2 @graphite
+control config unloader3 @graphite
+jump startLoop always 0 0
+
+metaglassConfig: 
+sensor totalMetaglass reconstructor2 @metaglass
+
+jump titaniumConfig greaterThan totalMetaglass 60 #80 minus 20
+
+control config unloader1 @metaglass
+control config unloader2 @metaglass
+control config unloader3 @metaglass
+jump startLoop always 0 0
+
+titaniumConfig: 
+sensor titaniumT3 reconstructor2 @titanium
+sensor titaniumT4 reconstructor3 @titanium
+op add totalTitanium titaniumT3 titaniumT4
+
+jump plastaniumConfig greaterThan totalTitanium 1630 #1660 minus 30
+
+control config unloader1 @titanium
+control config unloader2 @titanium
+control config unloader3 @titanium
+jump startLoop always 0 0
+
+plastaniumConfig: 
+sensor plastaniumT4 reconstructor3 @plastanium
+sensor plastaniumT5 reconstructor4 @plastanium
+op add totalPlastanium plastaniumT4 plastaniumT5
+
+jump surgeAlloyConfig greaterThan totalPlastanium 2470 #2500 minus 30
+
+control config unloader1 @plastanium
+control config unloader2 @plastanium
+control config unloader3 @plastanium
+jump startLoop always 0 0
+
+surgeAlloyConfig:
+sensor totalSurgeAlloy reconstructor4 @surge-alloy
+
+jump phaseFabricConfig greaterThan totalSurgeAlloy 970 #1000 minus 30
+
+control config unloader1 @surge-alloy
+control config unloader2 @surge-alloy
+control config unloader3 @surge-alloy
+jump startLoop always 0 0
+
+phaseFabricConfig:
+sensor totalPhaseFabric reconstructor4 @phase-fabric
+
+jump noConfig greaterThan totalPhaseFabric 670 #700 minus 30
+
+control config unloader1 @phase-fabric
+control config unloader2 @phase-fabric
+control config unloader3 @phase-fabric
+jump startLoop always 0 0
+
+noConfig:
+set enableTransport 0
+jump startLoop always 0 0

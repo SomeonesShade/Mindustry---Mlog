@@ -1,3 +1,7 @@
 #used for generating tedious lines of codes that can be generated with mlogx
 #mlogx: "https://github.com/BalaM314/mlogx/"
 #if you see nothing cuz i already generated em kek
+
+&for i of 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 {
+    set v$i 0
+}

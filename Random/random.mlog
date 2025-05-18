@@ -1,152 +1,89 @@
-sensor temp display1 @x
-op sub disX temp 1
-sensor temp display1 @y
-op sub disY temp 1
-radar ally any any distance duo1 1 unit
-sensor sx unit @shootX
-sensor sy unit @shootY
-set prevSh sh
-sensor sh unit @shooting
-jump skipEnab notEqual sh prevSh
-jump skipEnab equal sh 0
-set act 1
-skipEnab: draw clear 0 0 0 0 0 0
-set x 10
-set y 70
-set item -1
-op add item item 1
-lookup item out item
-jump 29 always x false
-draw color red green blue 255 0 0
-draw image x y out 19 0 0
-op add x x 19
-jump 16 lessThan x 80
-set x 10
-op sub y y 20
-jump 16 greaterThan y 0
-drawflush display1
-write bit cell1 1
-end
-set test 0
-op div dx x 80
-op mul dx dx 3
-op div dy y 80
-op mul dy dy 3
-op add dx disX dx
-op add dy disY dy
-op sub dx dx 0.5
-op sub dy dy 0.5
-op sub dx dx sx
-op sub dy dy sy
-op abs dfx dx sy
-op greaterThan resx 0.3 dfx
-op abs dfy dy sy
-op greaterThan resy 0.3 dfy
-jump 56 equal resx 0
-jump 56 notEqual resx resy
-set red 255
-set green 255
-set blue 100
-jump 55 equal act 0
-op shl select 1 item
-op and state bit select
-op xor state state 1
-op xor bit bit select
-set act 0
-jump 19 always x false
-set red 100
-set green 100
-set blue 100
-op shl select 1 item
-op and state bit select
-jump 65 equal state 0
-set red 255
-set green 255
-set blue 255
-jump 19 always x false
-end
-
-#first proc
-draw clear 0 0 0 0 0 0
-read bit cell1 1
-read hoverbit cell1 0
-set x 10
-set y 70
-set item -1
-
-loop1:
-op add item item 1
-lookup item out item
-
-op shl select 1 item
-op and hover hoverbit select
-jump hovered equal hover 1
-op and state bit select
-jump disabled equal state 0
-enabled:
-    set red 255
-    set green 255
-    set blue 100
-jump drawing always 
-hovered:
-    set red 255
-    set green 255
-    set blue 255
-jump drawing always 
-disabled: 
-    set red 100
-    set green 100
-    set blue 100
-drawing:
-draw color red green blue 255 0 0
-draw image x y out 19 0 0
-
-op add x x 19
-jump loop1 lessThan x 80
-
-set x 10
-op sub y y 20
-jump loop1 greaterThan y 0
-
-drawflush display1
-end
-
-radar player any any distance duo1 1 unit #get vars
-sensor sx unit @shootX
-sensor sy unit @shootY
-sensor temp display1 @x
-op sub px temp 1.5 #position x
-sensor temp display1 @y
-op sub py temp 1.5
-
-op sub dx sx px #dx is relative x
-
-op sub temp sy py  #tenmp is relative y
-op sub dy 3 temp #flip y axis
-
-op div temp dx 3
-op mul dx temp 4 #convert dx to button coord
-op floor x dx #and rounding
-
-op div temp dy 3
-op mul dy temp 4 #convert dy to button coord
-
-op floor temp dy #and rounding
-
-#weird math, converting x and y into one index
-op mul temp temp 4 
-op add i x temp
-op shl hover 1 i #convert index into bit
-write hover cell1 0 #bye!
-
-set prevSh sh #onClick Logic
-sensor sh unit @shooting
-jump skip equal sh prevSh #skip if its the same signal
-jump skip equal sh 0 #skip if the signal changed into is 0
-
-read bit cell1 1 #flip the bit
-op xor act hover bit
-write act cell1 1
-
-skip:
-end
+set swicth switch1 #0:set sorter sorter1 #analysis
+set varb 0
+set max 3
+set no "[#ff0000]"
+set on "[#5fff6f]"
+set mono 0
+set pulsar 0
+set mega 0
+set quasar 0
+j10: print "Compact Uminer"
+print "\n Made by:[black] Corrupted[white] "
+j12: sensor config sorter @config
+sensor on swicth @enabled
+jump j16 equal on true
+jump j23 always 0 0
+j16: jump j20 equal varb max
+op add varb varb 1
+control enabled swicth 0 0 0 0
+jump j12 always 0 0
+j20: set varb 0
+control enabled swicth 0 0 0 0
+jump j12 always 0 0
+j23: jump j28 equal varb 0
+jump j30 equal varb 1
+jump j34 equal varb 2
+jump j36 equal varb 3
+jump j38 always 0 0
+j28: print "\n "
+jump j38 always 0 0
+j30: print "\n    "
+jump j38 always 0 0
+j32: print "\n       "
+jump j38 always 0 0
+j34: print "\n       "
+jump j38 always 0 0
+j36: print "\n          "
+jump j38 always 0 0
+j38: print "\n "
+print "\n "
+print "\n "
+sensor configa sorter1 @config
+jump j45 equal config @blast-compound
+jump j59 equal config @plastanium
+jump j72 always config @blast-compound
+j45: jump 50 equal varb 0
+jump j52 equal varb 1
+jump j54 equal varb 2
+jump j56 equal varb 3
+jump j10 always 0 0
+set mono 0
+jump j72 always 0 0
+j52: set pulsar 0
+jump j72 always 0 0
+j54: set mega 0
+jump j72 always 0 0
+j56: set quasar 0
+jump j72 always 0 0
+jump j10 always 0 0
+j59: jump j64 equal varb 0
+jump j66 equal varb 1
+jump j68 equal varb 2
+jump j70 equal varb 3
+jump j10 always 0 0
+j64: set mono 1
+jump j72 always 0 0
+j66: set pulsar 1
+jump j72 always 0 0
+j68: set mega 1
+jump j72 always 0 0
+j70: set quasar 1
+j72: jump j76 equal mono 0
+j74: print "[#5fff6f]"
+jump j78 always mono 0
+j76: print "[#ff0000]"
+j78: jump j82 equal pulsar 0
+j80: print "[#5fff6f]"
+jump j84 always mono 0
+j82: print "[#ff0000]"
+j84: jump j88 equal mega 0
+j86: print "[#5fff6f]"
+jump j90 always mono 0
+j88: print "[#ff0000]"
+j90: jump j94 equal quasar 0
+j92: print "[#5fff6f]"
+jump j96 always mono 0
+j94: print "[#ff0000]"
+j96: print "\n [white] = [#5fff6f][blue] |  [white] =  [#ff0000]"
+printflush message1
+jump j10 always 0 0

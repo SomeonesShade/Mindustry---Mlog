@@ -8,7 +8,8 @@ set ut3 @pulsar
 set ut4 @pulsar
 set ut5 @poly
 set ut6 @poly
-jump 10 notEqual @links 6
+jump_0_:
+jump jump_0_ notEqual @links 6
 sensor x1 reconstructor1 @x
 sensor y1 reconstructor1 @y
 sensor s1 reconstructor1 @size
@@ -39,196 +40,298 @@ sensor y6 reconstructor6 @y
 sensor s6 reconstructor6 @size
 op div s6 s6 2
 op add s6 s6 1
+jump_49_:
 ubind u1
 sensor brPayload reconstructor1 @payloadCount
-jump 51 equal brPayload 0
+jump jump_1_ equal brPayload 0
 sensor p reconstructor1 @progress
-jump 48 equal p lp1
+jump jump_2_ equal p lp1
 set lp1 p
-jump 51 notEqual p 0
+jump jump_1_ notEqual p 0
+jump_2_:
 set u1 null
-ucontrol flag 0 0 0 0 0
-jump 73 always 0 0
+ucontrol flag 0
+jump jump_3_ always 0 0
+jump_1_:
 sensor uCont @unit @controlled
-jump 55 notEqual uCont 1
+jump jump_4_ notEqual uCont 1
 sensor uFlag @unit @flag
-jump 68 equal uFlag flag
+jump jump_5_ equal uFlag flag
+jump_4_:
 set u1 null
 op add lTime @time 500
-jump 73 greaterThan @time lTime
+jump_6_:
+jump jump_3_ greaterThan @time lTime
 ubind ut1
 sensor uCont @unit @controlled
-jump 57 greaterThan uCont 1
-jump 64 equal uCont 0
+jump jump_6_ greaterThan uCont 1
+jump jump_7_ equal uCont 0
 sensor uFlag @unit @flag
-jump 57 notEqual uFlag 0
-ucontrol within x1 y1 unitRadius cDrop 0
-jump 57 equal cDrop false
-ucontrol flag flag 0 0 0 0
+jump jump_6_ notEqual uFlag 0
+jump_7_:
+sensor x @unit @x
+op sub x x1 @thisx
+sensor y @unit @y
+op sub y y1 @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy 0
+jump jump_6_ greaterThan distance unitRadius
+ucontrol flag flag
 set u1 @unit
-ucontrol within x1 y1 s1 cDrop 0
-jump 71 equal cDrop false
-ucontrol payEnter 0 0 0 0 0
-ucontrol boost true 0 0 0 0
-ucontrol approach x1 y1 1 0 0
+jump_5_:
+ucontrol within x1 y1 s1 cDrop
+jump jump_8_ equal cDrop false
+ucontrol payEnter
+jump_8_:
+ucontrol boost true
+ucontrol approach x1 y1 1
+jump_3_:
 ubind u2
 sensor brPayload reconstructor2 @payloadCount
-jump 83 equal brPayload 0
+jump jump_9_ equal brPayload 0
 sensor p reconstructor2 @progress
-jump 80 equal p lp2
+jump jump_10_ equal p lp2
 set lp2 p
-jump 83 notEqual p 0
+jump jump_9_ notEqual p 0
+jump_10_:
 set u2 null
-ucontrol flag 0 0 0 0 0
-jump 105 always 0 0
+ucontrol flag 0
+jump jump_11_ always 0 0
+jump_9_:
 sensor uCont @unit @controlled
-jump 87 notEqual uCont 1
+jump jump_12_ notEqual uCont 1
 sensor uFlag @unit @flag
-jump 100 equal uFlag flag
+jump jump_13_ equal uFlag flag
+jump_12_:
 set u2 null
 op add lTime @time 500
-jump 105 greaterThan @time lTime
+jump_14_:
+jump jump_11_ greaterThan @time lTime
 ubind ut2
 sensor uCont @unit @controlled
-jump 89 greaterThan uCont 1
-jump 96 equal uCont 0
+jump jump_14_ greaterThan uCont 1
+jump jump_15_ equal uCont 0
 sensor uFlag @unit @flag
-jump 89 notEqual uFlag 0
-ucontrol within x1 y1 unitRadius cDrop 0
-jump 89 equal cDrop false
-ucontrol flag flag 0 0 0 0
+jump jump_14_ notEqual uFlag 0
+jump_15_:
+sensor x @unit @x
+op sub x x2 @thisx
+sensor y @unit @y
+op sub y y2 @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy 0
+jump jump_14_ greaterThan distance unitRadius
+ucontrol flag flag
 set u2 @unit
-ucontrol within x2 y2 s2 cDrop 0
-jump 103 equal cDrop false
-ucontrol payEnter 0 0 0 0 0
-ucontrol boost true 0 0 0 0
-ucontrol approach x2 y2 1 0 0
+jump_13_:
+ucontrol within x2 y2 s2 cDrop
+jump jump_16_ equal cDrop false
+ucontrol payEnter
+jump_16_:
+ucontrol boost true
+ucontrol approach x2 y2 1
+jump_11_:
 ubind u3
 sensor brPayload reconstructor3 @payloadCount
-jump 115 equal brPayload 0
+jump jump_17_ equal brPayload 0
 sensor p reconstructor3 @progress
-jump 112 equal p lp3
+jump jump_18_ equal p lp3
 set lp3 p
-jump 115 notEqual p 0
+jump jump_17_ notEqual p 0
+jump_18_:
 set u3 null
-ucontrol flag 0 0 0 0 0
-jump 137 always 0 0
+ucontrol flag 0
+jump jump_19_ always 0 0
+jump_17_:
 sensor uCont @unit @controlled
-jump 119 notEqual uCont 1
+jump jump_20_ notEqual uCont 1
 sensor uFlag @unit @flag
-jump 132 equal uFlag flag
+jump jump_21_ equal uFlag flag
+jump_20_:
 set u3 null
 op add lTime @time 500
-jump 137 greaterThan @time lTime
+jump_22_:
+jump jump_19_ greaterThan @time lTime
 ubind ut3
 sensor uCont @unit @controlled
-jump 121 greaterThan uCont 1
-jump 128 equal uCont 0
+jump jump_22_ greaterThan uCont 1
+jump jump_23_ equal uCont 0
 sensor uFlag @unit @flag
-jump 121 notEqual uFlag 0
-ucontrol within x1 y1 unitRadius cDrop 0
-jump 121 equal cDrop false
-ucontrol flag flag 0 0 0 0
+jump jump_22_ notEqual uFlag 0
+jump_23_:
+sensor x @unit @x
+op sub x x3 @thisx
+sensor y @unit @y
+op sub y y3 @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy 0
+jump jump_22_ greaterThan distance unitRadius
+ucontrol flag flag
 set u3 @unit
-ucontrol within x3 y3 s3 cDrop 0
-jump 135 equal cDrop false
-ucontrol payEnter 0 0 0 0 0
-ucontrol boost true 0 0 0 0
-ucontrol approach x3 y3 1 0 0
+jump_21_:
+ucontrol within x3 y3 s3 cDrop
+jump jump_24_ equal cDrop false
+ucontrol payEnter
+jump_24_:
+ucontrol boost true
+ucontrol approach x3 y3 1
+jump_19_:
 ubind u4
 sensor brPayload reconstructor4 @payloadCount
-jump 147 equal brPayload 0
+jump jump_25_ equal brPayload 0
 sensor p reconstructor4 @progress
-jump 144 equal p lp4
+jump jump_26_ equal p lp4
 set lp4 p
-jump 147 notEqual p 0
+jump jump_25_ notEqual p 0
+jump_26_:
 set u4 null
-ucontrol flag 0 0 0 0 0
-jump 169 always 0 0
+ucontrol flag 0
+jump jump_27_ always 0 0
+jump_25_:
 sensor uCont @unit @controlled
-jump 151 notEqual uCont 1
+jump jump_28_ notEqual uCont 1
 sensor uFlag @unit @flag
-jump 164 equal uFlag flag
+jump jump_29_ equal uFlag flag
+jump_28_:
 set u4 null
 op add lTime @time 500
-jump 169 greaterThan @time lTime
+jump_30_:
+jump jump_27_ greaterThan @time lTime
 ubind ut4
 sensor uCont @unit @controlled
-jump 153 greaterThan uCont 1
-jump 160 equal uCont 0
+jump jump_30_ greaterThan uCont 1
+jump jump_31_ equal uCont 0
 sensor uFlag @unit @flag
-jump 153 notEqual uFlag 0
-ucontrol within x1 y1 unitRadius cDrop 0
-jump 153 equal cDrop false
-ucontrol flag flag 0 0 0 0
+jump jump_30_ notEqual uFlag 0
+jump_31_:
+sensor x @unit @x
+op sub x x4 @thisx
+sensor y @unit @y
+op sub y y4 @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy 0
+jump jump_30_ greaterThan distance unitRadius
+ucontrol flag flag
 set u4 @unit
-ucontrol within x4 y4 s4 cDrop 0
-jump 167 equal cDrop false
-ucontrol payEnter 0 0 0 0 0
-ucontrol boost true 0 0 0 0
-ucontrol approach x4 y4 1 0 0
+jump_29_:
+ucontrol within x4 y4 s4 cDrop
+jump jump_32_ equal cDrop false
+ucontrol payEnter
+jump_32_:
+ucontrol boost true
+ucontrol approach x4 y4 1
+jump_27_:
 ubind u5
 sensor brPayload reconstructor5 @payloadCount
-jump 179 equal brPayload 0
+jump jump_33_ equal brPayload 0
 sensor p reconstructor5 @progress
-jump 176 equal p lp5
+jump jump_34_ equal p lp5
 set lp5 p
-jump 179 notEqual p 0
+jump jump_33_ notEqual p 0
+jump_34_:
 set u5 null
-ucontrol flag 0 0 0 0 0
-jump 201 always 0 0
+ucontrol flag 0
+jump jump_35_ always 0 0
+jump_33_:
 sensor uCont @unit @controlled
-jump 183 notEqual uCont 1
+jump jump_36_ notEqual uCont 1
 sensor uFlag @unit @flag
-jump 196 equal uFlag flag
+jump jump_37_ equal uFlag flag
+jump_36_:
 set u5 null
 op add lTime @time 500
-jump 201 greaterThan @time lTime
+jump_38_:
+jump jump_35_ greaterThan @time lTime
 ubind ut5
 sensor uCont @unit @controlled
-jump 185 greaterThan uCont 1
-jump 192 equal uCont 0
+jump jump_38_ greaterThan uCont 1
+jump jump_39_ equal uCont 0
 sensor uFlag @unit @flag
-jump 185 notEqual uFlag 0
-ucontrol within x1 y1 unitRadius cDrop 0
-jump 185 equal cDrop false
-ucontrol flag flag 0 0 0 0
+jump jump_38_ notEqual uFlag 0
+jump_39_:
+sensor x @unit @x
+op sub x x5 @thisx
+sensor y @unit @y
+op sub y y5 @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy 0
+jump jump_38_ greaterThan distance unitRadius
+ucontrol flag flag
 set u5 @unit
-ucontrol within x5 y5 s5 cDrop 0
-jump 199 equal cDrop false
-ucontrol payEnter 0 0 0 0 0
-ucontrol boost true 0 0 0 0
-ucontrol approach x5 y5 1 0 0
+jump_37_:
+ucontrol within x5 y5 s5 cDrop
+jump jump_40_ equal cDrop false
+ucontrol payEnter
+jump_40_:
+ucontrol boost true
+ucontrol approach x5 y5 1
+jump_35_:
 ubind u6
 sensor brPayload reconstructor6 @payloadCount
-jump 211 equal brPayload 0
+jump jump_41_ equal brPayload 0
 sensor p reconstructor6 @progress
-jump 208 equal p lp6
+jump jump_42_ equal p lp6
 set lp6 p
-jump 211 notEqual p 0
+jump jump_41_ notEqual p 0
+jump_42_:
 set u6 null
-ucontrol flag 0 0 0 0 0
-jump 233 always 0 0
+ucontrol flag 0
+jump jump_43_ always 0 0
+jump_41_:
 sensor uCont @unit @controlled
-jump 215 notEqual uCont 1
+jump jump_44_ notEqual uCont 1
 sensor uFlag @unit @flag
-jump 228 equal uFlag flag
+jump jump_45_ equal uFlag flag
+jump_44_:
 set u6 null
 op add lTime @time 500
-jump 233 greaterThan @time lTime
+jump_46_:
+jump jump_43_ greaterThan @time lTime
 ubind ut6
 sensor uCont @unit @controlled
-jump 217 greaterThan uCont 1
-jump 224 equal uCont 0
+jump jump_46_ greaterThan uCont 1
+jump jump_47_ equal uCont 0
 sensor uFlag @unit @flag
-jump 217 notEqual uFlag 0
-ucontrol within x1 y1 unitRadius cDrop 0
-jump 217 equal cDrop false
-ucontrol flag flag 0 0 0 0
+jump jump_46_ notEqual uFlag 0
+jump_47_:
+sensor x @unit @x
+op sub x x6 @thisx
+sensor y @unit @y
+op sub y y6 @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy 0
+jump jump_46_ greaterThan distance unitRadius
+ucontrol flag flag
 set u6 @unit
-ucontrol within x6 y6 s6 cDrop 0
-jump 231 equal cDrop false
-ucontrol payEnter 0 0 0 0 0
-ucontrol boost true 0 0 0 0
-ucontrol approach x6 y6 1 0 0
-jump 41 always 0 0
+jump_45_:
+ucontrol within x6 y6 s6 cDrop
+sensor x @unit @x
+op sub x x4 @thisx
+sensor y @unit @y
+op sub y y4 @thisy
+op mul xx x x
+op mul yy y y
+op add xxyy xx yy
+op sqrt distance xxyy 0
+jump jump_48_ equal cDrop false
+ucontrol payEnter
+jump_48_:
+ucontrol boost true
+ucontrol approach x6 y6 1
+jump_43_:
+jump jump_49_ always 0 0
+end
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"

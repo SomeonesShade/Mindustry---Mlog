@@ -1,0 +1,67 @@
+mainLoop1: 
+sensor s1 reconstructor1 @silicon
+sensor s2 reconstructor2 @silicon
+op add s s1 s2
+jump titanium1 greaterThan s 330
+control config unloader1 @silicon 0 0 0
+jump enable1 always 0 0
+
+titanium1: 
+sensor t reconstructor1 @titanium
+jump metaglass1 greaterThan t 150
+control config unloader1 @titanium 0 0 0
+jump enable1 always 0 0
+
+metaglass1: 
+sensor m reconstructor1 @metaglass
+jump graphite1 greaterThan m 65
+control config unloader1 @metaglass 0 0 0
+jump enable1 always 0 0
+
+graphite1: 
+sensor g reconstructor2 @graphite
+jump disable1 greaterThan g 65
+control config unloader1 @graphite 0 0 0
+jump enable1 always 0 0
+
+disable1: 
+control enabled unloader1 0 0 0 0
+jump mainLoop2 always 0 0
+
+enable1: 
+control enabled unloader1 1 0 0 0
+
+#second set
+
+mainLoop2: 
+#sensor s1 reconstructor3 @silicon
+#sensor s2 reconstructor4 @silicon
+#op add s s1 s2
+#jump titanium2 greaterThan s 330
+#control config unloader2 @silicon 0 0 0
+#jump enable2 always 0 0
+#
+#titanium2: 
+#sensor t reconstructor3 @titanium
+#jump metaglass2 greaterThan t 150
+#control config unloader2 @titanium 0 0 0
+#jump enable2 always 0 0
+#
+#metaglass2: 
+#sensor m reconstructor3 @metaglass
+#jump graphite2 greaterThan m 65
+#control config unloader2 @metaglass 0 0 0
+#jump enable2 always 0 0
+#
+#graphite2: 
+#sensor g reconstructor4 @graphite
+#jump disable2 greaterThan g 65
+#control config unloader2 @graphite 0 0 0
+#jump enable2 always 0 0
+#
+#disable2: 
+#control enabled unloader1 0 0 0 0
+#jump mainLoop1 always 0 0
+#
+#enable2: 
+#control enabled unloader1 1 0 0 0

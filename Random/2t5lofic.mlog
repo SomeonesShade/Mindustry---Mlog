@@ -1,0 +1,94 @@
+start:
+sensor unitType factory1 @config
+jump daggerC equal unitType @dagger
+jump crawlerC equal unitType @crawler
+jump novaC equal unitType @nova
+end
+
+daggerC:
+sensor s1 factory1 @silicon
+jump daggerLead greaterThan s1 45
+control config sorter1 @silicon 0 0 0
+jump titaniumT3 always 0 0
+
+daggerLead:
+sensor l1 factory1 @lead
+jump t1Full greaterThan l1 20
+control config sorter1 @lead 0 0 0
+jump T2T3Feed always 0 0
+
+crawlerC:
+sensor s1 factory1 @silicon
+jump crawlerCoal greaterThan s1 45
+control config sorter1 @silicon 0 0 0
+jump titaniumT3 always 0 0
+
+crawlerCoal:
+sensor s1 factory1 @coal
+jump t1Full greaterThan s1 11
+control config sorter1 @coal 0 0 0
+jump T2T3Feed always 0 0
+
+novaC:
+sensor s1 factory1 @silicon
+jump novaLead greaterThan s1 45
+control config sorter1 @silicon 0 0 0
+jump titaniumT3 always 0 0
+
+novaLead:
+sensor l1 factory1 @lead
+jump novaTitanium greaterThan l1 30
+control config sorter1 @lead 0 0 0
+jump T2T3Feed always 0 0
+
+novaTitanium:
+sensor l1 factory1 @titanium
+jump t1Full greaterThan l1 30
+control config sorter1 @titanium 0 0 0
+
+#[repeated for one line performance lol]
+-siliconT2T3:
+sensor s2 reconstructor1 @silicon
+sensor s3 reconstructor2 @silicon
+op add siliconTotal s2 s3
+jump graphiteT2 greaterThan siliconTotal 300
+control config sorter2 @silicon 0 0 0
+jump start always 0 0
+#
+
+
+t1Full:
+control config sorter1 null 0 0 0
+
+
+T2T3Feed:
+
+-siliconT2T3:
+sensor s2 reconstructor1 @silicon
+sensor s3 reconstructor2 @silicon
+op add siliconTotal s2 s3
+jump titaniumT3 greaterThan siliconTotal 315
+control config sorter2 @silicon 0 0 0
+jump start always 0 0
+
+titaniumT3:
+sensor titaniumTotal reconstructor2 @titanium
+jump graphiteT2 greaterThan titaniumTotal 140
+control config sorter2 @titanium 0 0 0
+jump start always 0 0
+
+graphiteT2:
+sensor graphiteTotal reconstructor1 @graphite
+jump metaglassT3 greaterThan graphiteTotal 50
+control config sorter2 @graphite 0 0 0
+jump start always 0 0
+
+metaglassT3:
+sensor metaglassTotal reconstructor2 @metaglass
+jump T2T3Full greaterThan metaglassTotal 50
+control config sorter2 @metaglass 0 0 0
+jump start always 0 0
+
+T2T3Full:
+control config sorter2 null 0 0 0
+jump start always 0 0

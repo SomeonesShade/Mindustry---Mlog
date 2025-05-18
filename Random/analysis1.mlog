@@ -1,0 +1,153 @@
+set interMD 0 #hyperion code doing an analysis
+set primaryMD true
+jump 79 equal connected true
+set col.uncon @blast-compound
+control enabled unloader1 0 0 0 0
+control enabled unloader2 0 0 0 0
+control enabled unloader3 0 0 0 0
+control enabled driver1 0 0 0 0
+control config unloader1 col.uncon 0 0 0
+control config unloader2 col.uncon 0 0 0
+control config unloader3 col.uncon 0 0 0
+print "Locate MD receiver.\n"
+ubind @gamma
+jump 36 notEqual @unit null
+jump 20 equal lastPlayer null
+ubind lastPlayer
+jump 20 equal @unit null
+sensor isDead @unit @dead
+jump 20 equal @unit isDead
+jump 36 always @unit isDead
+set u.c.i 0
+lookup unit u.c u.c.i
+set u.f null
+ubind u.c
+jump 32 equal @unit null
+jump 28 notEqual u.f null
+set u.f @unit
+jump 29 always u.f null
+jump 32 equal u.f @unit
+sensor u.cont @unit @controlled
+jump 36 equal u.cont 2
+jump 23 always u.cont 2
+op add u.c.i u.c.i 1
+jump 35 lessThan u.c.i 50
+end
+jump 21 always @unit null
+sensor x @unit @shootX
+sensor y @unit @shootY
+set lastPlayer @unit
+jump 46 notEqual lastUnit null
+ubind @mono
+jump 45 notEqual @unit null
+print "[red]no mono found.[]"
+printflush message1
+end
+set lastUnit @unit
+ubind lastUnit
+print "mono bound.\n[red]Shoot[] "
+jump 51 notEqual mem null
+print "MD.receiver memory cell"
+jump 52 always @unit null
+print "MD.intermediate memory cell"
+printflush message1
+ucontrol within x y 5 within 0
+jump 57 equal within 1
+ucontrol approach x y 3 0 0
+jump 53 always within 1
+ucontrol getBlock x y t b 0
+jump 152 notEqual t @memory-cell
+jump 63 notEqual mem null
+set mem b
+jump 70 equal interMD 0
+jump 12 always mem null
+jump 68 notEqual mem1 null
+jump 12 equal mem b
+set mem1 b
+jump 70 equal interMD 1
+jump 12 always mem null
+jump 12 equal mem1 b
+set mem2 b
+ucontrol unbind x y 27 within 0
+set lastUnit null
+set connected true
+print "memory linked. calculating items." #main analysis section
+print "\nensure MD is linked to receiver"
+printflush message1
+set time.recalc 3500
+sensor timeScale @this @timescale
+op div time.recalc time.recalc timeScale
+control config sorter1 @plastanium 0 0 0
+op sub time.diff @time time.lastcalc
+jump 110 lessThan time.diff time.recalc
+set time.lastcalc @time
+set j 0 #LOOP
+read item.max mem j #get new maxinum
+set item.%full 0 #reset vars
+set item.diff 0
+jump 105 equal item.max 0
+    read j.async mem 48 #hmm maybe to switch out between unloaders?
+    op mod j.async j.async 32
+    op add j.async j.async 16
+    op add j.mem j j.async
+    read item.cur mem j.mem                 #note mem is the external
+    lookup item mat j                       #mat-erial definition
+    sensor item.driver driver1 mat          #gain current amount of said item
+    op add item.cur item.cur item.driver    #add this to the current set
+    jump 102 equal mem1 null                #get extra memory cell data if needed
+        read item.mem1 mem1 j
+        op add item.cur item.cur item.mem1
+    jump 102 equal mem2 null
+        read item.mem2 mem2 j
+        op add item.cur item.cur item.mem2
+    op div item.%full item.cur item.max
+    op add item.%full item.%full 0.001
+    op sub item.diff item.max item.cur
+write item.%full cell1 j
+op add k j 16
+write item.diff cell1 k
+op add j j 1
+jump 84 lessThan j 16
+set unloader unloader1
+set i 0
+jump 115 notEqual primaryMD true
+set item.least.% 0.99
+jump 116 always primaryMD true
+set item.least.% 0.8
+set item.least.index null
+read item.r cell1 i
+jump 122 equal item.r 0
+jump 122 lessThanEq item.least.% item.r
+set item.least.% item.r
+set item.least.index i
+op add i i 1
+jump 117 lessThan i 16
+set u.enable 1
+jump 130 notEqual item.least.index null
+set u.enable 0
+control enabled unloader u.enable 0 0 0
+set item.least.mat null
+jump 131 always item.least.mat @phase-fabric
+lookup item item.least.mat item.least.index
+control config unloader item.least.mat 0 0 0
+read item.max.r mem item.least.index
+read item.%.r cell1 item.least.index
+op mul item.least.update item.max.r item.%.r
+op add item.least.update item.least.update 11
+op div item.least.update item.least.update item.max.r
+write item.least.update cell1 item.least.index
+jump 142 notEqual unloader unloader1
+control enabled unloader1 u.enable 0 0 0
+set unloader unloader2
+jump 111 always unloader unloader1
+jump 146 notEqual unloader unloader2
+control enabled unloader2 u.enable 0 0 0
+set unloader unloader3
+jump 111 always unloader unloader1
+jump 148 notEqual unloader unloader3
+control enabled unloader3 u.enable 0 0 0
+control enabled driver1 1 0 0 0
+jump 152 always unloader unloader3
+control enabled unloader 0 0 0 0
+control enabled driver1 1 0 0 0
+end
