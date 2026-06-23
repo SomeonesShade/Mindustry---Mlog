@@ -1,0 +1,12 @@
+set name "malis-freeze"
+sensor e switch1 @enabled
+jump 5 equal e true
+setrate 5
+jump 1 always e true
+setrate 60
+set i 0
+fetch unit u @malis i null
+fetch unitCount uC @malis i null
+status false unmoving u 1
+op add i i 1
+jump 7 lessThan i uC

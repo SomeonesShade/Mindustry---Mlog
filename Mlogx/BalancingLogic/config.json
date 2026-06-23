@@ -1,0 +1,17 @@
+{
+	"compilerConstants": {},
+	"compilerOptions": {
+		"removeCompilerMark": false,
+		"removeUnusedJumpLabels": true,
+		"checkTypes": true,
+		"prependFileName": true,
+		"mode": "single",
+		"compileWithErrors": true,
+		"removeComments": true,
+		"include": []
+	},
+	"authors": [
+		"Someone's Shade"
+	],
+	"name": "BalancingLogic"
+}

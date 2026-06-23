@@ -81,3 +81,17 @@
 #In all versions
 #Performance Lockdown, to insure <1sec performance [general goal]
     #at Best, less than 0.75 sec, that is max allowance
+
+
+
+#TODO General Inter-Storage Transport (GIST) 1.0
+#Renamed from S-AC 4.0
+    #Performance Improvements/Rework (its too slow for MDs)
+    #Fix isssues from V8 (Dormant-Cyst, Fissile Matter Especially)
+    #Use the read memory commands for additional functionality/replace the memory system by chaining GISTs (link the proc that is being controlled)
+    #An experimental toggle to basically feed the md the items needed...? no ui interaction...
+
+#TODO Core to Storage Transport (CST)
+    #For 3-6 unloader transport with 1-2 vaults
+    #Automatically sends in items, no config?
+    #Or can feed in via hand? idk
