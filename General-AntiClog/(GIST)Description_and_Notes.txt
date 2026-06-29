@@ -5,6 +5,25 @@ TODO:
 1. Better approach on sorting out items?
 2. Starting the cache system for ordering as well...
 3. For the barebones variant made, this could just be CST at this rate... or a dedicated one ig...
+4. The extra proc will basically fill in the rest of the QOL stuff as it acesses the cached extra stuff w/in the main proc...
+
+
+---
+
+Extra Proc Design Docs:
+- The main proc will stash in all of the variables of the original. 
+- It primarily checks if the stash is still valid, does the rss checks for power, and does the origin system stuff...
+    - First, it takes in the available storages and binds it does have..., and checks for validity so it automates the process (It has full control on the storage check)
+    - It loops through, and sees
+    - From said cache, it takes in the recognized power bind, and does RSS
+    - Uncertain if it also handles origin checks... but it does handle feeding the reference in at least...
+    - Will act as the main configuration and doesn't take away from the main proc on handling it
+    - It also sends out messages similar to S-AC.
+    - You can tell it to force a refresh using and binded sorter it does have on hand.
+    - Speaking of said sorter, 
+- The main processor (IST - Inter-Storage Transporter) can work independently of the config processor (The General).
+- All together they form GIST (General Inter-Storage Transport).
+    - Heh, I love double meanings.
 
 ---
 
