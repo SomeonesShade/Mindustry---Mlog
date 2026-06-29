@@ -1,0 +1,332 @@
+### Initialization {
+    # itemConfigArray - a boolean bit array storing the item configuations
+    
+    ## Threshold Settings {
+        jump _settings1 always 0 0
+        print "Threshold Settings"
+        end; end; _settings1:
+        
+        print "| <Decimal> / <Whole Number> | Threshold Amount (per item type) to stop recieving items. "
+        print "| Docs | If <Decimal> from 0 to 1, it is a percentage of the total available items. "
+        print "| Docs | Otherwise, its as is, and represents the number of items before it stops recieving. "
+        set MaxAmount 0.5
+    # }
+    
+    ## Item Configuration {
+        # Allows the player to pick which items to feed
+        jump _settings2 always 0 0
+        print "Item Configuration"
+        end; end; _settings2:
+        
+        print "| <Boolean> | Configure which items to recieve. "
+        print "| Docs | Set the middle variable to 1 to get the item, and 0 to not get. "
+        op shl  false 0
+        op shl  1 1
+        op shl  1 2
+        op shl  1 3
+        op shl  false 4
+        op shl  1 5
+        op shl  1 6
+        op shl  false 7
+        op shl  false 8
+        op shl  1 9
+        op shl  1 10
+        op shl  1 11
+        op shl  1 12
+        op shl  false 13
+        op shl  false 14
+        op shl  false 15
+        op shl  false 16
+        op shl  false 17
+        op shl  false 18
+        op shl  false 19
+    # }
+
+    ## Item Config Compilation {
+        # Adds all of the bit shifted values together to form the main selection
+        op add itemConfigArray  
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        op add itemConfigArray itemConfigArray 
+        
+        ## Item Array Last {
+            op shl itemConfigArray.temp itemConfigArray 1
+            op logn itemConfigArray.last itemConfigArray.temp 2
+        # }
+
+        ## Item Array Start {
+            # TODO: Rename Variables... or a better approach?
+            set itemStartingID 0
+            _itemStartingIDCheck:
+            op shl bitLocation 1 itemStartingID
+            op and isSelected bitLocation itemConfigArray
+            jump _itemStartingIDEnd notEqual isSelected 0
+            op add itemStartingID itemStartingID 1
+            jump _itemStartingIDCheck lessThan itemStartingID itemCount
+            _itemStartingIDEnd:
+        # }
+    # }
+
+    ## Remaining Variables {
+        
+    # }
+# }
+
+### Main Loop {
+    _mainLoop:
+    ## Check Cache {
+        #PERFORMANCECHECK# write 100 cell1 2
+        jump _updateCache_go notEqual @links prevLinks
+        jump _updateCache_dont equal output.activate
+        jump _updateCache_go lessThan checkCounter 25
+        
+        _updateCache_dont:
+        _updateCache_return:
+        set prevLinks @links
+    # }
+
+    ## Choose Item {
+        ## Initialize {
+            set output.itemType null
+            set decision.limit decision.maxValue
+        # }
+
+        ## Choose Item Loop {
+            set choose.i 0
+            _itemCheckLoop:
+            lookup item decision.itemType choose.i
+            op shl bitLocation 1 choose.i
+            op and decision.itemType.enabled bitLocation itemConfigArray
+            jump _itemCheckLoop_end equal decision.itemType.enabled 0
+
+            ## Check Items {
+                sensor decision.amount strArray.s1 decision.itemType
+                op add @counter @counter strArray.offset
+                sensor r16 strArray.s16 decision.itemType
+                op add decision.amount decision.amount r16
+                sensor r15 strArray.s15 decision.itemType
+                op add decision.amount decision.amount r15
+                sensor r14 strArray.s14 decision.itemType
+                op add decision.amount decision.amount r14
+                sensor r13 strArray.s13 decision.itemType
+                op add decision.amount decision.amount r13
+                sensor r12 strArray.s12 decision.itemType
+                op add decision.amount decision.amount r12
+                sensor r11 strArray.s11 decision.itemType
+                op add decision.amount decision.amount r11
+                sensor r10 strArray.s10 decision.itemType
+                op add decision.amount decision.amount r10
+                sensor r9 strArray.s9 decision.itemType
+                op add decision.amount decision.amount r9
+                sensor r8 strArray.s8 decision.itemType
+                op add decision.amount decision.amount r8
+                sensor r7 strArray.s7 decision.itemType
+                op add decision.amount decision.amount r7
+                sensor r6 strArray.s6 decision.itemType
+                op add decision.amount decision.amount r6
+                sensor r5 strArray.s5 decision.itemType
+                op add decision.amount decision.amount r5
+                sensor r4 strArray.s4 decision.itemType
+                op add decision.amount decision.amount r4
+                sensor r3 strArray.s3 decision.itemType
+                op add decision.amount decision.amount r3
+                sensor r2 strArray.s2 decision.itemType
+                op add decision.amount decision.amount r2
+                jump _thresholdCheck always 0 0
+            # }
+
+            ## Threshold Check {
+                # The main heart of the item check loop.
+                # Whether or not if an item should be taken based on the current amount.
+                _thresholdCheck:
+                    jump _itemCheckLoop_end greaterThanEq decision.amount decision.limit
+                    set output.itemType decision.itemType
+                    set decision.limit decision.amount
+            # }
+
+            _itemCheckLoop_end:
+            op add choose.i choose.i 1
+            jump _itemCheckLoop lessThan choose.i itemConfigArray.last
+        # }
+
+        ## Check Remaining {
+            op lessThan output.activate decision.limit decision.maxValue
+        # }
+        
+    # }
+
+    ## Order Item {
+        # { TEMPORARY, DELETE, USED FOR CHECKING IF THE REST OF THE CODE IS WORKING
+            set a -1
+            buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
+            op add a a 1
+            getlink obj a
+            sensor oType obj @type
+            jump jItemConfig equal oType @inverted-sorter #skip if storage block
+            jump jItemConfig equal oType @sorter
+            jump skip2 equal oType @mass-driver
+            # jump messageDisplay equal oType @message
+            jump jUnloader equal oType @unloader #jUnloader
+            jump jEnable notEqual oType @memory-cell
+            jump datawrite lessThan MemoryReadLocation 0 
+            jump jEnable equal obj ReadMemoryBlock #ohmygod was hardcoded to cell1 lmao
+    
+            datawrite:
+                write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
+                jump skip2 always 0 0
+            jUnloader: #this is slow... but it's forced to have no null loader shenanigans
+                sensor config obj @config
+                jump jEnable notEqual config null
+                control config obj output.itemType #set output
+            jEnable:
+                control enabled obj output.activate #enable or disable
+            jItemConfig:
+                control config obj output.itemType #set output
+            skip2:
+                jump buildingConfigLoop lessThan a @links
+        # }
+    # }
+
+    op add checkCounter checkCounter 1
+    jump _mainLoop always 0 0
+# }
+
+### Cache System {
+    # strArray - contains the storages
+    # - s1 to s16 - contains the storage
+    # strArray.size - the current size of the array
+    # strArray.totalStorage - total storage of all of the contained storages
+    # strArray.offset - used for reading values in standard double format
+
+    ## Main Cache Loop {
+        _updateCache_go:
+
+        ## Reset Variables {
+            # reset strArray
+            set strArray.s1 null
+            set strArray.s2 null
+            set strArray.s3 null
+            set strArray.s4 null
+            set strArray.s5 null
+            set strArray.s6 null
+            set strArray.s7 null
+            set strArray.s8 null
+            set strArray.s9 null
+            set strArray.s10 null
+            set strArray.s11 null
+            set strArray.s12 null
+            set strArray.s13 null
+            set strArray.s14 null
+            set strArray.s15 null
+            set strArray.s16 null
+            set strArray.size 0
+            set strArray.totalStorage 0
+        # }
+
+        ## Cache Objects {
+            set cache.i 0
+            _cacheLoop:
+            getlink obj cache.i
+            sensor obj.type obj @type
+            jump _cacheStorage_go equal obj.type @container
+            jump _cacheStorage_go equal obj.type @vault
+            
+            _cacheStorage_return:
+            op add cache.i cache.i 1
+            jump _cacheLoop lessThan cache.i @links
+        # }
+
+        ## Initialize Remaining Variables {
+            ## Compute strArray.offset {
+                # {
+                    # Usually counter is already the next line in the sequence, so...
+                    # If there are 16 storages, do not skip (16 - 16 = 0).
+                    # If there are 1 or 0, since the value is already initialized when reading...
+                    # Just skip to the end, since each Cascade Array is at size 2 * (16 - 1). (only has 15 code units, as the first value is already read by default.)...
+                # }
+                op max strArray.offset strArray.size 1
+                op sub strArray.offset 16 strArray.offset
+                op mul strArray.offset strArray.offset 2 #Each "code unit" has 2 lines
+                
+                # TODO: To be used later with the remaining scalable storages...
+                # jump skip greaterThan strArray.offset -1
+                #    set strArray.offset 31 #(15 * 2) + 1
+                # skip:
+            # }
+
+            ## Decision Variables {
+                op mul decision.temp.percentage MaxAmount strArray.totalStorage
+                select decision.maxValue lessThan MaxAmount 1 decision.temp.percentage MaxAmount
+
+            # }
+        # }
+
+        jump _updateCache_return always 0 0
+    # }
+
+    ## Cache Storage {
+        _cacheStorage_go:
+        
+        ## Add Storage to Array {
+            op mul temp.i strArray.size 2
+            op min temp.i temp.i 32 #(16 * 2)
+            op add @counter @counter temp.i
+            set strArray.s1 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s2 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s3 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s4 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s5 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s6 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s7 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s8 obj
+                jump _gatherStorageInformation always 0 0  
+            set strArray.s9 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s10 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s11 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s12 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s13 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s14 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s15 obj
+                jump _gatherStorageInformation always 0 0
+            set strArray.s16 obj
+                jump _gatherStorageInformation always 0 0
+        # }
+
+        ## Gather Storage Array Information {
+            _gatherStorageInformation:
+            op add strArray.size strArray.size 1
+            sensor itemCap obj @itemCapacity
+            op add strArray.totalStorage strArray.totalStorage itemCap
+        # }
+
+        jump _cacheStorage_return always 0 0
+    # }
+# }

@@ -2,11 +2,18 @@
 
 TODO:
 
+1. Better approach on sorting out items?
+2. Starting the cache system for ordering as well...
+3. For the barebones variant made, this could just be CST at this rate... or a dedicated one ig...
+
+---
+
 Doing the same trick of reverse arrays for unloaders, config items, etc. in the build loop
 - Requires knowledge on the stuff is still "valid"
 - Since something spooky happens when unbinding..., as the system will keep controlling it, and any new binds aren't updated or recognized in
 
 Additional Micro-Proc That handles immediate bitConfigurations
+this technically allows to "slow down" transmission if needed?
 
 Major Rewrites
 
