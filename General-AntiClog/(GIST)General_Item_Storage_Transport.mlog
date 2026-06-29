@@ -120,8 +120,7 @@ printflush null
 
 #hmm ln(bitSelection * 2)/ln(2)
 op shl bitTemp bitSelection 1
-op log bitTemp bitTemp 0
-op div itemCount bitTemp 0.6931471805599453
+op logn itemCount bitTemp 2
 #hmm
 
 #__caution (itemStartingID Check)
@@ -211,10 +210,9 @@ bitStart:
 jump bitSkip equal ReadMemoryBlock null #Sets the Bitselection if memory is used
 jump bitSkip lessThan MemoryReadLocation 0
     read bitSelection cell1 MemoryReadLocation
-#hmm ln(bitSelection * 2)/ln(2) a bit slower on max sadly (i wish log2 were a thing)
+#hmm a bit slower on max sadly
     op shl bitTemp bitSelection 1
-    op log bitTemp bitTemp 0
-    op div itemCount bitTemp 0.6931471805599453
+    op logn itemCount bitTemp 2
 
     set memReadAMessage " items\n[#FFAAFF]Reading any binded cell for item configuration"
 jump storageLoopCheck always 0 0
