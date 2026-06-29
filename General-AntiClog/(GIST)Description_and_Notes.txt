@@ -1,0 +1,30 @@
+|GIST BETA
+
+TODO:
+
+Doing the same trick of reverse arrays for unloaders, config items, etc. in the build loop
+- Requires knowledge on the stuff is still "valid"
+- Since something spooky happens when unbinding..., as the system will keep controlling it, and any new binds aren't updated or recognized in
+
+Additional Micro-Proc That handles immediate bitConfigurations
+
+Major Rewrites
+
+Multi-Origin requires the ff.
+Figure Out which unloader is connected to which container (measure by distance?)
+May be complicated
+using the array system, you can now dedicate certain unloaders to a different config system...
+may hit perf hard though...
+
+Do not add stuff unless it is something that can work.
+
+Goal: 0.5-0.6s perf.
+
+Multi-Proc system
+This is fairly tricky, but im going to do basically is transmit the recorded storages, through the system?
+
+The main situation is basically, multi-origin with one at core, and another at a seperate storage
+They merge into one md? And along the way the way, one md is hooked up to an overdrive system (micro proc will handle the necessary configutations)
+And the final distination only requires silicon but no phase... (so need to prevent phase from trickling down the system).
+
+This is technically possible from the read and write commands, as its now possible to transmit building references.
