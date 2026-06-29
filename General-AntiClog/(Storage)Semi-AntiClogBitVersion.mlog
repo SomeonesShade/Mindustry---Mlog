@@ -411,7 +411,7 @@ j3:
 end
 
 messageDisplay:
-print "[#DDDDFF]Semi-AntiClog 3.9\nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
+print "[#DDDDFF]Semi-AntiClog 3.9.1 (V7) \nmade by: [#0]|[white]Someone's []Shade\n[]Setting All Item Config Blocks To: [#BBBBEE]"
 print typec
 
 -counterMessageStart:
@@ -431,7 +431,7 @@ operational: #m0 - l9
     jump skip2 always 0 0
 
 #9
--depreciated: #m1 - l0
+-depreciated1: #m1 - l0
     #print "\n\n[#AAFFAA]Operational!\nTargeting for "
     #print MaxValue
     #print " items.\n[#FFFFAA]Internal RSS activated and set to "
@@ -452,7 +452,7 @@ fullStorage: #m2 - l8
     jump skip2 always 0 0
 
 #17
--depreciated: #m3 - l0
+-depreciated2: #m3 - l0
     #print "m3 is depreciated"
     #print "..."
     #printflush obj

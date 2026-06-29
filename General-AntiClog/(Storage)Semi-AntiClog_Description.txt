@@ -2,7 +2,8 @@ ____________
 Description:
 ------------
 
-|Semi-AntiClog 3.9
+|Semi-AntiClog 3.9.1
+Specific Changes (.1): No behavior changes. Only added warning the logic will only be for v7.
 Behavior Change: MaxAmount Calculation Revised for Percentage Input when IsCluster is true
 -> added IncludeMassDriverInStorageCalculation and OnlyMassDriversValue to compliment the above change
 Internal: Processor Works Faster by skipping the initial 0s if the bit config has them
@@ -166,6 +167,8 @@ b: Reverted Hidden Change of using @dead for checking memory cell
 #Bugfix: to -0.25, only md bind can clear storages
 #Behavior Change: to -0.125, only md bind will just default to 1 md storage or OnlyMassDriversValue
 
+#Semi-AntiClog 3.9.1
+#No internal changes, only mentioned it is only for v7 as the v8 variant will now be named GIST
 
 Also Old Description: Might be useful for later
 Features/Variables:
