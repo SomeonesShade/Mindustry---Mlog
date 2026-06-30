@@ -93,7 +93,7 @@
     ## Check Cache {
         #PERFORMANCECHECK# write 100 cell1 2
         jump _updateCache_go notEqual @links prevLinks
-        jump _updateCache_dont equal output.activate
+        jump _updateCache_dont equal output.activate true
         jump _updateCache_go lessThan checkCounter 25
         
         _updateCache_dont:
@@ -172,35 +172,146 @@
     # }
 
     ## Order Item {
-        # { TEMPORARY, DELETE, USED FOR CHECKING IF THE REST OF THE CODE IS WORKING
-            set a -1
-            buildingConfigLoop: #this loop now sets the config of buildings with enabled and itemconfig
-            op add a a 1
-            getlink obj a
-            sensor oType obj @type
-            jump jItemConfig equal oType @inverted-sorter #skip if storage block
-            jump jItemConfig equal oType @sorter
-            jump skip2 equal oType @mass-driver
-            # jump messageDisplay equal oType @message
-            jump jUnloader equal oType @unloader #jUnloader
-            jump jEnable notEqual oType @memory-cell
-            jump datawrite lessThan MemoryReadLocation 0 
-            jump jEnable equal obj ReadMemoryBlock #ohmygod was hardcoded to cell1 lmao
-    
-            datawrite:
-                write dataItem obj MemoryWriteLocation #at MemoryWriteLocation send item data
-                jump skip2 always 0 0
-            jUnloader: #this is slow... but it's forced to have no null loader shenanigans
-                sensor config obj @config
-                jump jEnable notEqual config null
-                control config obj output.itemType #set output
-            jEnable:
-                control enabled obj output.activate #enable or disable
-            jItemConfig:
-                control config obj output.itemType #set output
-            skip2:
-                jump buildingConfigLoop lessThan a @links
+        ## Unloader {
+            op add @counter @counter unloaderArray.offset
+            sensor unloaderArray.temp.config unloaderArray.s16 @config
+            jump unloaderArray_s16_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s16 output.activate
+            unloaderArray_s16_jumpLabel:
+            control config unloaderArray.s16 output.itemType
+            control enabled unloaderArray.s16 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s15 @config
+            jump unloaderArray_s15_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s15 output.activate
+            unloaderArray_s15_jumpLabel:
+            control config unloaderArray.s15 output.itemType
+            control enabled unloaderArray.s15 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s14 @config
+            jump unloaderArray_s14_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s14 output.activate
+            unloaderArray_s14_jumpLabel:
+            control config unloaderArray.s14 output.itemType
+            control enabled unloaderArray.s14 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s13 @config
+            jump unloaderArray_s13_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s13 output.activate
+            unloaderArray_s13_jumpLabel:
+            control config unloaderArray.s13 output.itemType
+            control enabled unloaderArray.s13 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s12 @config
+            jump unloaderArray_s12_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s12 output.activate
+            unloaderArray_s12_jumpLabel:
+            control config unloaderArray.s12 output.itemType
+            control enabled unloaderArray.s12 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s11 @config
+            jump unloaderArray_s11_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s11 output.activate
+            unloaderArray_s11_jumpLabel:
+            control config unloaderArray.s11 output.itemType
+            control enabled unloaderArray.s11 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s10 @config
+            jump unloaderArray_s10_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s10 output.activate
+            unloaderArray_s10_jumpLabel:
+            control config unloaderArray.s10 output.itemType
+            control enabled unloaderArray.s10 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s9 @config
+            jump unloaderArray_s9_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s9 output.activate
+            unloaderArray_s9_jumpLabel:
+            control config unloaderArray.s9 output.itemType
+            control enabled unloaderArray.s9 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s8 @config
+            jump unloaderArray_s8_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s8 output.activate
+            unloaderArray_s8_jumpLabel:
+            control config unloaderArray.s8 output.itemType
+            control enabled unloaderArray.s8 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s7 @config
+            jump unloaderArray_s7_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s7 output.activate
+            unloaderArray_s7_jumpLabel:
+            control config unloaderArray.s7 output.itemType
+            control enabled unloaderArray.s7 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s6 @config
+            jump unloaderArray_s6_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s6 output.activate
+            unloaderArray_s6_jumpLabel:
+            control config unloaderArray.s6 output.itemType
+            control enabled unloaderArray.s6 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s5 @config
+            jump unloaderArray_s5_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s5 output.activate
+            unloaderArray_s5_jumpLabel:
+            control config unloaderArray.s5 output.itemType
+            control enabled unloaderArray.s5 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s4 @config
+            jump unloaderArray_s4_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s4 output.activate
+            unloaderArray_s4_jumpLabel:
+            control config unloaderArray.s4 output.itemType
+            control enabled unloaderArray.s4 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s3 @config
+            jump unloaderArray_s3_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s3 output.activate
+            unloaderArray_s3_jumpLabel:
+            control config unloaderArray.s3 output.itemType
+            control enabled unloaderArray.s3 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s2 @config
+            jump unloaderArray_s2_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s2 output.activate
+            unloaderArray_s2_jumpLabel:
+            control config unloaderArray.s2 output.itemType
+            control enabled unloaderArray.s2 output.activate
+            sensor unloaderArray.temp.config unloaderArray.s1 @config
+            jump unloaderArray_s1_jumpLabel equal unloaderArray.temp.config null
+            control enabled unloaderArray.s1 output.activate
+            unloaderArray_s1_jumpLabel:
+            control config unloaderArray.s1 output.itemType
+            control enabled unloaderArray.s1 output.activate
         # }
+        
+        ## Config {
+            op add @counter @counter configArray.offset
+            control config configArray.s16 output.itemType
+            control config configArray.s15 output.itemType
+            control config configArray.s14 output.itemType
+            control config configArray.s13 output.itemType
+            control config configArray.s12 output.itemType
+            control config configArray.s11 output.itemType
+            control config configArray.s10 output.itemType
+            control config configArray.s9 output.itemType
+            control config configArray.s8 output.itemType
+            control config configArray.s7 output.itemType
+            control config configArray.s6 output.itemType
+            control config configArray.s5 output.itemType
+            control config configArray.s4 output.itemType
+            control config configArray.s3 output.itemType
+            control config configArray.s2 output.itemType
+            control config configArray.s1 output.itemType
+        # }
+
+        ## Toggle {
+            op add @counter @counter toggleArray.offset
+            control enabled toggleArray.s16 output.activate
+            control enabled toggleArray.s15 output.activate
+            control enabled toggleArray.s14 output.activate
+            control enabled toggleArray.s13 output.activate
+            control enabled toggleArray.s12 output.activate
+            control enabled toggleArray.s11 output.activate
+            control enabled toggleArray.s10 output.activate
+            control enabled toggleArray.s9 output.activate
+            control enabled toggleArray.s8 output.activate
+            control enabled toggleArray.s7 output.activate
+            control enabled toggleArray.s6 output.activate
+            control enabled toggleArray.s5 output.activate
+            control enabled toggleArray.s4 output.activate
+            control enabled toggleArray.s3 output.activate
+            control enabled toggleArray.s2 output.activate
+            control enabled toggleArray.s1 output.activate
+        # }
+        
     # }
 
     op add checkCounter checkCounter 1
@@ -218,25 +329,88 @@
         _updateCache_go:
 
         ## Reset Variables {
-            # reset strArray
-            set strArray.s1 null
-            set strArray.s2 null
-            set strArray.s3 null
-            set strArray.s4 null
-            set strArray.s5 null
-            set strArray.s6 null
-            set strArray.s7 null
-            set strArray.s8 null
-            set strArray.s9 null
-            set strArray.s10 null
-            set strArray.s11 null
-            set strArray.s12 null
-            set strArray.s13 null
-            set strArray.s14 null
-            set strArray.s15 null
-            set strArray.s16 null
-            set strArray.size 0
-            set strArray.totalStorage 0
+            ## Reset strArray {
+                set strArray.s1 null
+                set strArray.s2 null
+                set strArray.s3 null
+                set strArray.s4 null
+                set strArray.s5 null
+                set strArray.s6 null
+                set strArray.s7 null
+                set strArray.s8 null
+                set strArray.s9 null
+                set strArray.s10 null
+                set strArray.s11 null
+                set strArray.s12 null
+                set strArray.s13 null
+                set strArray.s14 null
+                set strArray.s15 null
+                set strArray.s16 null
+                set strArray.size 0
+                set strArray.totalStorage 0
+            # }
+
+            ## Reset unloaderArray {
+                set unloaderArray.s1 null
+                set unloaderArray.s2 null
+                set unloaderArray.s3 null
+                set unloaderArray.s4 null
+                set unloaderArray.s5 null
+                set unloaderArray.s6 null
+                set unloaderArray.s7 null
+                set unloaderArray.s8 null
+                set unloaderArray.s9 null
+                set unloaderArray.s10 null
+                set unloaderArray.s11 null
+                set unloaderArray.s12 null
+                set unloaderArray.s13 null
+                set unloaderArray.s14 null
+                set unloaderArray.s15 null
+                set unloaderArray.s16 null
+                set unloaderArray.size 0
+            # }
+            
+            ## Reset configArray {
+                set configArray.s1 null
+                set configArray.s2 null
+                set configArray.s3 null
+                set configArray.s4 null
+                set configArray.s5 null
+                set configArray.s6 null
+                set configArray.s7 null
+                set configArray.s8 null
+                set configArray.s9 null
+                set configArray.s10 null
+                set configArray.s11 null
+                set configArray.s12 null
+                set configArray.s13 null
+                set configArray.s14 null
+                set configArray.s15 null
+                set configArray.s16 null
+                set configArray.size 0
+            # }
+
+            ## Reset toggleArray {
+                set toggleArray.s1 null
+                set toggleArray.s2 null
+                set toggleArray.s3 null
+                set toggleArray.s4 null
+                set toggleArray.s5 null
+                set toggleArray.s6 null
+                set toggleArray.s7 null
+                set toggleArray.s8 null
+                set toggleArray.s9 null
+                set toggleArray.s10 null
+                set toggleArray.s11 null
+                set toggleArray.s12 null
+                set toggleArray.s13 null
+                set toggleArray.s14 null
+                set toggleArray.s15 null
+                set toggleArray.s16 null
+                set toggleArray.size 0
+            # }
+
+            
         # }
 
         ## Cache Objects {
@@ -244,30 +418,63 @@
             _cacheLoop:
             getlink obj cache.i
             sensor obj.type obj @type
+            # Storage
             jump _cacheStorage_go equal obj.type @container
             jump _cacheStorage_go equal obj.type @vault
+            # Unloader
+            jump _cacheUnloader_go equal obj.type @unloader
+            # Configuratables
+            jump _cacheConfig_go equal obj.type @sorter
+            jump _cacheConfig_go equal obj.type @inverted-sorter
+            jump _cacheConfig_go equal obj.type @item-source
+            _cacheConfig_return:
+            # Toggles
+            jump _cacheToggle_return equal obj.type @inverted-sorter
+            jump _cacheToggle_go notEqual obj.type @sorter
             
             _cacheStorage_return:
+            _cacheUnloader_return:
+            _cacheToggle_return:
             op add cache.i cache.i 1
             jump _cacheLoop lessThan cache.i @links
         # }
 
         ## Initialize Remaining Variables {
-            ## Compute strArray.offset {
+            ## Array Offset Computations {
                 # {
                     # Usually counter is already the next line in the sequence, so...
                     # If there are 16 storages, do not skip (16 - 16 = 0).
                     # If there are 1 or 0, since the value is already initialized when reading...
                     # Just skip to the end, since each Cascade Array is at size 2 * (16 - 1). (only has 15 code units, as the first value is already read by default.)...
                 # }
+                # strArray
                 op max strArray.offset strArray.size 1
                 op sub strArray.offset 16 strArray.offset
                 op mul strArray.offset strArray.offset 2 #Each "code unit" has 2 lines
-                
+                op max strArray.offset strArray.offset 0
+
                 # TODO: To be used later with the remaining scalable storages...
                 # jump skip greaterThan strArray.offset -1
                 #    set strArray.offset 31 #(15 * 2) + 1
                 # skip:
+
+                # unloaderArray
+                op max unloaderArray.offset unloaderArray.size 0
+                op sub unloaderArray.offset 16 unloaderArray.offset
+                op mul unloaderArray.offset unloaderArray.offset 5
+                op max unloaderArray.offset unloaderArray.offset 0
+                
+                # configArray
+                op max configArray.offset configArray.size 0
+                op sub configArray.offset 16 configArray.offset
+                # op mul configArray.offset configArray.offset 1
+                op max configArray.offset configArray.offset 0
+
+                # toggleArray
+                op max toggleArray.offset toggleArray.size 0
+                op sub toggleArray.offset 16 toggleArray.offset
+                # op mul toggleArray.offset toggleArray.offset 1
+                op max toggleArray.offset toggleArray.offset 0
             # }
 
             ## Decision Variables {
@@ -330,4 +537,152 @@
 
         jump _cacheStorage_return always 0 0
     # }
+
+    ## Cache Unloaders {
+        _cacheUnloader_go:
+        
+        ## Add Config to Array {
+            op mul temp.i unloaderArray.size 2
+            op min temp.i temp.i 32 #(16 * 2)
+            op add @counter @counter temp.i
+            set unloaderArray.s1 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s2 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s3 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s4 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s5 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s6 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s7 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s8 obj
+                jump _gatherUnloaderInformation always 0 0  
+            set unloaderArray.s9 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s10 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s11 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s12 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s13 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s14 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s15 obj
+                jump _gatherUnloaderInformation always 0 0
+            set unloaderArray.s16 obj
+                jump _gatherUnloaderInformation always 0 0
+        # }
+
+        ## Gather Config Array Information {
+            _gatherUnloaderInformation:
+            op add unloaderArray.size unloaderArray.size 1
+        # }
+
+        jump _cacheUnloader_return always 0 0
+    # }
+    
+    ## Cache Configurables {
+        _cacheConfig_go:
+        
+        ## Add Config to Array {
+            op mul temp.i configArray.size 2
+            op min temp.i temp.i 32 #(16 * 2)
+            op add @counter @counter temp.i
+            set configArray.s1 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s2 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s3 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s4 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s5 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s6 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s7 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s8 obj
+                jump _gatherConfigInformation always 0 0  
+            set configArray.s9 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s10 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s11 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s12 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s13 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s14 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s15 obj
+                jump _gatherConfigInformation always 0 0
+            set configArray.s16 obj
+                jump _gatherConfigInformation always 0 0
+        # }
+
+        ## Gather Config Array Information {
+            _gatherConfigInformation:
+            op add configArray.size configArray.size 1
+        # }
+
+        jump _cacheConfig_return always 0 0
+    # }
+
+    ## Cache Toggles {
+        _cacheToggle_go:
+        
+        ## Add Toggle to Array {
+            op mul temp.i toggleArray.size 2
+            op min temp.i temp.i 32 #(16 * 2)
+            op add @counter @counter temp.i
+            set toggleArray.s1 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s2 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s3 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s4 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s5 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s6 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s7 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s8 obj
+                jump _gatherToggleInformation always 0 0  
+            set toggleArray.s9 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s10 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s11 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s12 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s13 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s14 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s15 obj
+                jump _gatherToggleInformation always 0 0
+            set toggleArray.s16 obj
+                jump _gatherToggleInformation always 0 0
+        # }
+
+        ## Gather Toggle Array Information {
+            _gatherToggleInformation:
+            op add toggleArray.size toggleArray.size 1
+        # }
+
+        jump _cacheToggle_return always 0 0
+    # }
+
 # }

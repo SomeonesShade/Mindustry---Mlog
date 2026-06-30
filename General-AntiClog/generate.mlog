@@ -1,16 +1,19 @@
-set v16 0
-set v15 0
-set v14 0
-set v13 0
-set v12 0
-set v11 0
-set v10 0
-set v9 0
-set v8 0
-set v7 0
-set v6 0
-set v5 0
-set v4 0
-set v3 0
-set v2 0
-set v1 0
+control enabled toggleArray.s16 output.activate
+control enabled toggleArray.s15 output.activate
+control enabled toggleArray.s14 output.activate
+control enabled toggleArray.s13 output.activate
+control enabled toggleArray.s12 output.activate
+control enabled toggleArray.s11 output.activate
+control enabled toggleArray.s10 output.activate
+control enabled toggleArray.s9 output.activate
+control enabled toggleArray.s8 output.activate
+control enabled toggleArray.s7 output.activate
+control enabled toggleArray.s6 output.activate
+control enabled toggleArray.s5 output.activate
+control enabled toggleArray.s4 output.activate
+control enabled toggleArray.s3 output.activate
+control enabled toggleArray.s2 output.activate
+control enabled toggleArray.s1 output.activate
+end
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"
