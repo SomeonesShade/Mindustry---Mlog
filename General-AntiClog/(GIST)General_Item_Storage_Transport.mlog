@@ -72,13 +72,13 @@
 
         ## Item Array Start {
             # TODO: Rename Variables... or a better approach?
-            set itemStartingID 0
+            set itemConfigArray.first 0
             _itemStartingIDCheck:
-            op shl bitLocation 1 itemStartingID
+            op shl bitLocation 1 itemConfigArray.first
             op and isSelected bitLocation itemConfigArray
             jump _itemStartingIDEnd notEqual isSelected 0
-            op add itemStartingID itemStartingID 1
-            jump _itemStartingIDCheck lessThan itemStartingID itemCount
+            op add itemConfigArray.first itemConfigArray.first 1
+            jump _itemStartingIDCheck lessThan itemConfigArray.first itemConfigArray.last
             _itemStartingIDEnd:
         # }
     # }
@@ -94,7 +94,7 @@
         #PERFORMANCECHECK# write 100 cell1 2
         jump _updateCache_go notEqual @links prevLinks
         jump _updateCache_dont equal output.activate true
-        jump _updateCache_go lessThan checkCounter 25
+        jump _updateCache_go greaterThan checkCounter 25
         
         _updateCache_dont:
         _updateCache_return:
@@ -108,7 +108,7 @@
         # }
 
         ## Choose Item Loop {
-            set choose.i 0
+            set choose.i itemConfigArray.first
             _itemCheckLoop:
             lookup item decision.itemType choose.i
             op shl bitLocation 1 choose.i
@@ -329,6 +329,8 @@
         _updateCache_go:
 
         ## Reset Variables {
+            set checkCounter 0
+            
             ## Reset strArray {
                 set strArray.s1 null
                 set strArray.s2 null
