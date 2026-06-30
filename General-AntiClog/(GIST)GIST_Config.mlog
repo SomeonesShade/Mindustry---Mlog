@@ -1,1 +1,32 @@
 # The General (G) Main Logic Code
+### Preset Setting Configs {
+    # Sorter : Adds items or setting to existing format (an old project)
+    # Inv Sorter : Sets the current format. If recently set to null, retriggers initialization of the IST proc.
+
+# }
+
+### Cache Validity Checks {
+    # Check if the cached storages are still "valid"
+    # Handles when the state is invalid or non functional (i.e. there should be a storage, dont function if none).
+# }
+
+### RSS {
+    ## Automatic Core Origin {
+        # Handles finding monos to ulocate in the Core for the Origin System
+    # }
+
+    ## Power Check {
+        # From the Cache, use the cached block to check for power validity
+    # }
+# }
+
+### Inter Proc Communication {
+    # From cached procs (and the binded proc), handles communication back and forth to synchronize
+    # Sends in an additional storages to account for, in a secondary strArray.
+    # The difficult part is handling previous add. storages and current storages to be combined in the new send.
+# }
+
+### Message and Response Display {
+    # Handles Printed Messages based on the string Message Code
+    # Handles "Blinking"
+# }
