@@ -2,12 +2,10 @@
 
 TODO:
 
-1. Better approach on sorting out items?
-2. Starting the cache system for ordering as well...
-3. For the barebones variant made, this could just be CST at this rate... or a dedicated one ig...
-4. The extra proc will basically fill in the rest of the QOL stuff as it acesses the cached extra stuff w/in the main proc...
-
-
+1. (IST) Better approach on sorting out items?
+2. (IST) Add in handling for mass drivers
+3. (G) Start standard messages and configurations
+4. Add a credit section w/ myself and balam's mlogx
 ---
 
 Extra Proc Design Docs:
@@ -24,6 +22,7 @@ Extra Proc Design Docs:
 - The main processor (IST - Inter-Storage Transporter) can work independently of the config processor (The General).
 - All together they form GIST (General Inter-Storage Transport).
     - Heh, I love double meanings.
+- It can also act as a holding proc similar to a memcell, although... tricky as The General needs to figure out if its a sending proc... (trying to reduce config as much as possible)
 
 ---
 

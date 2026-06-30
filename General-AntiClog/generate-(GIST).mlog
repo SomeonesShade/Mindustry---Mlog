@@ -1,0 +1,55 @@
+end
+end
+end
+end
+end
+end
+op add @counter @counter configArray.offset
+control config configArray.s16 output.itemType
+control config configArray.s15 output.itemType
+control config configArray.s14 output.itemType
+control config configArray.s13 output.itemType
+control config configArray.s12 output.itemType
+control config configArray.s11 output.itemType
+control config configArray.s10 output.itemType
+control config configArray.s9 output.itemType
+control config configArray.s8 output.itemType
+control config configArray.s7 output.itemType
+control config configArray.s6 output.itemType
+control config configArray.s5 output.itemType
+control config configArray.s4 output.itemType
+control config configArray.s3 output.itemType
+control config configArray.s2 output.itemType
+control config configArray.s1 output.itemType
+end
+end
+end
+end
+end
+end
+op add @counter @counter toggleArray.offset
+control enabled toggleArray.s16 output.activate
+control enabled toggleArray.s15 output.activate
+control enabled toggleArray.s14 output.activate
+control enabled toggleArray.s13 output.activate
+control enabled toggleArray.s12 output.activate
+control enabled toggleArray.s11 output.activate
+control enabled toggleArray.s10 output.activate
+control enabled toggleArray.s9 output.activate
+control enabled toggleArray.s8 output.activate
+control enabled toggleArray.s7 output.activate
+control enabled toggleArray.s6 output.activate
+control enabled toggleArray.s5 output.activate
+control enabled toggleArray.s4 output.activate
+control enabled toggleArray.s3 output.activate
+control enabled toggleArray.s2 output.activate
+control enabled toggleArray.s1 output.activate
+end
+end
+end
+end
+end
+end
+end
+print "Made with mlogx"
+print "github.com/BalaM314/mlogx/"

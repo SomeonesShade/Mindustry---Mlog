@@ -1,0 +1,1 @@
+Doing a centralized variant of GIST by having only one proc at the end

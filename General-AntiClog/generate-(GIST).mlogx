@@ -1,0 +1,43 @@
+#used for generating tedious lines of codes that can be generated with mlogx
+#mlogx: "https://github.com/BalaM314/mlogx/"
+
+op add @counter @counter configArray.offset
+&for i of 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 {
+    sensor unloaderArray.temp.config unloaderArray.s$i @config
+    jump unloaderArray_s$i_jumpLabel equal unloaderArray.temp.config null
+    control enabled unloaderArray.s$i output.activate
+    unloaderArray_s$i_jumpLabel:
+    control config unloaderArray.s$i output.itemType
+    control enabled unloaderArray.s$i output.activate
+}
+
+end
+end
+end
+end
+end
+end
+
+op add @counter @counter configArray.offset
+&for i of 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 {
+    control config configArray.s$i output.itemType
+}
+
+end
+end
+end
+end
+end
+end
+
+op add @counter @counter toggleArray.offset
+&for i of 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 {
+    control enabled toggleArray.s$i output.activate
+}
+
+end
+end
+end
+end
+end
+end
