@@ -2,7 +2,7 @@
 ### Preset Setting Configs {
     # Sorter : Adds items or setting to existing format (an old project)
     # Inv Sorter : Sets the current format. If recently set to null, retriggers initialization of the IST proc.
-
+    set IST processor1
 # }
 
 ### Cache Validity Checks {
@@ -29,4 +29,30 @@
 ### Message and Response Display {
     # Handles Printed Messages based on the string Message Code
     # Handles "Blinking"
+    ## Get Variables {
+        read IST.output.itemType IST "output.itemType"
+        read IST.output.activate IST "output.activate"
+        read IST.decision.maxValue IST "decision.maxValue"
+    # }
+
+    ## Main Print {
+        # Start Line
+        print "[#BBBBFF]General [#FFFFCC]Inter-Storage Transport\n[#AAAAAA]| GIST 0.B [#0]|[white]Someone's []Shade[][#CCCCEE]\n---\nSetting all item config blocks to: [#BBBBEE]"
+        print IST.output.itemType
+        
+        # Status Line
+        jump _skipFull equal IST.output.activate 0
+        print "\n\n[#AAFFAA]Operational! \nTargeting for "
+        print IST.decision.maxValue
+        print " items."
+        jump _skipFull2 always 0 0
+        _skipFull:
+        print "\n\n[#AAFFAA]Storage(s) has reached Objective.\nReactivates if the total amount of items from all types reaches below "
+        print IST.decision.maxValue
+        _skipFull2:
+    # }
+
+    ## Print Out {
+        printflush message1
+    }
 # }

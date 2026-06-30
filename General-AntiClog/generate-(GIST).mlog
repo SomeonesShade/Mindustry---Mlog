@@ -1,3 +1,100 @@
+op add @counter @counter configArray.offset
+sensor unloaderArray.temp.config unloaderArray.s16 @config
+jump unloaderArray_s16_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s16 output.activate
+unloaderArray_s16_jumpLabel:
+control config unloaderArray.s16 output.itemType
+control enabled unloaderArray.s16 output.activate
+sensor unloaderArray.temp.config unloaderArray.s15 @config
+jump unloaderArray_s15_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s15 output.activate
+unloaderArray_s15_jumpLabel:
+control config unloaderArray.s15 output.itemType
+control enabled unloaderArray.s15 output.activate
+sensor unloaderArray.temp.config unloaderArray.s14 @config
+jump unloaderArray_s14_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s14 output.activate
+unloaderArray_s14_jumpLabel:
+control config unloaderArray.s14 output.itemType
+control enabled unloaderArray.s14 output.activate
+sensor unloaderArray.temp.config unloaderArray.s13 @config
+jump unloaderArray_s13_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s13 output.activate
+unloaderArray_s13_jumpLabel:
+control config unloaderArray.s13 output.itemType
+control enabled unloaderArray.s13 output.activate
+sensor unloaderArray.temp.config unloaderArray.s12 @config
+jump unloaderArray_s12_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s12 output.activate
+unloaderArray_s12_jumpLabel:
+control config unloaderArray.s12 output.itemType
+control enabled unloaderArray.s12 output.activate
+sensor unloaderArray.temp.config unloaderArray.s11 @config
+jump unloaderArray_s11_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s11 output.activate
+unloaderArray_s11_jumpLabel:
+control config unloaderArray.s11 output.itemType
+control enabled unloaderArray.s11 output.activate
+sensor unloaderArray.temp.config unloaderArray.s10 @config
+jump unloaderArray_s10_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s10 output.activate
+unloaderArray_s10_jumpLabel:
+control config unloaderArray.s10 output.itemType
+control enabled unloaderArray.s10 output.activate
+sensor unloaderArray.temp.config unloaderArray.s9 @config
+jump unloaderArray_s9_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s9 output.activate
+unloaderArray_s9_jumpLabel:
+control config unloaderArray.s9 output.itemType
+control enabled unloaderArray.s9 output.activate
+sensor unloaderArray.temp.config unloaderArray.s8 @config
+jump unloaderArray_s8_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s8 output.activate
+unloaderArray_s8_jumpLabel:
+control config unloaderArray.s8 output.itemType
+control enabled unloaderArray.s8 output.activate
+sensor unloaderArray.temp.config unloaderArray.s7 @config
+jump unloaderArray_s7_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s7 output.activate
+unloaderArray_s7_jumpLabel:
+control config unloaderArray.s7 output.itemType
+control enabled unloaderArray.s7 output.activate
+sensor unloaderArray.temp.config unloaderArray.s6 @config
+jump unloaderArray_s6_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s6 output.activate
+unloaderArray_s6_jumpLabel:
+control config unloaderArray.s6 output.itemType
+control enabled unloaderArray.s6 output.activate
+sensor unloaderArray.temp.config unloaderArray.s5 @config
+jump unloaderArray_s5_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s5 output.activate
+unloaderArray_s5_jumpLabel:
+control config unloaderArray.s5 output.itemType
+control enabled unloaderArray.s5 output.activate
+sensor unloaderArray.temp.config unloaderArray.s4 @config
+jump unloaderArray_s4_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s4 output.activate
+unloaderArray_s4_jumpLabel:
+control config unloaderArray.s4 output.itemType
+control enabled unloaderArray.s4 output.activate
+sensor unloaderArray.temp.config unloaderArray.s3 @config
+jump unloaderArray_s3_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s3 output.activate
+unloaderArray_s3_jumpLabel:
+control config unloaderArray.s3 output.itemType
+control enabled unloaderArray.s3 output.activate
+sensor unloaderArray.temp.config unloaderArray.s2 @config
+jump unloaderArray_s2_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s2 output.activate
+unloaderArray_s2_jumpLabel:
+control config unloaderArray.s2 output.itemType
+control enabled unloaderArray.s2 output.activate
+sensor unloaderArray.temp.config unloaderArray.s1 @config
+jump unloaderArray_s1_jumpLabel equal unloaderArray.temp.config null
+control enabled unloaderArray.s1 output.activate
+unloaderArray_s1_jumpLabel:
+control config unloaderArray.s1 output.itemType
+control enabled unloaderArray.s1 output.activate
 end
 end
 end

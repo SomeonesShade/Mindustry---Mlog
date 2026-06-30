@@ -1,1 +1,38 @@
 Doing a centralized variant of GIST by having only one proc at the end
+
+
+
+---
+
+externalConfiguration: #a non config way to set items, its not pernament though...
+set r -1
+resetConfig:
+op add r r 1
+getlink configBuilding r
+control enabled configBuilding false
+jump resetConfig lessThan r @links
+
+set selection 0b0 #reset some vars
+control enabled obj 1
+set turret obj #this is necessary if a link is broken for arc
+
+externalConfigurationLoop: #its time to set
+set r -1
+detectConfigLoop:
+op add r r 1
+getlink configBuilding r
+sensor itemDet configBuilding @config
+jump skipDCL strictEqual itemDet null #is it a valid item?
+sensor itemDetID itemDet @id
+op shl lookup_output 1 itemDetID
+op or selection lookup_output selection #record
+control shoot turret @thisx @thisy 1 #display
+control config configBuilding null #reset/feedback
+control enabled configBuilding false #dont send unessary items to other binds
+skipDCL:
+jump detectConfigLoop lessThan r @links
+
+getlink turret lp
+jump externalConfigurationLoop strictEqual turret obj #is the turret still valid link?
+set bitSelection selection
+end
